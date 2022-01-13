@@ -38,3 +38,12 @@ type banDataData struct {
 	Reason   string `json:"reason,omitempty"`
 	Address  string `json:"address,omitempty"`
 }
+
+type RCONDataList struct {
+	RCONData []RCONData
+}
+
+type RCONData struct {
+	RCONAddress  string
+	RCONPassword string
+}
