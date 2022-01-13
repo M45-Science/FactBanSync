@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -144,7 +145,7 @@ func writeBanListFile() {
 		os.Exit(1)
 	}
 
-	cachedBanList = outbuf.String()
+	cachedBanListGz = compressGzip(outbuf.Bytes())
 
 	wrote, err := file.Write(outbuf.Bytes())
 
@@ -246,4 +247,12 @@ func FileNameFilter(str string) string {
 	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")
 	str = alphafilter.ReplaceAllString(str, "")
 	return str
+}
+
+func compressGzip(data []byte) []byte {
+	var b bytes.Buffer
+	w := gzip.NewWriter(&b)
+	w.Write(data)
+	w.Close()
+	return b.Bytes()
 }

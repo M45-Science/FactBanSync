@@ -48,7 +48,7 @@ func main() {
 			http.HandleFunc("/", handleFileRequest)
 			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
 		}(serverConfig.WebPort)
-		log.Println("Web server started http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/server-banlist.json")
+		log.Println("Web server started http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName + ".gz")
 	}
 
 	var LastFetchBans = time.Now()
@@ -80,15 +80,21 @@ func main() {
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 
-	if r.URL.Path == "/server-banlist.json" {
-		if cachedBanList == "" {
+	if r.URL.Path == "/"+banFileWebName+".gz" {
+		if cachedBanListGz == nil {
+			w.WriteHeader(http.StatusOK)
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
 			fmt.Fprintf(w, "No ban data")
 			return
 		}
 
-		fmt.Fprintf(w, cachedBanList)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "gzip")
+		w.Write(cachedBanListGz)
 
 	} else {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
 		fmt.Fprintf(w, "404: File not found")
 	}
 }
