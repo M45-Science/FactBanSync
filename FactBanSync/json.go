@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -85,25 +86,25 @@ func readServerBanList() {
 	}
 
 	var names []string
-	err = json.Unmarshal([]byte(data), &names)
+	err = json.Unmarshal(data, &names)
 
 	if err != nil {
 		//Not really an error, just empty array
 		//Only needed because Factorio will write some bans as an array for some unknown reason.
-	}
+	} else {
 
-	for _, name := range names {
-		if name != "" {
-			bData = append(bData, banDataData{UserName: name})
+		for _, name := range names {
+			if name != "" {
+				bData = append(bData, banDataData{UserName: name})
+			}
 		}
 	}
 
 	var bans []banDataData
-	err = json.Unmarshal([]byte(data), &bans)
+	err = json.Unmarshal(data, &bans)
 
 	if err != nil {
-		log.Println("Error reading ban list file: " + err.Error())
-		os.Exit(1)
+		//Ignore, probably just array of strings
 	}
 
 	for _, item := range bans {
@@ -242,4 +243,10 @@ func readServerList() {
 	}
 
 	serverList = sList
+}
+
+func FileNameFilter(str string) string {
+	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")
+	str = alphafilter.ReplaceAllString(str, "")
+	return str
 }
