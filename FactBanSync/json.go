@@ -64,8 +64,6 @@ func makeDefaultConfigFile() {
 	serverConfig.FetchBansInterval = defualtFetchBansInterval
 	serverConfig.WatchInterval = defualtWatchInterval
 	serverConfig.RefreshListInterval = defualtRefreshListInterval
-	serverConfig.RCONAddresss = "localhost:12345"
-	serverConfig.RCONPassword = "CHANGE ME"
 	serverConfig.RCONEnabled = true
 	serverConfig.RunWebServer = true
 	serverConfig.WebPort = 8080
