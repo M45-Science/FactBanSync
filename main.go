@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"time"
 )
 
 const version = "0.0.1"
@@ -15,15 +16,35 @@ func main() {
 	flag.Parse()
 
 	readConfigFile()
-	writeConfigFile()
+	writeConfigFile() //To clean up formatting
 
 	startLog()
 	log.Println(fmt.Sprintf("FactBanSync v%v", version))
-
 	updateServerList()
 
 	readServerListFile()
 	readServerBanList()
-
 	writeBanListFile() //To clean up formatting
+
+	var LastFetchBans = time.Now()
+	var LastWatch = time.Now()
+	var LastRefresh = time.Now()
+
+	for {
+		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.FetchBansInterval) {
+			LastFetchBans = time.Now()
+
+			//Fetch bans
+		}
+		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchInterval) {
+			LastWatch = time.Now()
+
+			//Watch bans
+		}
+		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListInterval) {
+			LastRefresh = time.Now()
+
+			//Refresh list
+		}
+	}
 }
