@@ -1,15 +1,39 @@
 package main
 
+import "time"
+
 type serverConfigData struct {
-	Version        string
-	ServerName     string
-	ServerURL      string
-	ListURL        string
-	BanFile        string
+	Version string
+
+	Comment1   string
+	ServerName string
+
+	Comment2 string
+	ListURL  string
+
+	Comment3 string
+	BanFile  string
+
+	Comment4       string
 	ServerListFile string
-	LogPath        string
-	FetchRate      int
-	WatchInterval  int
+
+	Comment5 string
+	LogPath  string
+
+	Comment6      string
+	AutoSubscribe bool
+
+	Comment7      string
+	RequireReason bool
+
+	Comment8          string
+	FetchBansInterval int
+
+	Comment9      string
+	WatchInterval int
+
+	Comment10           string
+	RefreshListInterval int
 }
 
 type serverListData struct {
@@ -21,6 +45,7 @@ type serverData struct {
 	Subscribed bool
 	ServerName string
 	ServerURL  string
+	Added      time.Time
 }
 
 type banDataData struct {
