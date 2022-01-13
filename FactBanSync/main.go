@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -12,29 +16,51 @@ const version = "0.0.1"
 func main() {
 
 	//Launch arguments
-	configPath = *flag.String("configPath", defaultConfigPath, "config file path")
+	flag.StringVar(&configPath, "configPath", defaultConfigPath, "config file path")
+	var makeConfig bool
+	flag.BoolVar(&makeConfig, "makeConfig", false, "make a default config file")
 	flag.Parse()
 
-	readConfigFile()
-	writeConfigFile() //To clean up formatting
+	//Make config file if requested
+	if makeConfig {
+		makeDefaultConfigFile()
+		return
+	}
 
+	//Read config file, rewrite for indentation/cleanup
+	readConfigFile()
+	writeConfigFile()
+
+	//Logging
 	startLog()
 	log.Println(fmt.Sprintf("FactBanSync v%v", version))
 
+	//Read our ban list, rewrite for indentation/cleanup
 	readServerBanList()
-	writeBanListFile() //To clean up formatting
+	writeBanListFile()
 
+	//Read our server list, then update it
 	readServerListFile()
 	updateServerList()
+
+	//Run a webserver, if they want one
+	if serverConfig.RunWebServer {
+		go func(WebPort int) {
+			http.HandleFunc("/", handleFileRequest)
+			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
+		}(serverConfig.WebPort)
+		log.Println("Web server started on port " + strconv.Itoa(serverConfig.WebPort))
+	}
 
 	var LastFetchBans = time.Now()
 	var LastWatch = time.Now()
 	var LastRefresh = time.Now()
 
+	//Loop, checking for new bans
 	for serverRunning {
 		time.Sleep(time.Second)
 
-		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.FetchBansInterval) {
+		if time.Since(LastFetchBans).Seconds() >= float64(serverConfig.FetchBansInterval) {
 			LastFetchBans = time.Now()
 
 			//Fetch bans (TODO)
@@ -49,5 +75,23 @@ func main() {
 
 			updateServerList()
 		}
+	}
+}
+
+func handleFileRequest(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/server-banlist.json" {
+		if banData == nil {
+			fmt.Fprintf(w, "No ban data")
+			return
+		}
+		outbuf := new(bytes.Buffer)
+		enc := json.NewEncoder(outbuf)
+		enc.SetIndent("", "\t")
+		_ = enc.Encode(banData)
+
+		fmt.Fprintf(w, outbuf.String())
+
+	} else {
+		fmt.Fprintf(w, "404: File not found")
 	}
 }
