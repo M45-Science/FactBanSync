@@ -12,6 +12,7 @@ import (
 )
 
 func updateServerList() {
+	defer os.Remove(serverConfig.ServerListFile + ".tmp")
 	//Update server list
 	log.Println("Updating server list")
 	var wrote int64
@@ -30,7 +31,6 @@ func updateServerList() {
 		lData := strings.ToLower(string(data))
 		if strings.Contains(lData, "404: not found") {
 			log.Println("Error updating server list: 404: Not Found")
-			os.Remove(serverConfig.ServerListFile + ".tmp")
 			return
 		}
 		err = json.Unmarshal([]byte(data), &sList)
@@ -55,7 +55,6 @@ func updateServerList() {
 			}
 		} else {
 			log.Println("Unable to parse remote server list file")
-			os.Remove(serverConfig.ServerListFile + ".tmp")
 		}
 	}
 }
