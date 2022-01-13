@@ -57,7 +57,8 @@ func readConfigFile() {
 		serverConfig.FetchBansInterval = defualtFetchBansInterval
 		serverConfig.WatchInterval = defualtWatchInterval
 		serverConfig.RefreshListInterval = defualtRefreshListInterval
-		serverConfig.OurBansFile = defaultOurBansFile
+		serverConfig.RCONAddresss = "localhost:12345"
+		serverConfig.RCONPassword = "CHANGE ME"
 
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
 		log.Println("Please change ServerName in the config file!")
