@@ -3,43 +3,22 @@ package main
 import "time"
 
 type serverConfigData struct {
-	Version string
-
-	Comment1   string
-	ServerName string
-
-	Comment2 string
-	ListURL  string
-
-	Comment3 string
-	BanFile  string
-
-	Comment4       string
-	ServerListFile string
-
-	Comment5 string
-	LogPath  string
-
-	Comment6      string
-	AutoSubscribe bool
-
-	Comment7      string
-	RequireReason bool
-
-	Comment8          string
-	FetchBansInterval int
-
-	Comment9      string
-	WatchInterval int
-
-	Comment10           string
+	Version             string
+	ServerName          string
+	ListURL             string
+	BanFile             string
+	ServerListFile      string
+	LogPath             string
+	AutoSubscribe       bool
+	RequireReason       bool
+	FetchBansInterval   int
+	WatchInterval       int
 	RefreshListInterval int
-
-	Comment11    string
-	RCONAddresss string
-
-	Comment12    string
-	RCONPassword string
+	RCONEnabled         bool
+	RCONAddresss        string
+	RCONPassword        string
+	RunWebServer        bool
+	WebPort             int
 }
 
 type serverListData struct {
