@@ -43,7 +43,7 @@ func main() {
 	readServerListFile()
 	updateServerList()
 
-	//Run a webserver, if they want one
+	//Run a webserver, if requested
 	if serverConfig.RunWebServer {
 		go func(WebPort int) {
 			http.HandleFunc("/", handleFileRequest)
@@ -79,6 +79,8 @@ func main() {
 }
 
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
+	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
+
 	if r.URL.Path == "/server-banlist.json" {
 		if banData == nil {
 			fmt.Fprintf(w, "No ban data")
