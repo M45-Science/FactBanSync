@@ -44,12 +44,13 @@ func main() {
 	updateServerList()
 
 	//Run a webserver, if requested
+	//TODO offer HTTPs with directions to make cert
 	if serverConfig.RunWebServer {
 		go func(WebPort int) {
 			http.HandleFunc("/", handleFileRequest)
 			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
 		}(serverConfig.WebPort)
-		log.Println("Web server started on port " + strconv.Itoa(serverConfig.WebPort))
+		log.Println("Web server started http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/server-banlist.json")
 	}
 
 	var LastFetchBans = time.Now()
@@ -78,6 +79,7 @@ func main() {
 	}
 }
 
+//TODO: use cached reponse
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 
