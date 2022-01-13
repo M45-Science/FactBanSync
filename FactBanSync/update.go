@@ -35,6 +35,7 @@ func updateServerList() {
 		}
 		err = json.Unmarshal([]byte(data), &sList)
 		found := false
+		foundSelf := false
 		if err == nil {
 			for _, server := range sList.ServerList {
 				if server.ServerName != "" && server.ServerURL != "" {
@@ -45,9 +46,21 @@ func updateServerList() {
 					}
 					server.Added = time.Now()
 					serverList.ServerList = append(serverList.ServerList, server)
-					log.Println("Added server: " + server.ServerName)
-					found = true
+					for _, s := range serverList.ServerList {
+						if s.ServerName == server.ServerName {
+							found = true
+						}
+						if s.ServerName == server.ServerName {
+							foundSelf = true
+						}
+					}
+					if !found {
+						log.Println("Added server: " + server.ServerName)
+					}
 				}
+			}
+			if !foundSelf {
+				log.Println("We are currently not found in the server list!")
 			}
 			if found {
 				writeServerListFile()
