@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"time"
 )
 
 func readServerListFile() {
@@ -22,11 +21,10 @@ func readServerListFile() {
 			os.Exit(1)
 		}
 	} else {
-		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{{ServerName: serverConfig.ServerName, Subscribed: true, Added: time.Now()}}}
+		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{}}
 
 		log.Println("No server list file found, creating new one.")
 		writeServerListFile()
-		os.Exit(1)
 	}
 }
 
@@ -47,25 +45,32 @@ func readConfigFile() {
 			os.Exit(1)
 		}
 	} else {
-		serverConfig.Version = version
-		serverConfig.ServerName = "Default"
-		serverConfig.ListURL = defaultListURL
-		serverConfig.BanFile = defaultBanFile
-		serverConfig.ServerListFile = defaultServerListFile
-		serverConfig.LogPath = defaultLogPath
-		serverConfig.AutoSubscribe = true
-		serverConfig.FetchBansInterval = defualtFetchBansInterval
-		serverConfig.WatchInterval = defualtWatchInterval
-		serverConfig.RefreshListInterval = defualtRefreshListInterval
-		serverConfig.RCONAddresss = "localhost:12345"
-		serverConfig.RCONPassword = "CHANGE ME"
-
+		makeDefaultConfigFile()
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
 		log.Println("Please change ServerName in the config file!")
 		log.Println("Exiting...")
-		writeConfigFile()
 		os.Exit(1)
 	}
+}
+
+func makeDefaultConfigFile() {
+	serverConfig.Version = version
+	serverConfig.ServerName = "Default"
+	serverConfig.ListURL = defaultListURL
+	serverConfig.BanFile = defaultBanFile
+	serverConfig.ServerListFile = defaultServerListFile
+	serverConfig.LogPath = defaultLogPath
+	serverConfig.AutoSubscribe = true
+	serverConfig.FetchBansInterval = defualtFetchBansInterval
+	serverConfig.WatchInterval = defualtWatchInterval
+	serverConfig.RefreshListInterval = defualtRefreshListInterval
+	serverConfig.RCONAddresss = "localhost:12345"
+	serverConfig.RCONPassword = "CHANGE ME"
+	serverConfig.RCONEnabled = true
+	serverConfig.RunWebServer = true
+	serverConfig.WebPort = 8080
+
+	writeConfigFile()
 }
 
 func readServerBanList() {
@@ -74,7 +79,7 @@ func readServerBanList() {
 
 	if err != nil {
 		log.Println(err)
-		os.Exit(1)
+		return
 	}
 
 	var bData []banDataData
@@ -160,16 +165,7 @@ func writeConfigFile() {
 	}
 
 	serverConfig.Version = "0.0.1"
-	serverConfig.Comment1 = "Your server name. This is used to skip your own server in the server list."
-	serverConfig.Comment2 = "URL where server list is located, normally the git repo."
-	serverConfig.Comment3 = "Path to your Factorio server-banlist.json."
-	serverConfig.Comment4 = "Path to store server list locally. Cache, and allows manual subscription to servers."
-	serverConfig.Comment5 = "Path of directory to put our logs."
-	serverConfig.Comment6 = "Auto-subscribe to new servers."
-	serverConfig.Comment7 = "Only accept bans with a reason specified."
-	serverConfig.Comment8 = "How often to check other servers for new bans (in minutes)."
-	serverConfig.Comment9 = "How often to check for new bans on our own server. (seconds)"
-	serverConfig.Comment10 = "How often to check for new servers. (minutes)"
+	//Add config file comments
 
 	outbuf := new(bytes.Buffer)
 	enc := json.NewEncoder(outbuf)
