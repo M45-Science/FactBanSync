@@ -19,7 +19,6 @@ var defaultBanFile = "server-banlist.json"
 var defaultServerListFile = "serverList.json"
 var defaultLogPath = "logs"
 var defualtFetchRate = 300
-var defaultURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/banList.json"
 var defualtWatchInterval = 5
 
 type serverConfigData struct {
@@ -42,13 +41,12 @@ type serverData struct {
 	Subscribed    bool
 	ServerName    string
 	ServerAddress string
-	ServerPort    string
 }
 
 type banDataData struct {
 	UserName string `json:"username"`
-	Reason   string `json:"reason"`
-	Address  string `json:"address"`
+	Reason   string `json:"reason,omitempty"`
+	Address  string `json:"address,omitempty"`
 }
 
 var serverConfig serverConfigData
@@ -83,7 +81,6 @@ func main() {
 		serverConfig.ServerListFile = defaultServerListFile
 		serverConfig.LogPath = defaultLogPath
 		serverConfig.FetchRate = defualtFetchRate
-		serverConfig.URL = defaultURL
 		serverConfig.WatchInterval = defualtWatchInterval
 
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
@@ -137,7 +134,7 @@ func main() {
 	}
 
 	readServerBanList()
-
+	writeBanListFile() //To clean up formatting
 }
 
 func readServerBanList() {
@@ -167,6 +164,9 @@ func readServerBanList() {
 
 	for _, item := range bans {
 		if item.UserName != "" {
+			if item.Address == "0.0.0.0" {
+				item.Address = ""
+			}
 			bData = append(bData, item)
 		}
 	}
@@ -174,6 +174,30 @@ func readServerBanList() {
 	banData = bData
 
 	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
+}
+
+func writeBanListFile() {
+	file, err := os.Create(serverConfig.BanFile)
+
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	outbuf := new(bytes.Buffer)
+	enc := json.NewEncoder(outbuf)
+	enc.SetIndent("", "\t")
+
+	err = enc.Encode(banData)
+
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	_, err = file.Write(outbuf.Bytes())
+
+	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items")
 }
 
 func writeConfigFile() {
