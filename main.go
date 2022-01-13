@@ -14,9 +14,9 @@ import (
 
 const version = "0.0.1"
 
-var defaultConfigPath = "serverConfig.json"
+var defaultConfigPath = "server-config.json"
 var defaultBanFile = "server-banlist.json"
-var defaultServerListFile = "serverList.json"
+var defaultServerListFile = "server-list.json"
 var defaultLogPath = "logs"
 var defualtFetchRate = 300
 var defualtWatchInterval = 5
@@ -24,11 +24,11 @@ var defualtWatchInterval = 5
 type serverConfigData struct {
 	Version        string
 	ServerName     string
+	ServerURL      string
 	BanFile        string
 	ServerListFile string
 	LogPath        string
 	FetchRate      int
-	URL            string
 	WatchInterval  int
 }
 
@@ -38,9 +38,9 @@ type serverListData struct {
 }
 
 type serverData struct {
-	Subscribed    bool
-	ServerName    string
-	ServerAddress string
+	Subscribed bool
+	ServerName string
+	ServerURL  string
 }
 
 type banDataData struct {
@@ -84,6 +84,8 @@ func main() {
 		serverConfig.WatchInterval = defualtWatchInterval
 
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
+		log.Println("Please change ServerName in the config file!")
+		log.Println("Exiting...")
 		writeConfigFile()
 		os.Exit(1)
 	}
@@ -115,7 +117,6 @@ func main() {
 	file, err = ioutil.ReadFile(serverConfig.ServerListFile)
 
 	if file != nil && !os.IsNotExist(err) {
-		var serverList serverListData
 		err = json.Unmarshal(file, &serverList)
 
 		if err != nil {
@@ -123,14 +124,11 @@ func main() {
 			panic(err)
 		}
 	} else {
-		var serverList serverListData
-		serverList.ServerList = make([]serverData, 0)
-		serverList.Version = "0.0.1"
-		log.Println("No server list file found, creating new one.")
-		log.Println("Please change ServerName in the config file!")
-		log.Println("Exiting...")
+		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{{ServerName: serverConfig.ServerName, ServerURL: serverConfig.ServerURL, Subscribed: true}}}
 
+		log.Println("No server list file found, creating new one.")
 		WriteServerListFile()
+		os.Exit(1)
 	}
 
 	readServerBanList()

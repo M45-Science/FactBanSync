@@ -1,0 +1,10 @@
+{
+	"Version": "0.0.1",
+	"ServerName": "M45-Science",
+	"ServerURL": "http://m45sci.xyz/server-banlist.json",
+	"BanFile": "server-banlist.json",
+	"ServerListFile": "server-list.json",
+	"LogPath": "logs",
+	"FetchRate": 300,
+	"WatchInterval": 5
+}
