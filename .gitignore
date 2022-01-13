@@ -1,9 +1,8 @@
 /.vscode
-/FactBanSync
-/go.mod
-/logs
-/server-banlist.json
-/serverConfig.json
-/serverList.json
-server-config.json
-server-list.json.tmp
+/FactBanSync/FactBanSync
+/FactBanSync/go.mod
+/FactBanSync/logs
+/FactBanSync/server-banlist.json
+/FactBanSync/server-list.json
+/FactBanSync/server-config.json
+/FactBanSync/server-list.json.tmp
