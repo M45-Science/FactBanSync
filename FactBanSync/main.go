@@ -48,7 +48,9 @@ func main() {
 			http.HandleFunc("/", handleFileRequest)
 			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
 		}(serverConfig.WebPort)
-		log.Println("Web server started http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName + ".gz")
+		log.Println("Web server started:")
+		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName + ".gz")
+		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName)
 	}
 
 	var LastFetchBans = time.Now()
@@ -82,19 +84,31 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/"+banFileWebName+".gz" {
 		if cachedBanListGz == nil {
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
-			fmt.Fprintf(w, "No ban data")
-			return
+			noDataReply(w)
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "gzip")
 		w.Write(cachedBanListGz)
 
+	} else if r.URL.Path == "/"+banFileWebName {
+		if cachedBanList == nil {
+			noDataReply(w)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(cachedBanList)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
 		fmt.Fprintf(w, "404: File not found")
 	}
+}
+
+func noDataReply(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
+	fmt.Fprintf(w, "No ban data")
 }

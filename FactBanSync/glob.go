@@ -24,6 +24,7 @@ var logDesc *os.File
 var banData []banDataData
 var logsToMonitor []LogMonitorData
 var cachedBanListGz []byte
+var cachedBanList []byte
 var serverRunning = true
 
 var initialStat fs.FileInfo

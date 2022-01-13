@@ -145,7 +145,9 @@ func writeBanListFile() {
 		os.Exit(1)
 	}
 
+	cachedBanList = outbuf.Bytes()
 	cachedBanListGz = compressGzip(outbuf.Bytes())
+	log.Println("Cached reponse: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
 
 	wrote, err := file.Write(outbuf.Bytes())
 
