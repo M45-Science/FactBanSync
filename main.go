@@ -14,49 +14,6 @@ import (
 
 const version = "0.0.1"
 
-var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/server-list.json"
-var defaultConfigPath = "server-config.json"
-var defaultBanFile = "server-banlist.json"
-var defaultServerListFile = "server-list.json"
-var defaultLogPath = "logs"
-var defualtFetchRate = 300
-var defualtWatchInterval = 5
-
-type serverConfigData struct {
-	Version        string
-	ServerName     string
-	ServerURL      string
-	ListURL        string
-	BanFile        string
-	ServerListFile string
-	LogPath        string
-	FetchRate      int
-	WatchInterval  int
-}
-
-type serverListData struct {
-	Version    string
-	ServerList []serverData
-}
-
-type serverData struct {
-	Subscribed bool
-	ServerName string
-	ServerURL  string
-}
-
-type banDataData struct {
-	UserName string `json:"username"`
-	Reason   string `json:"reason,omitempty"`
-	Address  string `json:"address,omitempty"`
-}
-
-var serverConfig serverConfigData
-var serverList serverListData
-var configPath string
-var logDesc *os.File
-var banData []banDataData
-
 func main() {
 
 	configPath = *flag.String("configPath", defaultConfigPath, "config file path")
