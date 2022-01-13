@@ -11,6 +11,7 @@ var defaultBanFile = "server-banlist.json"
 var defaultServerListFile = "server-list.json"
 var defaultRCONFile = "server-rcon.json"
 var defaultOurBansFile = "our-bans.json"
+var defaultLogMonitorFile = "log-monitor.json"
 var defaultLogPath = "logs"
 var defualtFetchBansInterval = 5    //Seconds
 var defualtWatchInterval = 5        //Seconds
@@ -20,6 +21,8 @@ var serverList serverListData
 var configPath string
 var logDesc *os.File
 var banData []banDataData
+var LogsToMonitor []LogMonitorData
+
 var serverRunning = true
 
 var initialStat fs.FileInfo
