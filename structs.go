@@ -34,6 +34,9 @@ type serverConfigData struct {
 
 	Comment10           string
 	RefreshListInterval int
+
+	Comment11   string
+	OurBansFile string
 }
 
 type serverListData struct {

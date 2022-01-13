@@ -56,6 +56,7 @@ func readConfigFile() {
 		serverConfig.FetchBansInterval = defualtFetchBansInterval
 		serverConfig.WatchInterval = defualtWatchInterval
 		serverConfig.RefreshListInterval = defualtRefreshListInterval
+		serverConfig.OurBansFile = defaultOurBansFile
 
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
 		log.Println("Please change ServerName in the config file!")
