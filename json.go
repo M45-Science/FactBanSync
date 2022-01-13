@@ -9,6 +9,58 @@ import (
 	"os"
 )
 
+func readServerListFile() {
+	file, err := ioutil.ReadFile(serverConfig.ServerListFile)
+
+	if file != nil && !os.IsNotExist(err) {
+		err = json.Unmarshal(file, &serverList)
+
+		if err != nil {
+			log.Println(err)
+			panic(err)
+		}
+	} else {
+		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{{ServerName: serverConfig.ServerName, ServerURL: serverConfig.ServerURL, Subscribed: true}}}
+
+		log.Println("No server list file found, creating new one.")
+		WriteServerListFile()
+		os.Exit(1)
+	}
+}
+
+func readConfigFile() {
+	//Read server config file
+	file, err := ioutil.ReadFile(configPath)
+
+	if file != nil && err == nil {
+		err = json.Unmarshal(file, &serverConfig)
+
+		if err != nil {
+			panic(err)
+		}
+
+		if serverConfig.ServerName == "Default" {
+			log.Println("Please change ServerName in the config file")
+			os.Exit(1)
+		}
+	} else {
+		serverConfig.Version = version
+		serverConfig.ServerName = "Default"
+		serverConfig.BanFile = defaultBanFile
+		serverConfig.ServerListFile = defaultServerListFile
+		serverConfig.ListURL = defaultListURL
+		serverConfig.LogPath = defaultLogPath
+		serverConfig.FetchRate = defualtFetchRate
+		serverConfig.WatchInterval = defualtWatchInterval
+
+		fmt.Println("No config file found, generating defaults, saving to " + configPath)
+		log.Println("Please change ServerName in the config file!")
+		log.Println("Exiting...")
+		writeConfigFile()
+		os.Exit(1)
+	}
+}
+
 func readServerBanList() {
 
 	file, err := os.Open(serverConfig.BanFile)
