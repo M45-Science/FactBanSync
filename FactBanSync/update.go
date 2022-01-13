@@ -30,6 +30,7 @@ func updateServerList() {
 		lData := strings.ToLower(string(data))
 		if strings.Contains(lData, "404: not found") {
 			log.Println("Error updating server list: 404: Not Found")
+			os.Remove(serverConfig.ServerListFile + ".tmp")
 			return
 		}
 		err = json.Unmarshal([]byte(data), &sList)
