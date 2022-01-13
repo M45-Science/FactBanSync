@@ -1,19 +1,20 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
 
 const version = "0.0.1"
 
+var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/server-list.json"
 var defaultConfigPath = "server-config.json"
 var defaultBanFile = "server-banlist.json"
 var defaultServerListFile = "server-list.json"
@@ -25,6 +26,7 @@ type serverConfigData struct {
 	Version        string
 	ServerName     string
 	ServerURL      string
+	ListURL        string
 	BanFile        string
 	ServerListFile string
 	LogPath        string
@@ -79,6 +81,7 @@ func main() {
 		serverConfig.ServerName = "Default"
 		serverConfig.BanFile = defaultBanFile
 		serverConfig.ServerListFile = defaultServerListFile
+		serverConfig.ListURL = defaultListURL
 		serverConfig.LogPath = defaultLogPath
 		serverConfig.FetchRate = defualtFetchRate
 		serverConfig.WatchInterval = defualtWatchInterval
@@ -113,6 +116,33 @@ func main() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
 	log.Println(fmt.Sprintf("FactBanSync v%v", version))
 
+	//Update server list
+	log.Println("Updating server list")
+	var wrote int64
+	wrote, err = downloadFile(serverConfig.ServerListFile+".tmp", defaultListURL)
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	if wrote > 0 {
+		var sList serverListData
+		data, err := ioutil.ReadFile(serverConfig.ServerListFile + ".tmp")
+		if err != nil {
+			panic(err)
+		}
+		err = json.Unmarshal([]byte(data), &sList)
+		if err == nil {
+			err = os.Rename(serverConfig.ServerListFile+".tmp", serverConfig.ServerListFile)
+			if err != nil {
+				panic(err)
+			}
+			serverList = sList
+		} else {
+			log.Println("Unable to parse remote server list file")
+			os.Remove(serverConfig.ServerListFile + ".tmp")
+		}
+	}
 	//Read server list file
 	file, err = ioutil.ReadFile(serverConfig.ServerListFile)
 
@@ -135,112 +165,21 @@ func main() {
 	writeBanListFile() //To clean up formatting
 }
 
-func readServerBanList() {
+func downloadFile(filepath string, url string) (int64, error) {
 
-	file, err := os.Open(serverConfig.BanFile)
-
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		return 0, err
 	}
+	defer resp.Body.Close()
 
-	var bData []banDataData
-
-	data, err := ioutil.ReadAll(file)
-
-	var names []string
-	_ = json.Unmarshal([]byte(data), &names)
-
-	for _, name := range names {
-		if name != "" {
-			bData = append(bData, banDataData{UserName: name})
-		}
-	}
-
-	var bans []banDataData
-	_ = json.Unmarshal([]byte(data), &bans)
-
-	for _, item := range bans {
-		if item.UserName != "" {
-			if item.Address == "0.0.0.0" {
-				item.Address = ""
-			}
-			bData = append(bData, item)
-		}
-	}
-
-	banData = bData
-
-	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
-}
-
-func writeBanListFile() {
-	file, err := os.Create(serverConfig.BanFile)
-
+	out, err := os.Create(filepath)
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		return 0, err
 	}
+	defer out.Close()
 
-	outbuf := new(bytes.Buffer)
-	enc := json.NewEncoder(outbuf)
-	enc.SetIndent("", "\t")
-
-	err = enc.Encode(banData)
-
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	_, err = file.Write(outbuf.Bytes())
-
-	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items")
-}
-
-func writeConfigFile() {
-	file, err := os.Create(configPath)
-
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	outbuf := new(bytes.Buffer)
-	enc := json.NewEncoder(outbuf)
-	enc.SetIndent("", "\t")
-
-	err = enc.Encode(serverConfig)
-
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	_, err = file.Write(outbuf.Bytes())
-
-}
-
-func WriteServerListFile() {
-	file, err := os.Create(serverConfig.ServerListFile)
-
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	serverList.Version = "0.0.1"
-	outbuf := new(bytes.Buffer)
-	enc := json.NewEncoder(outbuf)
-	enc.SetIndent("", "\t")
-
-	err = enc.Encode(serverList)
-
-	if err != nil {
-		log.Println(err)
-		panic(err)
-	}
-
-	_, err = file.Write(outbuf.Bytes())
-	log.Print("Wrote server list file")
+	var wrote int64
+	wrote, err = io.Copy(out, resp.Body)
+	return wrote, err
 }
