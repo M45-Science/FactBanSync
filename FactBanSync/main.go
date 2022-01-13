@@ -24,6 +24,7 @@ func main() {
 	readServerBanList()
 	writeBanListFile() //To clean up formatting
 
+	readServerListFile()
 	updateServerList()
 
 	var LastFetchBans = time.Now()
