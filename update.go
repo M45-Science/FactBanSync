@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func updateServerList() {
@@ -26,11 +27,17 @@ func updateServerList() {
 		}
 		err = json.Unmarshal([]byte(data), &sList)
 		if err == nil {
-			err = os.Rename(serverConfig.ServerListFile+".tmp", serverConfig.ServerListFile)
-			if err != nil {
-				log.Println("Error renaming server list: " + err.Error())
+			for _, server := range sList.ServerList {
+				if server.ServerName != "" && server.ServerURL != "" {
+					if serverConfig.AutoSubscribe {
+						server.Subscribed = true
+					} else {
+						server.Subscribed = false
+					}
+					server.Added = time.Now()
+					serverList.ServerList = append(serverList.ServerList, server)
+				}
 			}
-			serverList = sList
 		} else {
 			log.Println("Unable to parse remote server list file")
 			os.Remove(serverConfig.ServerListFile + ".tmp")
