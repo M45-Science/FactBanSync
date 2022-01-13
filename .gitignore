@@ -1,0 +1,7 @@
+/.vscode
+/FactBanSync
+/go.mod
+/logs
+/server-banlist.json
+/serverConfig.json
+/serverList.json
