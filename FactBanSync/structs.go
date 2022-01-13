@@ -35,8 +35,11 @@ type serverConfigData struct {
 	Comment10           string
 	RefreshListInterval int
 
-	Comment11   string
-	OurBansFile string
+	Comment11    string
+	RCONAddresss string
+
+	Comment12    string
+	RCONPassword string
 }
 
 type serverListData struct {
