@@ -7,9 +7,9 @@ var defaultConfigPath = "server-config.json"
 var defaultBanFile = "server-banlist.json"
 var defaultServerListFile = "server-list.json"
 var defaultLogPath = "logs"
-var defualtFetchRate = 300
-var defualtWatchInterval = 5
-
+var defualtFetchBansInterval = 60        //Minutes
+var defualtWatchInterval = 5             //Seconds
+var defualtRefreshListInterval = 60 * 24 //Minutes
 var serverConfig serverConfigData
 var serverList serverListData
 var configPath string
