@@ -84,8 +84,8 @@ func readServerBanList() {
 	err = json.Unmarshal([]byte(data), &names)
 
 	if err != nil {
-		log.Println("Error reading ban list file: " + err.Error())
-		os.Exit(1)
+		//Not really an error, just empty array
+		//Only needed because Factorio will write some bans as an array for some unknown reason.
 	}
 
 	for _, name := range names {
