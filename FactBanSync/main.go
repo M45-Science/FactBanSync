@@ -20,11 +20,11 @@ func main() {
 
 	startLog()
 	log.Println(fmt.Sprintf("FactBanSync v%v", version))
-	updateServerList()
 
-	readServerListFile()
 	readServerBanList()
 	writeBanListFile() //To clean up formatting
+
+	updateServerList()
 
 	var LastFetchBans = time.Now()
 	var LastWatch = time.Now()
