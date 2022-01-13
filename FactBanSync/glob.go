@@ -9,6 +9,7 @@ var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSyn
 var defaultConfigPath = "server-config.json"
 var defaultBanFile = "server-banlist.json"
 var defaultServerListFile = "server-list.json"
+var defaultRCONFile = "server-rcon.json"
 var defaultOurBansFile = "our-bans.json"
 var defaultLogPath = "logs"
 var defualtFetchBansInterval = 5    //Seconds
