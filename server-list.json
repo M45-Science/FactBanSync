@@ -1,7 +1,10 @@
 {
 	"Version": "0.0.1",
-	"ServerList": {
-		"ServerName": "M45-Science",
-		"ServerAddress": "https://m45sci.xyz/server-banlist.json"
-	}
+	"ServerList": [
+		{
+			"Subscribed": true,
+			"ServerName": "M45-Science",
+			"ServerURL": "http://m45sci.xyz/server-banlist.json"
+		}
+	]
 }
