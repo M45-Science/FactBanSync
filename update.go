@@ -15,21 +15,20 @@ func updateServerList() {
 	var wrote int64
 	wrote, err := downloadFile(serverConfig.ServerListFile+".tmp", defaultListURL)
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		log.Println("Error updating server list: " + err.Error())
 	}
 
 	if wrote > 0 {
 		var sList serverListData
 		data, err := ioutil.ReadFile(serverConfig.ServerListFile + ".tmp")
 		if err != nil {
-			panic(err)
+			log.Println("Error reading server list: " + err.Error())
 		}
 		err = json.Unmarshal([]byte(data), &sList)
 		if err == nil {
 			err = os.Rename(serverConfig.ServerListFile+".tmp", serverConfig.ServerListFile)
 			if err != nil {
-				panic(err)
+				log.Println("Error renaming server list: " + err.Error())
 			}
 			serverList = sList
 		} else {

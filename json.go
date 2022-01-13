@@ -16,14 +16,14 @@ func readServerListFile() {
 		err = json.Unmarshal(file, &serverList)
 
 		if err != nil {
-			log.Println(err)
-			panic(err)
+			log.Println("Error reading server list file: " + err.Error())
+			os.Exit(1)
 		}
 	} else {
 		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{{ServerName: serverConfig.ServerName, ServerURL: serverConfig.ServerURL, Subscribed: true}}}
 
 		log.Println("No server list file found, creating new one.")
-		WriteServerListFile()
+		writeServerListFile()
 		os.Exit(1)
 	}
 }
@@ -36,7 +36,8 @@ func readConfigFile() {
 		err = json.Unmarshal(file, &serverConfig)
 
 		if err != nil {
-			panic(err)
+			log.Println("Error reading config file: " + err.Error())
+			os.Exit(1)
 		}
 
 		if serverConfig.ServerName == "Default" {
@@ -67,15 +68,25 @@ func readServerBanList() {
 
 	if err != nil {
 		log.Println(err)
-		panic(err)
+		os.Exit(1)
 	}
 
 	var bData []banDataData
 
 	data, err := ioutil.ReadAll(file)
 
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
 	var names []string
-	_ = json.Unmarshal([]byte(data), &names)
+	err = json.Unmarshal([]byte(data), &names)
+
+	if err != nil {
+		log.Println("Error reading ban list file: " + err.Error())
+		os.Exit(1)
+	}
 
 	for _, name := range names {
 		if name != "" {
@@ -84,7 +95,12 @@ func readServerBanList() {
 	}
 
 	var bans []banDataData
-	_ = json.Unmarshal([]byte(data), &bans)
+	err = json.Unmarshal([]byte(data), &bans)
+
+	if err != nil {
+		log.Println("Error reading ban list file: " + err.Error())
+		os.Exit(1)
+	}
 
 	for _, item := range bans {
 		if item.UserName != "" {
@@ -105,7 +121,7 @@ func writeBanListFile() {
 
 	if err != nil {
 		log.Println(err)
-		panic(err)
+		os.Exit(1)
 	}
 
 	outbuf := new(bytes.Buffer)
@@ -115,13 +131,18 @@ func writeBanListFile() {
 	err = enc.Encode(banData)
 
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		log.Println("Error writing ban list file: " + err.Error())
+		os.Exit(1)
 	}
 
-	_, err = file.Write(outbuf.Bytes())
+	wrote, err := file.Write(outbuf.Bytes())
 
-	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items")
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
 func writeConfigFile() {
@@ -129,7 +150,7 @@ func writeConfigFile() {
 
 	if err != nil {
 		log.Println(err)
-		panic(err)
+		os.Exit(1)
 	}
 
 	outbuf := new(bytes.Buffer)
@@ -139,20 +160,26 @@ func writeConfigFile() {
 	err = enc.Encode(serverConfig)
 
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		log.Println("Error writing config file: " + err.Error())
+		os.Exit(1)
 	}
 
-	_, err = file.Write(outbuf.Bytes())
+	wrote, err := file.Write(outbuf.Bytes())
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + " bytes")
 
 }
 
-func WriteServerListFile() {
+func writeServerListFile() {
 	file, err := os.Create(serverConfig.ServerListFile)
 
 	if err != nil {
 		log.Println(err)
-		panic(err)
+		os.Exit(1)
 	}
 
 	serverList.Version = "0.0.1"
@@ -163,12 +190,15 @@ func WriteServerListFile() {
 	err = enc.Encode(serverList)
 
 	if err != nil {
-		log.Println(err)
-		panic(err)
+		log.Println("Error writing server list file: " + err.Error())
 	}
 
-	_, err = file.Write(outbuf.Bytes())
-	log.Print("Wrote server list file")
+	wrote, err := file.Write(outbuf.Bytes())
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
 func readServerList() {
@@ -177,17 +207,21 @@ func readServerList() {
 
 	if err != nil {
 		log.Println(err)
-		panic(err)
+		os.Exit(1)
 	}
 
 	var sList serverListData
 
 	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
 
 	err = json.Unmarshal([]byte(data), &sList)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Error reading server list file: " + err.Error())
 		os.Exit(1)
 	}
 

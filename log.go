@@ -12,7 +12,8 @@ func startLog() {
 	err := os.Mkdir(serverConfig.LogPath, 0777)
 
 	if os.IsNotExist(err) {
-		panic(err)
+		log.Println("Couldnt't create log dir!")
+		os.Exit(1)
 	}
 
 	//Open log file
@@ -20,7 +21,7 @@ func startLog() {
 	logDesc, err = os.OpenFile(serverConfig.LogPath+"/"+logName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
-		panic(err)
+		log.Println("Couldn't open log file!")
 	}
 
 	defer logDesc.Close()
