@@ -77,3 +77,38 @@ func downloadFile(filepath string, url string) (int64, error) {
 	wrote, err = io.Copy(out, resp.Body)
 	return wrote, err
 }
+
+func WatchBanFile() {
+	var err error
+
+	filePath := serverConfig.BanFile
+	if initialStat == nil {
+		initialStat, err = os.Stat(filePath)
+	}
+
+	if err != nil {
+		log.Println("WatchBanFile: stat: " + err.Error())
+		return
+	}
+
+	if initialStat != nil {
+		stat, errb := os.Stat(filePath)
+		if errb != nil {
+			log.Println("WatchDatabaseFile: restat")
+			return
+		}
+
+		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+			log.Println("WatchBanFile: file changed")
+			readServerBanList()
+
+			initialStat, err = os.Stat(filePath)
+
+			if err != nil {
+				log.Println("WatchBanFile: stat: " + err.Error())
+				return
+			}
+			return
+		}
+	}
+}

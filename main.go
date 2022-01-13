@@ -30,21 +30,23 @@ func main() {
 	var LastWatch = time.Now()
 	var LastRefresh = time.Now()
 
-	for {
+	for serverRunning {
+		time.Sleep(time.Second)
+
 		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.FetchBansInterval) {
 			LastFetchBans = time.Now()
 
-			//Fetch bans
+			//Fetch bans (TODO)
 		}
 		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchInterval) {
 			LastWatch = time.Now()
 
-			//Watch bans
+			WatchBanFile()
 		}
 		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListInterval) {
 			LastRefresh = time.Now()
 
-			//Refresh list
+			updateServerList()
 		}
 	}
 }

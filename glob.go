@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+	"io/fs"
+	"os"
+)
 
 var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/server-list.json"
 var defaultConfigPath = "server-config.json"
@@ -16,3 +19,6 @@ var serverList serverListData
 var configPath string
 var logDesc *os.File
 var banData []banDataData
+var serverRunning = true
+
+var initialStat fs.FileInfo
