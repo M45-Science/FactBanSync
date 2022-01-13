@@ -140,9 +140,11 @@ func writeBanListFile() {
 	err = enc.Encode(banData)
 
 	if err != nil {
-		log.Println("Error writing ban list file: " + err.Error())
+		log.Println("Error encoding ban list file: " + err.Error())
 		os.Exit(1)
 	}
+
+	cachedBanList = outbuf.String()
 
 	wrote, err := file.Write(outbuf.Bytes())
 

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -79,21 +77,16 @@ func main() {
 	}
 }
 
-//TODO: use cached reponse
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 
 	if r.URL.Path == "/server-banlist.json" {
-		if banData == nil {
+		if cachedBanList == "" {
 			fmt.Fprintf(w, "No ban data")
 			return
 		}
-		outbuf := new(bytes.Buffer)
-		enc := json.NewEncoder(outbuf)
-		enc.SetIndent("", "\t")
-		_ = enc.Encode(banData)
 
-		fmt.Fprintf(w, outbuf.String())
+		fmt.Fprintf(w, cachedBanList)
 
 	} else {
 		fmt.Fprintf(w, "404: File not found")
