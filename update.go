@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -25,7 +26,14 @@ func updateServerList() {
 		if err != nil {
 			log.Println("Error reading server list: " + err.Error())
 		}
+
+		lData := strings.ToLower(string(data))
+		if strings.Contains(lData, "404: not found") {
+			log.Println("Error updating server list: 404: Not Found")
+			return
+		}
 		err = json.Unmarshal([]byte(data), &sList)
+		found := false
 		if err == nil {
 			for _, server := range sList.ServerList {
 				if server.ServerName != "" && server.ServerURL != "" {
@@ -36,7 +44,13 @@ func updateServerList() {
 					}
 					server.Added = time.Now()
 					serverList.ServerList = append(serverList.ServerList, server)
+					log.Println("Added server: " + server.ServerName)
+					found = true
 				}
+			}
+			if found {
+				writeServerListFile()
+				writeBanListFile()
 			}
 		} else {
 			log.Println("Unable to parse remote server list file")
