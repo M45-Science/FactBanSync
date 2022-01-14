@@ -11,8 +11,6 @@ type serverConfigData struct {
 	ServerListFile string
 	LogPath        string
 
-	RCONAddresss string
-	RCONPassword string
 	RunWebServer bool
 	WebPort      int
 
@@ -32,10 +30,11 @@ type serverListData struct {
 }
 
 type serverData struct {
-	Subscribed bool
-	ServerName string
-	ServerURL  string
-	Added      time.Time
+	Subscribed   bool
+	ServerName   string
+	ServerURL    string
+	JsonGz    bool `json:"omitempty"`
+	AddedLocally time.Time
 }
 
 type banDataData struct {
