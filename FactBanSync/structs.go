@@ -40,6 +40,8 @@ type serverData struct {
 	JsonGzip   bool   `json:"omitempty"`
 	Subscribed bool   `json:"omitempty"`
 	LocalAdd   string
+
+	BanList []banDataType `json:"-"`
 }
 
 //Ban data

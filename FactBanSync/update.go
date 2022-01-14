@@ -10,6 +10,70 @@ import (
 	"time"
 )
 
+func fetchBanLists() {
+	for _, server := range serverList.ServerList {
+		if server.Subscribed {
+			log.Println("Updating ban list for server: " + server.ServerName)
+			data, err := fetchFile(server.ServerURL)
+			if err != nil {
+				log.Println("Error updating ban list: " + err.Error())
+				continue
+			}
+			if len(data) > 0 {
+				var names []string
+				var bData []banDataType
+				err = json.Unmarshal(data, &names)
+
+				if err != nil {
+					//Not really an error, just empty array
+					//Only needed because Factorio will write some bans as an array for some unknown reason.
+				} else {
+
+					found := false
+					for _, name := range names {
+						if name != "" {
+							for _, item := range server.BanList {
+								if item.UserName == name {
+									found = true
+								}
+							}
+							if !found {
+								server.BanList = append(server.BanList, banDataType{UserName: name, LocalAdd: time.Now().Format(timeFormat)})
+							}
+						}
+					}
+				}
+
+				var bans []banDataType
+				err = json.Unmarshal(data, &bans)
+
+				if err != nil {
+					//Ignore, just array of strings
+				}
+
+				for _, item := range bans {
+					if item.UserName != "" {
+						//It also commonly writes this address, and it isn't neeeded
+						if item.Address == "0.0.0.0" {
+							item.Address = ""
+						}
+						found := false
+						for _, ban := range server.BanList {
+							if ban.UserName == item.UserName {
+								found = true
+							}
+						}
+						if !found {
+							server.BanList = append(server.BanList, item)
+						}
+					}
+				}
+
+			}
+		}
+	}
+}
+
 //Refresh list of servers from master
 func updateServerList() {
 
