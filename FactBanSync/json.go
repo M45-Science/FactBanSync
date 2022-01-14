@@ -164,9 +164,11 @@ func writeBanListFile() {
 
 	//Cache a normal and gzipped version of the ban list, for the webserver
 	if serverConfig.RunWebServer {
+		cachedBanListLock.Lock()
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
 		log.Println("Cached reponse: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+		cachedBanListLock.Unlock()
 	}
 
 	wrote, err := file.Write(outbuf.Bytes())

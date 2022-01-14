@@ -3,6 +3,7 @@ package main
 import (
 	"io/fs"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -37,5 +38,6 @@ var banData []banDataType
 var logsToMonitor []LogMonitorData
 var cachedBanListGz []byte
 var cachedBanList []byte
+var cachedBanListLock sync.Mutex
 
 var initialStat fs.FileInfo
