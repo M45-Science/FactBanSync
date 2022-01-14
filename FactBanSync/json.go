@@ -56,18 +56,24 @@ func readConfigFile() {
 
 func makeDefaultConfigFile() {
 	serverConfig.Version = version
-	serverConfig.ServerName = "Default"
 	serverConfig.ListURL = defaultListURL
+
+	serverConfig.ServerName = "Default"
 	serverConfig.BanFile = defaultBanFile
 	serverConfig.ServerListFile = defaultServerListFile
 	serverConfig.LogPath = defaultLogPath
+
+	serverConfig.RunWebServer = false
+	serverConfig.WebPort = 8080
+
+	serverConfig.RCONEnabled = false
+	serverConfig.LogMonitoring = false
 	serverConfig.AutoSubscribe = true
+	serverConfig.RequireReason = false
+
 	serverConfig.FetchBansInterval = defualtFetchBansInterval
 	serverConfig.WatchInterval = defualtWatchInterval
 	serverConfig.RefreshListInterval = defualtRefreshListInterval
-	serverConfig.RCONEnabled = true
-	serverConfig.RunWebServer = true
-	serverConfig.WebPort = 8080
 
 	writeConfigFile()
 }
