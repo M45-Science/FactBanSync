@@ -40,7 +40,6 @@ func main() {
 	//Read our server list, then update it
 	readServerListFile()
 	updateServerList()
-	writeServerListFile()
 
 	//Run a webserver, if requested
 	//TODO offer HTTPs with directions to make cert
@@ -92,7 +91,9 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "gzip")
+		cachedBanListLock.Lock()
 		w.Write(cachedBanListGz)
+		cachedBanListLock.Unlock()
 
 		//Cached copy
 	} else if r.URL.Path == "/"+banFileWebName {
@@ -103,7 +104,9 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		cachedBanListLock.Lock()
 		w.Write(cachedBanList)
+		cachedBanListLock.Unlock()
 	} else {
 		//Not found
 		w.WriteHeader(http.StatusNotFound)
