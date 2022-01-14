@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,21 +11,16 @@ import (
 )
 
 func updateServerList() {
-	defer os.Remove(serverConfig.ServerListFile + ".tmp")
+
 	//Update server list
 	log.Println("Updating server list")
-	var wrote int64
-	wrote, err := downloadFile(serverConfig.ServerListFile+".tmp", defaultListURL)
+	data, err := fetchFile(serverConfig.ListURL)
 	if err != nil {
 		log.Println("Error updating server list: " + err.Error())
 	}
 
-	if wrote > 0 {
+	if len(data) > 0 {
 		var sList serverListData
-		data, err := ioutil.ReadFile(serverConfig.ServerListFile + ".tmp")
-		if err != nil {
-			log.Println("Error reading server list: " + err.Error())
-		}
 
 		lData := strings.ToLower(string(data))
 		if strings.Contains(lData, "404: not found") {
@@ -38,33 +32,34 @@ func updateServerList() {
 		foundSelf := false
 		if err == nil {
 			for _, server := range sList.ServerList {
+				foundl := false
 				if server.ServerName != "" && server.ServerURL != "" {
-					if serverConfig.AutoSubscribe {
-						server.Subscribed = true
-					} else {
-						server.Subscribed = false
-					}
-					server.Added = time.Now()
-					serverList.ServerList = append(serverList.ServerList, server)
 					for _, s := range serverList.ServerList {
 						if s.ServerName == server.ServerName {
+							foundl = true
 							found = true
 						}
-						if s.ServerName == server.ServerName {
-							foundSelf = true
-						}
 					}
-					if !found {
+					if !foundl {
+						if serverConfig.AutoSubscribe {
+							server.Subscribed = true
+						} else {
+							server.Subscribed = false
+						}
+						server.AddedLocally = time.Now()
+						serverList.ServerList = append(serverList.ServerList, server)
 						log.Println("Added server: " + server.ServerName)
 					}
+				}
+				if server.ServerName == server.ServerName {
+					foundSelf = true
 				}
 			}
 			if !foundSelf {
 				log.Println("We are currently not found in the server list!")
 			}
-			if found {
+			if !found {
 				writeServerListFile()
-				writeBanListFile()
 			}
 		} else {
 			log.Println("Unable to parse remote server list file")
@@ -72,23 +67,17 @@ func updateServerList() {
 	}
 }
 
-func downloadFile(filepath string, url string) (int64, error) {
+func fetchFile(url string) ([]byte, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return 0, err
+		return []byte{}, err
 	}
 	defer resp.Body.Close()
 
-	out, err := os.Create(filepath)
-	if err != nil {
-		return 0, err
-	}
-	defer out.Close()
+	output, err := ioutil.ReadAll(resp.Body)
 
-	var wrote int64
-	wrote, err = io.Copy(out, resp.Body)
-	return wrote, err
+	return output, err
 }
 
 func WatchBanFile() {
