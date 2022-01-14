@@ -9,7 +9,8 @@ type serverConfigData struct {
 	ServerName     string
 	BanFile        string
 	ServerListFile string
-	LogPath        string
+	LogDir         string
+	BanFileDir     string
 
 	RunWebServer bool
 	WebPort      int
@@ -33,7 +34,7 @@ type serverData struct {
 	Subscribed   bool
 	ServerName   string
 	ServerURL    string
-	JsonGz    bool `json:"omitempty"`
+	JsonGz       bool `json:"omitempty"`
 	AddedLocally time.Time
 }
 
@@ -41,6 +42,7 @@ type banDataData struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
 	Address  string `json:"address,omitempty"`
+	Added    time.Time
 }
 
 type RCONDataList struct {

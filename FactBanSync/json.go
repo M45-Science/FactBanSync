@@ -61,7 +61,8 @@ func makeDefaultConfigFile() {
 	serverConfig.ServerName = "Default"
 	serverConfig.BanFile = defaultBanFile
 	serverConfig.ServerListFile = defaultServerListFile
-	serverConfig.LogPath = defaultLogPath
+	serverConfig.LogDir = defaultLogDir
+	serverConfig.BanFileDir = defaultBanFileDir
 
 	serverConfig.RunWebServer = false
 	serverConfig.WebPort = 8080
