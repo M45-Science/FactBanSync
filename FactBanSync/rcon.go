@@ -7,9 +7,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func SendRCON(address string, command string, s *discordgo.Session) {
+func SendRCON(address string, command string, password string, s *discordgo.Session) {
 
-	remoteConsole, err := rcon.Dial(address, serverConfig.RCONPassword)
+	remoteConsole, err := rcon.Dial(address, password)
 	if err != nil || remoteConsole == nil {
 		log.Println("rcon: " + err.Error())
 		return
