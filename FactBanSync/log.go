@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+///Config and start a new log file
 func startLog() {
 	//Make log dir
 	err := os.Mkdir(serverConfig.LogDir, 0777)

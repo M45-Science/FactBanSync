@@ -2,6 +2,7 @@ package main
 
 import "time"
 
+//Our config data
 type serverConfigData struct {
 	Version string
 	ListURL string
@@ -25,11 +26,13 @@ type serverConfigData struct {
 	RefreshListInterval int
 }
 
+//List of servers
 type serverListData struct {
 	Version    string
 	ServerList []serverData
 }
 
+//Server data
 type serverData struct {
 	Subscribed   bool
 	ServerName   string
@@ -38,6 +41,7 @@ type serverData struct {
 	AddedLocally time.Time
 }
 
+//Ban data
 type banDataData struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
@@ -45,15 +49,18 @@ type banDataData struct {
 	Added    time.Time
 }
 
+//RCON list
 type RCONDataList struct {
 	RCONData []RCONData
 }
 
+//RCON data
 type RCONData struct {
 	RCONAddress  string
 	RCONPassword string
 }
 
+//Log monitor data
 type LogMonitorData struct {
 	Name string
 	Path string

@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+//For live disconnect/ban
 func SendRCON(address string, command string, password string, s *discordgo.Session) {
 
 	remoteConsole, err := rcon.Dial(address, password)

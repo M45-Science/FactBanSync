@@ -79,6 +79,7 @@ func main() {
 	}
 }
 
+//Web server
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 

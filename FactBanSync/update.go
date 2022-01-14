@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+//Refresh list of servers from master
 func updateServerList() {
 
 	//Update server list
@@ -67,6 +68,7 @@ func updateServerList() {
 	}
 }
 
+//Fetch and update a ban list from a server
 func updateBanList() {
 	for _, server := range serverList.ServerList {
 		if server.Subscribed {
@@ -82,6 +84,7 @@ func updateBanList() {
 	}
 }
 
+//Download file to byte array
 func fetchFile(url string) ([]byte, error) {
 
 	resp, err := http.Get(url)
@@ -95,6 +98,7 @@ func fetchFile(url string) ([]byte, error) {
 	return output, err
 }
 
+//Monitor ban file for changes
 func WatchBanFile() {
 	var err error
 

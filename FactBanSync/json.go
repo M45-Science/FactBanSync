@@ -11,6 +11,7 @@ import (
 	"regexp"
 )
 
+//Read list of servers from file
 func readServerListFile() {
 	file, err := ioutil.ReadFile(serverConfig.ServerListFile)
 
@@ -29,6 +30,7 @@ func readServerListFile() {
 	}
 }
 
+//Read server config from file
 func readConfigFile() {
 	//Read server config file
 	file, err := ioutil.ReadFile(configPath)
@@ -54,6 +56,7 @@ func readConfigFile() {
 	}
 }
 
+//Make  default-value config file as an example starting point
 func makeDefaultConfigFile() {
 	serverConfig.Version = version
 	serverConfig.ListURL = defaultListURL
@@ -79,6 +82,7 @@ func makeDefaultConfigFile() {
 	writeConfigFile()
 }
 
+//Read the Factorio ban list file locally
 func readServerBanList() {
 
 	file, err := os.Open(serverConfig.BanFile)
@@ -133,6 +137,7 @@ func readServerBanList() {
 	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
 }
 
+//Write our ban list to the Factorio ban list file (indent)
 func writeBanListFile() {
 	file, err := os.Create(serverConfig.BanFile)
 
@@ -166,6 +171,7 @@ func writeBanListFile() {
 	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
+//Write our server list to the server list file (indent)
 func writeConfigFile() {
 	file, err := os.Create(configPath)
 
@@ -198,6 +204,7 @@ func writeConfigFile() {
 
 }
 
+//Write list of servers to file
 func writeServerListFile() {
 	file, err := os.Create(serverConfig.ServerListFile)
 
@@ -225,6 +232,7 @@ func writeServerListFile() {
 	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
+//Read list of servers locally
 func readServerList() {
 
 	file, err := os.Open(serverConfig.ServerListFile)
@@ -252,12 +260,14 @@ func readServerList() {
 	serverList = sList
 }
 
+//sanitize a string beofore use in a filename
 func FileNameFilter(str string) string {
 	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")
 	str = alphafilter.ReplaceAllString(str, "")
 	return str
 }
 
+//Gzip compress a byte array
 func compressGzip(data []byte) []byte {
 	var b bytes.Buffer
 	w := gzip.NewWriter(&b)
