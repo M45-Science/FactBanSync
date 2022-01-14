@@ -29,5 +29,5 @@ func startLog() {
 	mw := io.MultiWriter(os.Stdout, logDesc) //To log and stdout
 	log.SetOutput(mw)
 
-	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
+	log.SetFlags(log.Lmicroseconds | log.Lshortfile) //Show source file and line number
 }

@@ -15,6 +15,7 @@ import (
 func readServerListFile() {
 	file, err := ioutil.ReadFile(serverConfig.ServerListFile)
 
+	//Read server list file if it exists
 	if file != nil && !os.IsNotExist(err) {
 		err = json.Unmarshal(file, &serverList)
 
@@ -23,6 +24,7 @@ func readServerListFile() {
 			os.Exit(1)
 		}
 	} else {
+		//Generate empty list
 		serverList = serverListData{Version: "0.0.1", ServerList: []serverData{}}
 
 		log.Println("No server list file found, creating new one.")
@@ -43,11 +45,13 @@ func readConfigFile() {
 			os.Exit(1)
 		}
 
+		//Let user know further config is required
 		if serverConfig.ServerName == "Default" {
 			log.Println("Please change ServerName in the config file")
 			os.Exit(1)
 		}
 	} else {
+		//Make example config file, with reasonable defaults
 		makeDefaultConfigFile()
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
 		log.Println("Please change ServerName in the config file!")
@@ -56,7 +60,7 @@ func readConfigFile() {
 	}
 }
 
-//Make  default-value config file as an example starting point
+//Make default-value config file as an example starting point
 func makeDefaultConfigFile() {
 	serverConfig.Version = version
 	serverConfig.ListURL = defaultListURL
@@ -125,6 +129,7 @@ func readServerBanList() {
 
 	for _, item := range bans {
 		if item.UserName != "" {
+			//It also commonly writes this address, and it isn't neeeded
 			if item.Address == "0.0.0.0" {
 				item.Address = ""
 			}
@@ -157,9 +162,12 @@ func writeBanListFile() {
 		os.Exit(1)
 	}
 
-	cachedBanList = outbuf.Bytes()
-	cachedBanListGz = compressGzip(outbuf.Bytes())
-	log.Println("Cached reponse: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+	//Cache a normal and gzipped version of the ban list, for the webserver
+	if serverConfig.RunWebServer {
+		cachedBanList = outbuf.Bytes()
+		cachedBanListGz = compressGzip(outbuf.Bytes())
+		log.Println("Cached reponse: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+	}
 
 	wrote, err := file.Write(outbuf.Bytes())
 

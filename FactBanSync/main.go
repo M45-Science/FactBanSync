@@ -83,6 +83,7 @@ func main() {
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 
+	//Cached gzip copy
 	if r.URL.Path == "/"+banFileWebName+".gz" {
 		if cachedBanListGz == nil {
 			noDataReply(w)
@@ -92,6 +93,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "gzip")
 		w.Write(cachedBanListGz)
 
+		//Cached copy
 	} else if r.URL.Path == "/"+banFileWebName {
 		if cachedBanList == nil {
 			noDataReply(w)
@@ -102,6 +104,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(cachedBanList)
 	} else {
+		//Not found
 		w.WriteHeader(http.StatusNotFound)
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
 		fmt.Fprintf(w, "404: File not found")

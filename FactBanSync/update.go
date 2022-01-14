@@ -20,46 +20,60 @@ func updateServerList() {
 		log.Println("Error updating server list: " + err.Error())
 	}
 
+	//If there appears to be data, attempt parse it
 	if len(data) > 0 {
 		var sList serverListData
 
+		//handle 404 error (TODO: check headers)
 		lData := strings.ToLower(string(data))
 		if strings.Contains(lData, "404: not found") {
 			log.Println("Error updating server list: 404: Not Found")
 			return
 		}
+
+		//Decode json
 		err = json.Unmarshal([]byte(data), &sList)
 		found := false
 		foundSelf := false
 		if err == nil {
+			//Check the new data against our current list
 			for _, server := range sList.ServerList {
 				foundl := false
 				if server.ServerName != "" && server.ServerURL != "" {
-					for _, s := range serverList.ServerList {
+					for spos, s := range serverList.ServerList {
+						//Found existing entry
 						if s.ServerName == server.ServerName {
 							foundl = true
 							found = true
+							//Update entry
+							serverList.ServerList[spos].ServerURL = server.ServerURL
+							serverList.ServerList[spos].JsonGz = server.JsonGz
 						}
 					}
 					if !foundl {
+						//New entry, subscribe automatically if chosen
 						if serverConfig.AutoSubscribe {
 							server.Subscribed = true
 						} else {
 							server.Subscribed = false
 						}
+						//Add, datestamp
 						server.AddedLocally = time.Now()
 						serverList.ServerList = append(serverList.ServerList, server)
 						log.Println("Added server: " + server.ServerName)
 					}
 				}
+				//Found ourselves in plublic list
 				if server.ServerName == server.ServerName {
 					foundSelf = true
 				}
 			}
+			//Alert if we're not in the list
 			if !foundSelf {
 				log.Println("We are currently not found in the server list!")
 			}
 			if !found {
+				//Write updated file and update webServer caches if needed
 				writeServerListFile()
 			}
 		} else {
@@ -68,6 +82,7 @@ func updateServerList() {
 	}
 }
 
+//Incomplete
 //Fetch and update a ban list from a server
 func updateBanList() {
 	for _, server := range serverList.ServerList {
@@ -103,6 +118,7 @@ func WatchBanFile() {
 	var err error
 
 	filePath := serverConfig.BanFile
+	//Save current profile
 	if initialStat == nil {
 		initialStat, err = os.Stat(filePath)
 	}
@@ -119,10 +135,12 @@ func WatchBanFile() {
 			return
 		}
 
+		//Detect file change
 		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
 			log.Println("WatchBanFile: file changed")
-			readServerBanList()
+			readServerBanList() //Reload ban list
 
+			//Update stat for next time
 			initialStat, err = os.Stat(filePath)
 
 			if err != nil {
