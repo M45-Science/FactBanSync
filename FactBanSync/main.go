@@ -40,6 +40,7 @@ func main() {
 	//Read our server list, then update it
 	readServerListFile()
 	updateServerList()
+	writeServerListFile()
 
 	//Run a webserver, if requested
 	//TODO offer HTTPs with directions to make cert
@@ -61,17 +62,17 @@ func main() {
 	for serverRunning {
 		time.Sleep(time.Second)
 
-		if time.Since(LastFetchBans).Seconds() >= float64(serverConfig.FetchBansInterval) {
+		if time.Since(LastFetchBans).Seconds() >= float64(serverConfig.FetchBansSeconds) {
 			LastFetchBans = time.Now()
 
 			//Fetch bans (TODO)
 		}
-		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchInterval) {
+		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchSeconds) {
 			LastWatch = time.Now()
 
 			WatchBanFile()
 		}
-		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListInterval) {
+		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListMinutes) {
 			LastRefresh = time.Now()
 
 			updateServerList()

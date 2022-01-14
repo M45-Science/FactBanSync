@@ -34,7 +34,6 @@ func updateServerList() {
 		//Decode json
 		err = json.Unmarshal([]byte(data), &sList)
 		found := false
-		foundSelf := false
 		if err == nil {
 			//Check the new data against our current list
 			for _, server := range sList.ServerList {
@@ -47,7 +46,7 @@ func updateServerList() {
 							found = true
 							//Update entry
 							serverList.ServerList[spos].ServerURL = server.ServerURL
-							serverList.ServerList[spos].JsonGz = server.JsonGz
+							serverList.ServerList[spos].JsonGzip = server.JsonGzip
 						}
 					}
 					if !foundl {
@@ -58,19 +57,11 @@ func updateServerList() {
 							server.Subscribed = false
 						}
 						//Add, datestamp
-						server.AddedLocally = time.Now()
+						server.LocalAdd = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						log.Println("Added server: " + server.ServerName)
 					}
 				}
-				//Found ourselves in plublic list
-				if server.ServerName == server.ServerName {
-					foundSelf = true
-				}
-			}
-			//Alert if we're not in the list
-			if !foundSelf {
-				log.Println("We are currently not found in the server list!")
 			}
 			if !found {
 				//Write updated file and update webServer caches if needed

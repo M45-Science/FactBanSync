@@ -3,10 +3,12 @@ package main
 import (
 	"io/fs"
 	"os"
+	"time"
 )
 
 var serverRunning = true
 var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/server-list.json"
+var timeFormat = time.RFC822Z
 
 //Default file names
 var defaultConfigPath = "server-config.json"
@@ -21,17 +23,17 @@ var banFileWebName = "server-banlist.json"
 var defaultLogDir = "logs"
 var defaultBanFileDir = "banLists"
 
-//Defualt delay times
-var defualtFetchBansInterval = 15        //Seconds
-var defualtWatchInterval = 10            //Seconds
-var defualtRefreshListInterval = 60 * 24 //One a day
+//Default delay times
+var defaultFetchBansSeconds = 15        //Seconds
+var defaultWatchSeconds = 10            //Seconds
+var defaultRefreshListMinutes = 60 * 24 //One a day
 
-//Glboal vars
+//Global vars
 var serverConfig serverConfigData
 var serverList serverListData
 var configPath string
 var logDesc *os.File
-var banData []banDataData
+var banData []banDataType
 var logsToMonitor []LogMonitorData
 var cachedBanListGz []byte
 var cachedBanList []byte

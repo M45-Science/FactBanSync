@@ -79,9 +79,9 @@ func makeDefaultConfigFile() {
 	serverConfig.AutoSubscribe = true
 	serverConfig.RequireReason = false
 
-	serverConfig.FetchBansInterval = defualtFetchBansInterval
-	serverConfig.WatchInterval = defualtWatchInterval
-	serverConfig.RefreshListInterval = defualtRefreshListInterval
+	serverConfig.FetchBansSeconds = defaultFetchBansSeconds
+	serverConfig.WatchSeconds = defaultWatchSeconds
+	serverConfig.RefreshListMinutes = defaultRefreshListMinutes
 
 	writeConfigFile()
 }
@@ -96,7 +96,7 @@ func readServerBanList() {
 		return
 	}
 
-	var bData []banDataData
+	var bData []banDataType
 
 	data, err := ioutil.ReadAll(file)
 
@@ -115,16 +115,16 @@ func readServerBanList() {
 
 		for _, name := range names {
 			if name != "" {
-				bData = append(bData, banDataData{UserName: name})
+				bData = append(bData, banDataType{UserName: name})
 			}
 		}
 	}
 
-	var bans []banDataData
+	var bans []banDataType
 	err = json.Unmarshal(data, &bans)
 
 	if err != nil {
-		//Ignore, probably just array of strings
+		//Ignore, just array of strings
 	}
 
 	for _, item := range bans {
@@ -240,35 +240,7 @@ func writeServerListFile() {
 	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
-//Read list of servers locally
-func readServerList() {
-
-	file, err := os.Open(serverConfig.ServerListFile)
-
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-
-	var sList serverListData
-
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-
-	err = json.Unmarshal([]byte(data), &sList)
-
-	if err != nil {
-		log.Println("Error reading server list file: " + err.Error())
-		os.Exit(1)
-	}
-
-	serverList = sList
-}
-
-//sanitize a string beofore use in a filename
+//sanitize a string before use in a filename
 func FileNameFilter(str string) string {
 	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")
 	str = alphafilter.ReplaceAllString(str, "")

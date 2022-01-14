@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 //Our config data
 type serverConfigData struct {
 	Version string
@@ -21,9 +19,9 @@ type serverConfigData struct {
 	AutoSubscribe bool
 	RequireReason bool
 
-	FetchBansInterval   int
-	WatchInterval       int
-	RefreshListInterval int
+	FetchBansSeconds   int
+	WatchSeconds       int
+	RefreshListMinutes int
 }
 
 //List of servers
@@ -34,19 +32,22 @@ type serverListData struct {
 
 //Server data
 type serverData struct {
-	Subscribed   bool
-	ServerName   string
-	ServerURL    string
-	JsonGz       bool `json:"omitempty"`
-	AddedLocally time.Time
+	ServerName string
+	ServerURL  string
+	Website    string `json:"omitempty"`
+	Discord    string `json:"omitempty"`
+	Logs       string `json:"omitempty"`
+	JsonGzip   bool   `json:"omitempty"`
+	Subscribed bool   `json:"omitempty"`
+	LocalAdd   string
 }
 
 //Ban data
-type banDataData struct {
+type banDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
 	Address  string `json:"address,omitempty"`
-	Added    time.Time
+	LocalAdd string `json:"omitempty"`
 }
 
 //RCON list
@@ -56,6 +57,7 @@ type RCONDataList struct {
 
 //RCON data
 type RCONData struct {
+	RCONName     string
 	RCONAddress  string
 	RCONPassword string
 }
@@ -63,5 +65,6 @@ type RCONData struct {
 //Log monitor data
 type LogMonitorData struct {
 	Name string
+	File string
 	Path string
 }

@@ -13,7 +13,7 @@ func startLog() {
 	err := os.Mkdir(serverConfig.LogDir, 0777)
 
 	if os.IsNotExist(err) {
-		log.Println("Couldnt't create log dir!")
+		log.Println("Could not create log dir!")
 		os.Exit(1)
 	}
 
