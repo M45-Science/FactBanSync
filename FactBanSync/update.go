@@ -67,6 +67,21 @@ func updateServerList() {
 	}
 }
 
+func updateBanList() {
+	for _, server := range serverList.ServerList {
+		if server.Subscribed {
+			log.Println("Updating ban list for server: " + server.ServerName)
+			data, err := fetchFile(server.ServerURL)
+			if err != nil {
+				log.Println("Error updating ban list: " + err.Error())
+			}
+			if len(data) > 0 {
+				//
+			}
+		}
+	}
+}
+
 func fetchFile(url string) ([]byte, error) {
 
 	resp, err := http.Get(url)
