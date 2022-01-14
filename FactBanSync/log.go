@@ -25,7 +25,6 @@ func startLog() {
 		log.Println("Couldn't open log file!")
 	}
 
-	defer logDesc.Close()
 	mw := io.MultiWriter(os.Stdout, logDesc) //To log and stdout
 	log.SetOutput(mw)
 
