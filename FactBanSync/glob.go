@@ -14,8 +14,8 @@ var defaultOurBansFile = "our-bans.json"
 var defaultLogMonitorFile = "log-monitor.json"
 var defaultLogPath = "logs"
 var banFileWebName = "server-banlist.json"
-var defualtFetchBansInterval = 10        //Seconds
-var defualtWatchInterval = 5             //Seconds
+var defualtFetchBansInterval = 15        //Seconds
+var defualtWatchInterval = 10            //Seconds
 var defualtRefreshListInterval = 60 * 24 //One a day
 var serverConfig serverConfigData
 var serverList serverListData
