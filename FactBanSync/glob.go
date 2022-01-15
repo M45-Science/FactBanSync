@@ -12,17 +12,16 @@ var defaultListURL = "https://raw.githubusercontent.com/Distortions81/Factorio-C
 var timeFormat = time.RFC822Z
 
 //Default file names
-var defaultConfigPath = "server-config.json"
-var defaultBanFile = "server-banlist.json"
-var defaultServerListFile = "server-list.json"
-var defaultRCONFile = "server-rcon.json"
-var defaultOurBansFile = "our-bans.json"
-var defaultLogMonitorFile = "log-monitor.json"
+var defaultBanFile = ""
+var defaultConfigPath = "data/server-config.json"
+var defaultServerListFile = "data/server-list.json"
+var defaultRCONFile = "data/server-rcon.json"
+var defaultLogMonitorFile = "data/log-monitor.json"
 var banFileWebName = "server-banlist.json"
 
 //Default directories
-var defaultLogDir = "logs"
-var defaultBanFileDir = "banLists"
+var defaultLogDir = "data/logs"
+var defaultBanFileDir = "data/banCache"
 
 //Default delay times
 var defaultFetchBansSeconds = 15        //Seconds
