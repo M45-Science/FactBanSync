@@ -16,7 +16,7 @@ func fetchBanLists() {
 	for spos, server := range serverList.ServerList {
 		lDirty := 0
 		if server.Subscribed {
-			data, err := fetchFile(server.ServerURL)
+			data, err := fetchFile(server.Bans)
 			if err != nil {
 				log.Println("Error updating ban list: " + err.Error())
 				continue
@@ -81,7 +81,7 @@ func fetchBanLists() {
 
 			}
 			if lDirty > 0 {
-				log.Printf("Found %v new bans for %v\n", lDirty, server.ServerName)
+				log.Printf("Found %v new bans for %v\n", lDirty, server.Name)
 			}
 		}
 	}
@@ -94,7 +94,7 @@ func saveBanLists() {
 	os.Mkdir(serverConfig.BanFileDir, 0777)
 	for _, server := range serverList.ServerList {
 		if server.Subscribed {
-			log.Println("Saving ban list for server: " + server.ServerName)
+			log.Println("Saving ban list for server: " + server.Name)
 
 			outbuf := new(bytes.Buffer)
 			enc := json.NewEncoder(outbuf)
@@ -106,7 +106,7 @@ func saveBanLists() {
 				log.Println("Error encoding ban list file: " + err.Error())
 				os.Exit(1)
 			}
-			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.ServerName)+".json", outbuf.Bytes(), 0644)
+			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.Name)+".json", outbuf.Bytes(), 0644)
 			if err != nil {
 				log.Println("Error saving ban list: " + err.Error())
 				continue
@@ -143,14 +143,14 @@ func updateServerList() {
 			//Check the new data against our current list
 			for _, server := range sList.ServerList {
 				foundl := false
-				if server.ServerName != "" && server.ServerURL != "" {
+				if server.Name != "" && server.Bans != "" {
 					for ipos, s := range serverList.ServerList {
 						//Found existing entry
-						if s.ServerName == server.ServerName {
+						if s.Name == server.Name {
 							foundl = true
 							found = true
 							//Update entry
-							serverList.ServerList[ipos].ServerURL = server.ServerURL
+							serverList.ServerList[ipos].Bans = server.Bans
 							serverList.ServerList[ipos].Discord = server.Discord
 							serverList.ServerList[ipos].Website = server.Website
 							serverList.ServerList[ipos].Logs = server.Logs
@@ -168,7 +168,7 @@ func updateServerList() {
 						//Add, datestamp
 						server.LocalAdd = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
-						log.Println("Added server: " + server.ServerName)
+						log.Println("Added server: " + server.Name)
 						writeServerListFile()
 					}
 				}

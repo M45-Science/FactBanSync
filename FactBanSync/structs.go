@@ -32,16 +32,17 @@ type serverListData struct {
 
 //Server data
 type serverData struct {
-	ServerName string
-	ServerURL  string
-	Website    string `json:",omitempty"`
-	Discord    string `json:",omitempty"`
-	Logs       string `json:",omitempty"`
-	JsonGzip   bool
+	Name     string
+	Bans     string
+	Trusts   string `json:",omitempty"`
+	Logs     string `json:",omitempty"`
+	Website  string `json:",omitempty"`
+	Discord  string `json:",omitempty"`
+	JsonGzip bool
+
 	Subscribed bool
 	LocalAdd   string
-
-	BanList []banDataType `json:"-"`
+	BanList    []banDataType `json:"-"`
 }
 
 //Ban data

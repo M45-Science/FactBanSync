@@ -8,7 +8,7 @@ import (
 )
 
 var serverRunning = true
-var defaultListURL = "https://raw.githubusercontent.com/Distortions81/FactBanSync/master/server-list.json"
+var defaultListURL = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
 var timeFormat = time.RFC822Z
 
 //Default file names
