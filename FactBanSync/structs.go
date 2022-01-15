@@ -5,22 +5,25 @@ type serverConfigData struct {
 	Version string
 	ListURL string
 
-	ServerName     string
+	Name           string
 	BanFile        string
 	ServerListFile string
 	LogDir         string
-	BanFileDir     string
+	BanCacheDir    string
 
 	RunWebServer bool
 	WebPort      int
 
-	RCONEnabled   bool
-	LogMonitoring bool
-	AutoSubscribe bool
-	RequireReason bool
+	AutoSubscribe       bool
+	RCONEnabled         bool
+	LogMonitoring       bool
+	RequireReason       bool
+	RequireMultipleBans bool
+	StripReasons        bool
+	StripAddresses      bool
 
 	FetchBansSeconds   int
-	WatchSeconds       int
+	WatchFileSeconds   int
 	RefreshListMinutes int
 }
 
