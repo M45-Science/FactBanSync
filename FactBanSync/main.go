@@ -25,21 +25,11 @@ func main() {
 		return
 	}
 
-	//Read config file, rewrite for indentation/cleanup
 	readConfigFile()
-	writeConfigFile()
 
 	//Logging
 	startLog()
 	log.Println(fmt.Sprintf("FactBanSync v%v", version))
-
-	//Read our ban list, rewrite for indentation/cleanup
-	readServerBanList()
-	writeBanListFile()
-
-	//Read our server list, then update it
-	readServerListFile()
-	updateServerList()
 
 	//Run a webserver, if requested
 	//TODO offer HTTPs with directions to make cert
@@ -53,6 +43,13 @@ func main() {
 		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName)
 	}
 
+	readServerBanList()
+	readServerListFile()
+
+	//Startup update
+	updateServerList()
+	fetchBanLists()
+
 	var LastFetchBans = time.Now()
 	var LastWatch = time.Now()
 	var LastRefresh = time.Now()
@@ -64,12 +61,12 @@ func main() {
 		if time.Since(LastFetchBans).Seconds() >= float64(serverConfig.FetchBansSeconds) {
 			LastFetchBans = time.Now()
 
-			//Fetch bans (TODO)
+			fetchBanLists()
 		}
 		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchSeconds) {
 			LastWatch = time.Now()
 
-			WatchBanFile()
+			watchBanFile()
 		}
 		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListMinutes) {
 			LastRefresh = time.Now()
