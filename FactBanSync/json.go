@@ -77,10 +77,11 @@ func makeDefaultConfigFile() {
 	serverConfig.ListURL = defaultListURL
 
 	serverConfig.Name = defaultName
-	serverConfig.BanFile = defaultBanFile
+	serverConfig.FactorioBanFile = defaultBanFile
 	serverConfig.ServerListFile = defaultServerListFile
 	serverConfig.LogDir = defaultLogDir
 	serverConfig.BanCacheDir = defaultBanFileDir
+	serverConfig.MaxBanlistSize = defaultMaxBanListSize
 
 	serverConfig.RunWebServer = false
 	serverConfig.WebPort = defaultWebPort
@@ -100,7 +101,7 @@ func makeDefaultConfigFile() {
 //Read the Factorio ban list file locally
 func readServerBanList() {
 
-	file, err := os.Open(serverConfig.BanFile)
+	file, err := os.Open(serverConfig.FactorioBanFile)
 
 	if err != nil {
 		log.Println(err)
@@ -148,16 +149,17 @@ func readServerBanList() {
 		}
 	}
 
-	banData = bData
+	ourBanData = bData
 
 	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
 	updateWebCache()
+	compositeBans()
 }
 
 func updateWebCache() {
 
 	var localCopy []banDataType
-	for _, item := range banData {
+	for _, item := range ourBanData {
 		if item.UserName != "" {
 			var name, addr, reason string
 
@@ -196,7 +198,7 @@ func updateWebCache() {
 
 //Write our ban list to the Factorio ban list file (indent)
 func writeBanListFile() {
-	file, err := os.Create(serverConfig.BanFile)
+	file, err := os.Create(serverConfig.FactorioBanFile)
 
 	if err != nil {
 		log.Println(err)
@@ -207,7 +209,7 @@ func writeBanListFile() {
 	enc := json.NewEncoder(outbuf)
 	enc.SetIndent("", "\t")
 
-	err = enc.Encode(banData)
+	err = enc.Encode(ourBanData)
 
 	if err != nil {
 		log.Println("Error encoding ban list file: " + err.Error())
@@ -221,7 +223,7 @@ func writeBanListFile() {
 		os.Exit(1)
 	}
 
-	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(banData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
+	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(ourBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
 //Write our server list to the server list file (indent)

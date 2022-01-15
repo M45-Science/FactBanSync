@@ -45,11 +45,11 @@ func main() {
 			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
 		}(serverConfig.WebPort)
 		log.Println("Web server started:")
-		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName + ".gz")
-		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName)
+		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName + ".gz")
+		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName)
 	}
 
-	if serverConfig.BanFile != "" {
+	if serverConfig.FactorioBanFile != "" {
 		readServerBanList()
 	}
 	readServerListFile()
@@ -58,6 +58,7 @@ func main() {
 	updateServerList()
 	fetchBanLists()
 	updateWebCache()
+	compositeBans()
 
 	var LastFetchBans = time.Now()
 	var LastWatch = time.Now()
@@ -74,7 +75,7 @@ func main() {
 		}
 		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchFileSeconds) {
 			LastWatch = time.Now()
-			if serverConfig.BanFile != "" {
+			if serverConfig.FactorioBanFile != "" {
 				watchBanFile()
 			}
 		}
@@ -91,7 +92,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
 
 	//Cached gzip copy
-	if r.URL.Path == "/"+banFileWebName+".gz" {
+	if r.URL.Path == "/"+defaultFileWebName+".gz" {
 		if cachedBanListGz == nil {
 			noDataReply(w)
 		}
@@ -103,7 +104,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		cachedBanListLock.Unlock()
 
 		//Cached copy
-	} else if r.URL.Path == "/"+banFileWebName {
+	} else if r.URL.Path == "/"+defaultFileWebName {
 		if cachedBanList == nil {
 			noDataReply(w)
 			return

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -57,24 +58,34 @@ func fetchBanLists() {
 					//Ignore, just array of strings
 				}
 
-				if len(bans) > 0 {
-					for _, item := range bans {
-						if item.UserName != "" {
-							//It also commonly writes this address, and it isn't neeeded
-							if item.Address == "0.0.0.0" {
-								item.Address = ""
+				//Deal with nested json
+				if len(bans) <= 1 && len(data) > 0 {
+					datastr := string(data)
+					datastr = strings.TrimSuffix(datastr, "]")
+					datastr = strings.TrimPrefix(datastr, "[")
+
+					err = json.Unmarshal([]byte(datastr), &bans)
+					if err != nil {
+						log.Println("Error parsing ban list: " + err.Error())
+					}
+				}
+
+				for _, item := range bans {
+					if item.UserName != "" {
+						//It also commonly writes this address, and it isn't neeeded
+						if item.Address == "0.0.0.0" {
+							item.Address = ""
+						}
+						found := false
+						for _, ban := range server.BanList {
+							if ban.UserName == item.UserName {
+								found = true
 							}
-							found := false
-							for _, ban := range server.BanList {
-								if ban.UserName == item.UserName {
-									found = true
-								}
-							}
-							if !found {
-								gDirty++
-								lDirty++
-								serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, item)
-							}
+						}
+						if !found {
+							gDirty++
+							lDirty++
+							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, item)
 						}
 					}
 				}
@@ -94,7 +105,7 @@ func saveBanLists() {
 	os.Mkdir(serverConfig.BanCacheDir, 0777)
 	for _, server := range serverList.ServerList {
 		if server.Subscribed {
-			log.Println("Saving ban list for server: " + server.Name)
+			log.Println("Saving ban list for server: " + server.Name + " (" + strconv.Itoa(len(server.BanList)) + " bans)")
 
 			outbuf := new(bytes.Buffer)
 			enc := json.NewEncoder(outbuf)
@@ -207,6 +218,11 @@ func fetchFile(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	output, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	log.Println("Fetched file: " + url + " (" + strconv.Itoa(len(output)) + " bytes)")
 
 	return output, err
 }
@@ -215,7 +231,7 @@ func fetchFile(url string) ([]byte, error) {
 func watchBanFile() {
 	var err error
 
-	filePath := serverConfig.BanFile
+	filePath := serverConfig.FactorioBanFile
 	//Save current profile
 	if initialStat == nil {
 		initialStat, err = os.Stat(filePath)
@@ -238,6 +254,7 @@ func watchBanFile() {
 			log.Println("watchBanFile: file changed")
 			readServerBanList() //Reload ban list
 			updateWebCache()    //Update web cache
+			compositeBans()     //Update composite ban list
 
 			//Update stat for next time
 			initialStat, err = os.Stat(filePath)
