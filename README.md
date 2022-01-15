@@ -22,4 +22,5 @@ Merging ban lists<br>
 limiting banlist size<br>
 RCON banning live<br>
 Logfile monitoring for logins<br>
+Whitelists<br>
 Lots of other stuff.<br>
