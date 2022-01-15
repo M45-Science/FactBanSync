@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -11,17 +12,18 @@ import (
 )
 
 func fetchBanLists() {
-	for _, server := range serverList.ServerList {
+	gDirty := 0
+	for spos, server := range serverList.ServerList {
+		lDirty := 0
 		if server.Subscribed {
-			log.Println("Updating ban list for server: " + server.ServerName)
 			data, err := fetchFile(server.ServerURL)
 			if err != nil {
 				log.Println("Error updating ban list: " + err.Error())
 				continue
 			}
 			if len(data) > 0 {
+
 				var names []string
-				var bData []banDataType
 				err = json.Unmarshal(data, &names)
 
 				if err != nil {
@@ -30,15 +32,19 @@ func fetchBanLists() {
 				} else {
 
 					found := false
-					for _, name := range names {
-						if name != "" {
-							for _, item := range server.BanList {
-								if item.UserName == name {
-									found = true
+					if len(names) > 0 {
+						for _, name := range names {
+							if name != "" {
+								for _, item := range server.BanList {
+									if item.UserName == name {
+										found = true
+									}
 								}
-							}
-							if !found {
-								server.BanList = append(server.BanList, banDataType{UserName: name, LocalAdd: time.Now().Format(timeFormat)})
+								if !found {
+									gDirty++
+									lDirty++
+									serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: name, LocalAdd: time.Now().Format(timeFormat)})
+								}
 							}
 						}
 					}
@@ -51,24 +57,59 @@ func fetchBanLists() {
 					//Ignore, just array of strings
 				}
 
-				for _, item := range bans {
-					if item.UserName != "" {
-						//It also commonly writes this address, and it isn't neeeded
-						if item.Address == "0.0.0.0" {
-							item.Address = ""
-						}
-						found := false
-						for _, ban := range server.BanList {
-							if ban.UserName == item.UserName {
-								found = true
+				if len(bans) > 0 {
+					for _, item := range bans {
+						if item.UserName != "" {
+							//It also commonly writes this address, and it isn't neeeded
+							if item.Address == "0.0.0.0" {
+								item.Address = ""
 							}
-						}
-						if !found {
-							server.BanList = append(server.BanList, item)
+							found := false
+							for _, ban := range server.BanList {
+								if ban.UserName == item.UserName {
+									found = true
+								}
+							}
+							if !found {
+								gDirty++
+								lDirty++
+								serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, item)
+							}
 						}
 					}
 				}
 
+			}
+			if lDirty > 0 {
+				log.Printf("Found %v new bans for %v\n", lDirty, server.ServerName)
+			}
+		}
+	}
+	if gDirty > 0 {
+		saveBanLists()
+	}
+}
+
+func saveBanLists() {
+	os.Mkdir(serverConfig.BanFileDir, 0777)
+	for _, server := range serverList.ServerList {
+		if server.Subscribed {
+			log.Println("Saving ban list for server: " + server.ServerName)
+
+			outbuf := new(bytes.Buffer)
+			enc := json.NewEncoder(outbuf)
+			enc.SetIndent("", "\t")
+
+			err := enc.Encode(server.BanList)
+
+			if err != nil {
+				log.Println("Error encoding ban list file: " + err.Error())
+				os.Exit(1)
+			}
+			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.ServerName)+".json", outbuf.Bytes(), 0644)
+			if err != nil {
+				log.Println("Error saving ban list: " + err.Error())
+				continue
 			}
 		}
 	}
@@ -103,14 +144,18 @@ func updateServerList() {
 			for _, server := range sList.ServerList {
 				foundl := false
 				if server.ServerName != "" && server.ServerURL != "" {
-					for spos, s := range serverList.ServerList {
+					for ipos, s := range serverList.ServerList {
 						//Found existing entry
 						if s.ServerName == server.ServerName {
 							foundl = true
 							found = true
 							//Update entry
-							serverList.ServerList[spos].ServerURL = server.ServerURL
-							serverList.ServerList[spos].JsonGzip = server.JsonGzip
+							serverList.ServerList[ipos].ServerURL = server.ServerURL
+							serverList.ServerList[ipos].Discord = server.Discord
+							serverList.ServerList[ipos].Website = server.Website
+							serverList.ServerList[ipos].Logs = server.Logs
+							serverList.ServerList[ipos].JsonGzip = server.JsonGzip
+
 						}
 					}
 					if !foundl {
@@ -124,6 +169,7 @@ func updateServerList() {
 						server.LocalAdd = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						log.Println("Added server: " + server.ServerName)
+						writeServerListFile()
 					}
 				}
 			}
@@ -133,23 +179,6 @@ func updateServerList() {
 			}
 		} else {
 			log.Println("Unable to parse remote server list file")
-		}
-	}
-}
-
-//Incomplete
-//Fetch and update a ban list from a server
-func updateBanList() {
-	for _, server := range serverList.ServerList {
-		if server.Subscribed {
-			log.Println("Updating ban list for server: " + server.ServerName)
-			data, err := fetchFile(server.ServerURL)
-			if err != nil {
-				log.Println("Error updating ban list: " + err.Error())
-			}
-			if len(data) > 0 {
-				//
-			}
 		}
 	}
 }
@@ -169,7 +198,7 @@ func fetchFile(url string) ([]byte, error) {
 }
 
 //Monitor ban file for changes
-func WatchBanFile() {
+func watchBanFile() {
 	var err error
 
 	filePath := serverConfig.BanFile
@@ -179,27 +208,27 @@ func WatchBanFile() {
 	}
 
 	if err != nil {
-		log.Println("WatchBanFile: stat: " + err.Error())
+		log.Println("watchBanFile: stat: " + err.Error())
 		return
 	}
 
 	if initialStat != nil {
 		stat, errb := os.Stat(filePath)
 		if errb != nil {
-			log.Println("WatchDatabaseFile: restat")
+			log.Println("watchDatabaseFile: restat")
 			return
 		}
 
 		//Detect file change
 		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
-			log.Println("WatchBanFile: file changed")
+			log.Println("watchBanFile: file changed")
 			readServerBanList() //Reload ban list
 
 			//Update stat for next time
 			initialStat, err = os.Stat(filePath)
 
 			if err != nil {
-				log.Println("WatchBanFile: stat: " + err.Error())
+				log.Println("watchBanFile: stat: " + err.Error())
 				return
 			}
 			return
