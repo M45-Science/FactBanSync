@@ -91,7 +91,7 @@ func fetchBanLists() {
 }
 
 func saveBanLists() {
-	os.Mkdir(serverConfig.BanFileDir, 0777)
+	os.Mkdir(serverConfig.BanCacheDir, 0777)
 	for _, server := range serverList.ServerList {
 		if server.Subscribed {
 			log.Println("Saving ban list for server: " + server.Name)
@@ -138,8 +138,8 @@ func updateServerList() {
 
 		//Decode json
 		err = json.Unmarshal([]byte(data), &sList)
-		found := false
 		if err == nil {
+			updated := false
 			//Check the new data against our current list
 			for _, server := range sList.ServerList {
 				foundl := false
@@ -148,13 +148,27 @@ func updateServerList() {
 						//Found existing entry
 						if s.Name == server.Name {
 							foundl = true
-							found = true
-							//Update entry
-							serverList.ServerList[ipos].Bans = server.Bans
-							serverList.ServerList[ipos].Discord = server.Discord
-							serverList.ServerList[ipos].Website = server.Website
-							serverList.ServerList[ipos].Logs = server.Logs
-							serverList.ServerList[ipos].JsonGzip = server.JsonGzip
+
+							if serverList.ServerList[ipos].Bans != server.Bans {
+								serverList.ServerList[ipos].Bans = server.Bans
+								updated = true
+							}
+							if serverList.ServerList[ipos].Discord != server.Discord {
+								serverList.ServerList[ipos].Discord = server.Discord
+								updated = true
+							}
+							if serverList.ServerList[ipos].Website != server.Website {
+								serverList.ServerList[ipos].Website = server.Website
+								updated = true
+							}
+							if serverList.ServerList[ipos].Logs != server.Logs {
+								serverList.ServerList[ipos].Logs = server.Logs
+								updated = true
+							}
+							if serverList.ServerList[ipos].JsonGzip != server.JsonGzip {
+								serverList.ServerList[ipos].JsonGzip = server.JsonGzip
+								updated = true
+							}
 
 						}
 					}
@@ -168,13 +182,13 @@ func updateServerList() {
 						//Add, datestamp
 						server.LocalAdd = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
+						updated = true
 						log.Println("Added server: " + server.Name)
 						writeServerListFile()
 					}
 				}
 			}
-			if !found {
-				//Write updated file and update webServer caches if needed
+			if updated {
 				writeServerListFile()
 			}
 		} else {
@@ -223,6 +237,7 @@ func watchBanFile() {
 		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
 			log.Println("watchBanFile: file changed")
 			readServerBanList() //Reload ban list
+			updateWebCache()    //Update web cache
 
 			//Update stat for next time
 			initialStat, err = os.Stat(filePath)
