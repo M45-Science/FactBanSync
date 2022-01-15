@@ -46,7 +46,7 @@ func readConfigFile() {
 		}
 
 		//Let user know further config is required
-		if serverConfig.ServerName == "Default" {
+		if serverConfig.Name == "Default" {
 			log.Println("Please change ServerName in the config file")
 			os.Exit(1)
 		}
@@ -54,7 +54,7 @@ func readConfigFile() {
 		//Make example config file, with reasonable defaults
 		makeDefaultConfigFile()
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
-		log.Println("Please change ServerName in the config file!")
+		log.Println("Please change Name in the config file!")
 		log.Println("Exiting...")
 		os.Exit(1)
 	}
@@ -65,11 +65,11 @@ func makeDefaultConfigFile() {
 	serverConfig.Version = version
 	serverConfig.ListURL = defaultListURL
 
-	serverConfig.ServerName = "Default"
+	serverConfig.Name = "Default"
 	serverConfig.BanFile = defaultBanFile
 	serverConfig.ServerListFile = defaultServerListFile
 	serverConfig.LogDir = defaultLogDir
-	serverConfig.BanFileDir = defaultBanFileDir
+	serverConfig.BanCacheDir = defaultBanFileDir
 
 	serverConfig.RunWebServer = false
 	serverConfig.WebPort = 8080
@@ -80,7 +80,7 @@ func makeDefaultConfigFile() {
 	serverConfig.RequireReason = false
 
 	serverConfig.FetchBansSeconds = defaultFetchBansSeconds
-	serverConfig.WatchSeconds = defaultWatchSeconds
+	serverConfig.WatchFileSeconds = defaultWatchSeconds
 	serverConfig.RefreshListMinutes = defaultRefreshListMinutes
 
 	writeConfigFile()
@@ -140,6 +140,47 @@ func readServerBanList() {
 	banData = bData
 
 	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
+	updateWebCache()
+}
+
+func updateWebCache() {
+
+	var localCopy []banDataType
+	for _, item := range banData {
+		if item.UserName != "" {
+			var name, addr, reason string
+
+			name = item.UserName
+			if !serverConfig.StripAddresses {
+				addr = item.Address
+			}
+			if !serverConfig.StripReasons {
+				reason = item.Reason
+			}
+
+			localCopy = append(localCopy, banDataType{UserName: name, Address: addr, Reason: reason})
+		}
+	}
+
+	outbuf := new(bytes.Buffer)
+	enc := json.NewEncoder(outbuf)
+	enc.SetIndent("", "\t")
+
+	err := enc.Encode(localCopy)
+
+	if err != nil {
+		log.Println("Error encoding ban list file: " + err.Error())
+		os.Exit(1)
+	}
+
+	//Cache a normal and gzip version of the ban list
+	if serverConfig.RunWebServer {
+		cachedBanListLock.Lock()
+		cachedBanList = outbuf.Bytes()
+		cachedBanListGz = compressGzip(outbuf.Bytes())
+		log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+		cachedBanListLock.Unlock()
+	}
 }
 
 //Write our ban list to the Factorio ban list file (indent)
@@ -160,15 +201,6 @@ func writeBanListFile() {
 	if err != nil {
 		log.Println("Error encoding ban list file: " + err.Error())
 		os.Exit(1)
-	}
-
-	//Cache a normal and gzipped version of the ban list, for the webserver
-	if serverConfig.RunWebServer {
-		cachedBanListLock.Lock()
-		cachedBanList = outbuf.Bytes()
-		cachedBanListGz = compressGzip(outbuf.Bytes())
-		log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
-		cachedBanListLock.Unlock()
 	}
 
 	wrote, err := file.Write(outbuf.Bytes())
@@ -242,7 +274,7 @@ func writeServerListFile() {
 	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
-//sanitize a string before use in a filename
+//Sanitize a string before use in a filename
 func FileNameFilter(str string) string {
 	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")
 	str = alphafilter.ReplaceAllString(str, "")
