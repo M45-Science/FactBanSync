@@ -1,4 +1,4 @@
 /.vscode
-/FactBanSync/Data
-FactBanSync
+/FactBanSync/data/
+/FactBanSync/FactBanSync
 go.sum
