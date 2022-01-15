@@ -1,5 +1,5 @@
 # FactBanSync
-(no binaries yet)<br>
+**(no binaries yet)**<br>
 <br>
 STEPS:<br>
 1: Install GO 1.17.x<br>
