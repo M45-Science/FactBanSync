@@ -12,7 +12,10 @@ var defaultListURL = "https://raw.githubusercontent.com/Distortions81/Factorio-C
 var timeFormat = time.RFC822Z
 
 //Default file names
+var defaultName = "Default"
 var defaultBanFile = ""
+var defaultWebPort = 8080
+var defaultDataDir = "data"
 var defaultConfigPath = "data/server-config.json"
 var defaultServerListFile = "data/server-list.json"
 var defaultRCONFile = "data/server-rcon.json"
