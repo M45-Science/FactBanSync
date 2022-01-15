@@ -10,16 +10,11 @@ import (
 ///Config and start a new log file
 func startLog() {
 	//Make log dir
-	err := os.Mkdir(serverConfig.LogDir, 0777)
-
-	if os.IsNotExist(err) {
-		log.Println("Could not create log dir!")
-		os.Exit(1)
-	}
+	os.Mkdir(serverConfig.LogDir+"/", 0777)
 
 	//Open log file
 	logName := time.Now().Format("2006-01-02") + ".log"
-	logDesc, err = os.OpenFile(serverConfig.LogDir+"/"+logName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logDesc, err := os.OpenFile(serverConfig.LogDir+"/"+logName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
 		log.Println("Couldn't open log file!")
