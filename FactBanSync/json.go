@@ -167,7 +167,7 @@ func writeBanListFile() {
 		cachedBanListLock.Lock()
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
-		log.Println("Cached reponse: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+		log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
 		cachedBanListLock.Unlock()
 	}
 
