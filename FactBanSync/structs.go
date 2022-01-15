@@ -34,11 +34,11 @@ type serverListData struct {
 type serverData struct {
 	ServerName string
 	ServerURL  string
-	Website    string `json:"omitempty"`
-	Discord    string `json:"omitempty"`
-	Logs       string `json:"omitempty"`
-	JsonGzip   bool   `json:"omitempty"`
-	Subscribed bool   `json:"omitempty"`
+	Website    string `json:",omitempty"`
+	Discord    string `json:",omitempty"`
+	Logs       string `json:",omitempty"`
+	JsonGzip   bool
+	Subscribed bool
 	LocalAdd   string
 
 	BanList []banDataType `json:"-"`
@@ -49,7 +49,7 @@ type banDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
 	Address  string `json:"address,omitempty"`
-	LocalAdd string `json:"omitempty"`
+	LocalAdd string `json:",omitempty"`
 }
 
 //RCON list
