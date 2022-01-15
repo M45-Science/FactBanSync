@@ -6,4 +6,4 @@ Add your server to the list here (server-list.json)
 
 
 This is currently a unfinished prototype, WIP.
-Everything here is public domain.
+
