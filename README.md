@@ -7,7 +7,7 @@ https://go.dev/dl/<br>
 <br>
 2: Go to the FactBanSync directory, run 'go get'<br>
 3: Run 'go build', then run the FactBanSync binary.<br>
-4: Run once to generate a default config file, set configuration, run again.<br>
+4: Use the setup wizard, or let it generate a default config, then edit the config.<br>
 5: (optional) Add your server to the list:<br>
 https://github.com/Distortions81/Factorio-Community-List/<br>
 <br>
