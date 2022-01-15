@@ -12,3 +12,4 @@ https://go.dev/dl/<br>
 <br>
 `This is currently a unfinished prototype, WIP.`<br>
 
+*This is free and unencumbered software released into the public domain.*
