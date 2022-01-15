@@ -49,6 +49,7 @@ func main() {
 	//Startup update
 	updateServerList()
 	fetchBanLists()
+	updateWebCache()
 
 	var LastFetchBans = time.Now()
 	var LastWatch = time.Now()
@@ -63,10 +64,11 @@ func main() {
 
 			fetchBanLists()
 		}
-		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchSeconds) {
+		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchFileSeconds) {
 			LastWatch = time.Now()
-
-			watchBanFile()
+			if serverConfig.BanFile != "" {
+				watchBanFile()
+			}
 		}
 		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListMinutes) {
 			LastRefresh = time.Now()
