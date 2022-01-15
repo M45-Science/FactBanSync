@@ -47,14 +47,25 @@ func readConfigFile() {
 
 		//Let user know further config is required
 		if serverConfig.Name == "Default" {
-			log.Println("Please change ServerName in the config file")
+			log.Println("Please change ServerName in the config file, or use --runWizard")
 			os.Exit(1)
 		}
 	} else {
 		//Make example config file, with reasonable defaults
-		makeDefaultConfigFile()
 		fmt.Println("No config file found, generating defaults, saving to " + configPath)
-		log.Println("Please change Name in the config file!")
+		os.Mkdir(defaultDataDir, 0755)
+		makeDefaultConfigFile()
+
+		fmt.Println("Would you like to use the setup wizard? (y/N)")
+
+		var input string
+		fmt.Scanln(&input)
+
+		if input == "y" || input == "Y" {
+			setupWizard()
+			return
+		}
+
 		log.Println("Exiting...")
 		os.Exit(1)
 	}
@@ -65,18 +76,18 @@ func makeDefaultConfigFile() {
 	serverConfig.Version = version
 	serverConfig.ListURL = defaultListURL
 
-	serverConfig.Name = "Default"
+	serverConfig.Name = defaultName
 	serverConfig.BanFile = defaultBanFile
 	serverConfig.ServerListFile = defaultServerListFile
 	serverConfig.LogDir = defaultLogDir
 	serverConfig.BanCacheDir = defaultBanFileDir
 
 	serverConfig.RunWebServer = false
-	serverConfig.WebPort = 8080
+	serverConfig.WebPort = defaultWebPort
 
 	serverConfig.RCONEnabled = false
 	serverConfig.LogMonitoring = false
-	serverConfig.AutoSubscribe = true
+	serverConfig.AutoSubscribe = false
 	serverConfig.RequireReason = false
 
 	serverConfig.FetchBansSeconds = defaultFetchBansSeconds

@@ -12,17 +12,23 @@ import (
 const version = "0.0.1"
 
 func main() {
+	var runWizard bool
 
 	//Launch arguments
 	flag.StringVar(&configPath, "configPath", defaultConfigPath, "config file path")
 	var makeConfig bool
 	flag.BoolVar(&makeConfig, "makeConfig", false, "make a default config file")
+	flag.BoolVar(&runWizard, "runWizard", false, "run the setup wizard")
 	flag.Parse()
 
 	//Make config file if requested
 	if makeConfig {
 		makeDefaultConfigFile()
 		return
+	}
+
+	if runWizard {
+		setupWizard()
 	}
 
 	readConfigFile()
@@ -43,7 +49,9 @@ func main() {
 		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + banFileWebName)
 	}
 
-	readServerBanList()
+	if serverConfig.BanFile != "" {
+		readServerBanList()
+	}
 	readServerListFile()
 
 	//Startup update
