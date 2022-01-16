@@ -10,7 +10,13 @@ import (
 func compositeBans() {
 	var compositeBanlist []banDataType
 	for _, ban := range ourBanData {
-		compositeBanlist = append(compositeBanlist, ban)
+
+		compositeBanlist = append(compositeBanlist, banDataType{
+			UserName: ban.UserName,
+			Sources:  []string{serverConfig.Name},
+			Reasons:  []string{ban.Reason},
+			Revokes:  []bool{ban.Revoked},
+			Adds:     []string{ban.Added}})
 	}
 
 	dupes := 0
@@ -29,24 +35,42 @@ func compositeBans() {
 						}
 					}
 					if !found {
-						compositeBanlist = append(compositeBanlist, ban)
+						compositeBanlist = append(compositeBanlist, banDataType{
+							UserName: ban.UserName,
+							Sources:  []string{serverConfig.Name},
+							Reasons:  []string{ban.Reason},
+							Revokes:  []bool{ban.Revoked},
+							Adds:     []string{ban.Added}})
 					}
 				}
 			}
 		}
 	}
 
-	log.Println("Found " + strconv.Itoa(len(compositeBanlist)) + " bans, " + strconv.Itoa(dupes) + " duplicates")
+	log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans.")
 
 	//Sort by time added, new to old
 	sort.Slice(compositeBanlist, func(i, j int) bool {
-		aTime, erra := time.Parse(timeFormat, compositeBanlist[i].LocalAdd)
-		bTime, errb := time.Parse(timeFormat, compositeBanlist[j].LocalAdd)
-		if erra != nil || errb != nil {
-			log.Println("Error parsing time: " + erra.Error())
-			return false
+		//Use newest date, if there are multiple sources
+		var newest_a time.Time = time.Time{}
+		for _, addA := range compositeBanlist[j].Adds {
+			bTime, errb := time.Parse(timeFormat, addA)
+			if errb == nil {
+				if bTime.After(newest_a) || newest_a.IsZero() {
+					newest_a = bTime
+				}
+			}
 		}
-		return aTime.Before(bTime)
+		var newest_b time.Time = time.Time{}
+		for _, addB := range compositeBanlist[j].Adds {
+			bTime, errb := time.Parse(timeFormat, addB)
+			if errb == nil {
+				if bTime.After(newest_b) || newest_b.IsZero() {
+					newest_b = bTime
+				}
+			}
+		}
+		return newest_a.Before(newest_b)
 	})
 
 	//Cut list to size, new entries are at the start
