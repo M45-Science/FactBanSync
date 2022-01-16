@@ -17,6 +17,8 @@ func fetchBanLists() {
 	for spos, server := range serverList.ServerList {
 		lDirty := 0
 		if server.Subscribed {
+			oldList := server.BanList
+
 			data, err := fetchFile(server.Bans)
 			if err != nil {
 				log.Println("Error updating ban list: " + err.Error())
@@ -32,6 +34,7 @@ func fetchBanLists() {
 					//Only needed because Factorio will write some bans as an array for some unknown reason.
 				} else {
 
+					//Read bans in array format
 					found := false
 					if len(names) > 0 {
 						for _, name := range names {
@@ -70,6 +73,7 @@ func fetchBanLists() {
 					}
 				}
 
+				//Read bans in standard format
 				for _, item := range bans {
 					if item.UserName != "" {
 						//It also commonly writes this address, and it isn't neeeded
@@ -87,6 +91,21 @@ func fetchBanLists() {
 							lDirty++
 							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, item)
 						}
+					}
+				}
+
+				//Detect bans that were revoked
+				for ipos, item := range oldList {
+					found := false
+					for _, ban := range server.BanList {
+						if ban.UserName == item.UserName {
+							found = true
+							break
+						}
+					}
+					if !found {
+						log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
+						serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList[:ipos], serverList.ServerList[spos].BanList[ipos+1:]...)
 					}
 				}
 
