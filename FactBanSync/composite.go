@@ -86,7 +86,7 @@ func compositeBans() {
 		if bpos < serverConfig.MaxBanlistSize {
 			compBanData = append(compBanData, ban)
 		} else {
-			log.Println("Banlist size exceeded, truncating...")
+			log.Println("Banlist size (" + strconv.Itoa(serverConfig.MaxBanlistSize) + ") exceeded, truncating...")
 			break
 		}
 	}
