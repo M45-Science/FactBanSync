@@ -18,7 +18,7 @@ Fetching bans from other servers, detecting new bans<br>
 Webserver, with cached json and json.gz<br>
 <br>
 ### What is still WIP?
-Writing out composited bans.
+Writing out composited bans.<br>
 RCON banning live<br>
 Logfile monitoring for logins<br>
 Whitelists<br>
