@@ -55,6 +55,7 @@ type banDataType struct {
 	Reason   string `json:"reason,omitempty"`
 	Address  string `json:"address,omitempty"`
 	LocalAdd string `json:",omitempty"`
+	Revoked  bool
 }
 
 //RCON list
