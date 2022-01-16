@@ -12,10 +12,12 @@ import (
 	"time"
 )
 
+//Duplicate code, not great
 func fetchBanLists() {
 	gDirty := 0
 	for spos, server := range serverList.ServerList {
 		lDirty := 0
+		revoked := 0
 		if server.Subscribed {
 			oldList := server.BanList
 
@@ -39,8 +41,12 @@ func fetchBanLists() {
 					if len(names) > 0 {
 						for _, name := range names {
 							if name != "" {
-								for _, item := range server.BanList {
+								for ipos, item := range server.BanList {
 									if item.UserName == name {
+										if item.Revoked {
+											log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+											serverList.ServerList[spos].BanList[ipos].Revoked = false
+										}
 										found = true
 									}
 								}
@@ -74,27 +80,35 @@ func fetchBanLists() {
 				}
 
 				//Read bans in standard format
-				for _, item := range bans {
+				for ipos, item := range bans {
 					if item.UserName != "" {
-						//It also commonly writes this address, and it isn't neeeded
+						//It also commonly writes this address, and it isn't needed
 						if item.Address == "0.0.0.0" {
 							item.Address = ""
 						}
 						found := false
 						for _, ban := range server.BanList {
-							if ban.UserName == item.UserName {
+							if ban.UserName == item.UserName && item.Revoked == false {
+								if item.Revoked {
+									log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+									serverList.ServerList[spos].BanList[ipos].Revoked = false
+								}
 								found = true
 							}
 						}
 						if !found {
 							gDirty++
 							lDirty++
-							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, item)
+							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Address: item.Address, LocalAdd: time.Now().Format(timeFormat)})
 						}
 					}
 				}
 
 				//Detect bans that were revoked
+				oldLen := len(oldList)
+				threshold := oldLen / 10
+
+				count := 0
 				for ipos, item := range oldList {
 					found := false
 					for _, ban := range server.BanList {
@@ -104,14 +118,25 @@ func fetchBanLists() {
 						}
 					}
 					if !found {
-						log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
-						serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList[:ipos], serverList.ServerList[spos].BanList[ipos+1:]...)
+						count++
+						revoked++
+						if oldLen > 30 && count > threshold {
+							log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
+							oldLen = 0
+						}
+						if oldLen > 0 {
+							log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
+						}
+						serverList.ServerList[spos].BanList[ipos].Revoked = true
 					}
 				}
 
 			}
 			if lDirty > 0 {
 				log.Printf("Found %v new bans for %v\n", lDirty, server.Name)
+			}
+			if revoked > 0 {
+				log.Printf("Found %v revoked bans for %v\n", revoked, server.Name)
 			}
 		}
 	}
