@@ -287,6 +287,34 @@ func writeServerListFile() {
 	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
+func writeCompositeBanlist() {
+	file, err := os.Create(serverConfig.CompositeBanFile)
+
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	outbuf := new(bytes.Buffer)
+	enc := json.NewEncoder(outbuf)
+	enc.SetIndent("", "\t")
+
+	err = enc.Encode(compBanData)
+
+	if err != nil {
+		log.Println("writeCompositeBanlist: " + err.Error())
+		os.Exit(1)
+	}
+
+	wrote, err := file.Write(outbuf.Bytes())
+
+	if err != nil {
+		log.Println("writeCompositeBanlist: " + err.Error())
+	}
+
+	log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
+}
+
 //Sanitize a string before use in a filename
 func FileNameFilter(str string) string {
 	alphafilter, _ := regexp.Compile("[^a-zA-Z0-9-_]+")

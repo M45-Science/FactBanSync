@@ -60,4 +60,6 @@ func compositeBans() {
 		}
 	}
 	log.Println("Composite banlist updated: " + strconv.Itoa(len(compBanData)) + " bans")
+
+	writeCompositeBanlist()
 }

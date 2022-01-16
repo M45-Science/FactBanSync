@@ -20,6 +20,7 @@ const defaultConfigPath = "data/server-config.json"
 const defaultServerListFile = "data/server-list.json"
 const defaultRCONFile = "data/server-rcon.json"
 const defaultLogMonitorFile = "data/log-monitor.json"
+const defaultCompositeFile = "data/composite.json"
 const defaultFileWebName = "server-banlist.json"
 
 //Default directories

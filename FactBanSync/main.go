@@ -32,6 +32,7 @@ func main() {
 	}
 
 	readConfigFile()
+	writeConfigFile() //Clean up
 
 	//Logging
 	startLog()
@@ -53,13 +54,14 @@ func main() {
 		readServerBanList()
 	}
 	readServerListFile()
+	//readBanCache()
 
 	//Fetch if we don't have anything
 	if len(serverList.ServerList) == 0 {
 		updateServerList()
 		fetchBanLists()
-		compositeBans()
 	}
+	compositeBans()
 	updateWebCache()
 
 	var LastFetchBans = time.Now()

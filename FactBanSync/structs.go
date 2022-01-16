@@ -5,12 +5,13 @@ type serverConfigData struct {
 	Version string
 	ListURL string
 
-	Name            string
-	FactorioBanFile string
-	ServerListFile  string
-	LogDir          string
-	BanCacheDir     string
-	MaxBanlistSize  int
+	Name             string
+	FactorioBanFile  string
+	ServerListFile   string
+	CompositeBanFile string
+	LogDir           string
+	BanCacheDir      string
+	MaxBanlistSize   int
 
 	RunWebServer bool
 	WebPort      int
