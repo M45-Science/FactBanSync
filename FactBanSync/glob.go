@@ -7,15 +7,16 @@ import (
 	"time"
 )
 
+//Server defaults
 var serverRunning = true
 var defaultListURL = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
 var timeFormat = time.RFC822Z
 
-//Default file names
 const defaultName = "Default"
 const defaultBanFile = ""
 const defaultWebPort = 8080
-const defaultDataDir = "data"
+
+//Default file paths
 const defaultConfigPath = "data/server-config.json"
 const defaultServerListFile = "data/server-list.json"
 const defaultRCONFile = "data/server-rcon.json"
@@ -24,6 +25,7 @@ const defaultCompositeFile = "data/composite.json"
 const defaultFileWebName = "server-banlist.json"
 
 //Default directories
+const defaultDataDir = "data"
 const defaultLogDir = "data/logs"
 const defaultBanFileDir = "data/banCache"
 
