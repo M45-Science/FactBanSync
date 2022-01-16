@@ -45,7 +45,9 @@ func fetchBanLists() {
 									if item.UserName == name {
 										if item.Revoked {
 											log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+
 											serverList.ServerList[spos].BanList[ipos].Revoked = false
+											serverList.ServerList[spos].BanList[ipos].Added = time.Now().Format(time.RFC3339)
 										}
 										found = true
 									}

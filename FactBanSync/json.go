@@ -9,7 +9,36 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"time"
 )
+
+func readBanCache() {
+	for spos, server := range serverList.ServerList {
+		if server.Name == serverConfig.Name {
+			continue
+		}
+		serverList.ServerList[spos].BanList = readBanCacheFile(spos, server.Name)
+	}
+}
+
+func readBanCacheFile(spos int, serverName string) []banDataType {
+
+	bandata := []banDataType{}
+	serverName = FileNameFilter(serverName)
+	path := serverConfig.BanCacheDir + "/" + serverName + ".json"
+	file, err := ioutil.ReadFile(path)
+
+	if file != nil && err == nil {
+		err = json.Unmarshal(file, &bandata)
+
+		if err != nil {
+			log.Println("Error reading ban cache file: " + err.Error())
+		}
+	}
+
+	return bandata
+
+}
 
 //Read list of servers from file
 func readServerListFile() {
@@ -127,7 +156,7 @@ func readServerBanList() {
 
 		for _, name := range names {
 			if name != "" {
-				bData = append(bData, banDataType{UserName: name})
+				bData = append(bData, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
 			}
 		}
 	}
@@ -141,7 +170,7 @@ func readServerBanList() {
 
 	for _, item := range bans {
 		if item.UserName != "" {
-			bData = append(bData, item)
+			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 		}
 	}
 

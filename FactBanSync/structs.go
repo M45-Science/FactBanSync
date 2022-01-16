@@ -51,19 +51,19 @@ type serverData struct {
 
 //Minimal ban data
 type minBanDataType struct {
-	UserName string
-	Reason   string
+	UserName string `json:"username"`
+	Reason   string `json:"reason"`
 }
 
 //Ban data
 type banDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
-	Revoked  bool   `json:"revoked,omitempty"`
-	Added    string `json:"added,omitempty"`
+	Revoked  bool   `json:",omitempty"`
+	Added    string `json:",omitempty"`
 
 	Sources []string `json:",omitempty"`
-	Reasons []string `json:"reason,omitempty"`
+	Reasons []string `json:",omitempty"`
 	Revokes []bool   `json:",omitempty"`
 	Adds    []string `json:",omitempty"`
 }

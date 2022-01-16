@@ -54,7 +54,7 @@ func main() {
 		readServerBanList()
 	}
 	readServerListFile()
-	//readBanCache()
+	readBanCache()
 
 	//Fetch if we don't have anything
 	if len(serverList.ServerList) == 0 {
