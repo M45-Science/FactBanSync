@@ -15,6 +15,7 @@ https://github.com/Distortions81/Factorio-Community-List/<br>
 ### What currently works:<br>
 Fetching list of servers<br>
 Fetching bans from other servers, detecting new bans<br>
+Detecting when a ban is revoked.<br>
 Webserver, with cached json and json.gz<br>
 <br>
 ### What is still WIP?
