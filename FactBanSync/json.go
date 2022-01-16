@@ -88,7 +88,7 @@ func makeDefaultConfigFile() {
 
 	serverConfig.RCONEnabled = false
 	serverConfig.LogMonitoring = false
-	serverConfig.AutoSubscribe = false
+	serverConfig.AutoSubscribe = true
 	serverConfig.RequireReason = false
 
 	serverConfig.FetchBansSeconds = defaultFetchBansSeconds
@@ -141,10 +141,6 @@ func readServerBanList() {
 
 	for _, item := range bans {
 		if item.UserName != "" {
-			//It also commonly writes this address, and it isn't neeeded
-			if item.Address == "0.0.0.0" {
-				item.Address = ""
-			}
 			bData = append(bData, item)
 		}
 	}
@@ -161,17 +157,15 @@ func updateWebCache() {
 	var localCopy []banDataType
 	for _, item := range ourBanData {
 		if item.UserName != "" {
-			var name, addr, reason string
+			var name, reason string
 
 			name = item.UserName
-			if !serverConfig.StripAddresses {
-				addr = item.Address
-			}
+
 			if !serverConfig.StripReasons {
 				reason = item.Reason
 			}
 
-			localCopy = append(localCopy, banDataType{UserName: name, Address: addr, Reason: reason})
+			localCopy = append(localCopy, banDataType{UserName: name, Reason: reason})
 		}
 	}
 

@@ -70,17 +70,6 @@ func setupWizard() {
 		serverConfig.StripReasons = false
 	}
 
-	fmt.Println("Strip ban addresses from public ban list? (Y/n)")
-
-	var stripAddresses string
-	fmt.Scanln(&stripAddresses)
-
-	if stripAddresses == "N" || stripAddresses == "n" {
-		serverConfig.StripAddresses = false
-	} else {
-		serverConfig.StripAddresses = true
-	}
-
 	writeConfigFile()
 
 }

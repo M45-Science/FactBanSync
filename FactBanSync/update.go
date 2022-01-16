@@ -53,7 +53,7 @@ func fetchBanLists() {
 								if !found {
 									gDirty++
 									lDirty++
-									serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: name, LocalAdd: time.Now().Format(timeFormat)})
+									serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
 								}
 							}
 						}
@@ -82,10 +82,6 @@ func fetchBanLists() {
 				//Read bans in standard format
 				for ipos, item := range bans {
 					if item.UserName != "" {
-						//It also commonly writes this address, and it isn't needed
-						if item.Address == "0.0.0.0" {
-							item.Address = ""
-						}
 						found := false
 						for _, ban := range server.BanList {
 							if ban.UserName == item.UserName && item.Revoked == false {
@@ -99,7 +95,7 @@ func fetchBanLists() {
 						if !found {
 							gDirty++
 							lDirty++
-							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Address: item.Address, LocalAdd: time.Now().Format(timeFormat)})
+							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 						}
 					}
 				}
@@ -235,7 +231,7 @@ func updateServerList() {
 							server.Subscribed = false
 						}
 						//Add, datestamp
-						server.LocalAdd = time.Now().Format(timeFormat)
+						server.Added = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						updated = true
 						log.Println("Added server: " + server.Name)

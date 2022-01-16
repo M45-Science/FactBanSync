@@ -22,7 +22,6 @@ type serverConfigData struct {
 	RequireReason       bool
 	RequireMultipleBans bool
 	StripReasons        bool
-	StripAddresses      bool
 
 	FetchBansSeconds   int
 	WatchFileSeconds   int
@@ -46,17 +45,27 @@ type serverData struct {
 	JsonGzip bool
 
 	Subscribed bool
-	LocalAdd   string
+	Added      string
 	BanList    []banDataType `json:"-"`
+}
+
+//Minimal ban data
+type minBanDataType struct {
+	UserName string
+	Reason   string
 }
 
 //Ban data
 type banDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
-	Address  string `json:"address,omitempty"`
-	LocalAdd string `json:",omitempty"`
-	Revoked  bool
+	Revoked  bool   `json:"revoked,omitempty"`
+	Added    string `json:"added,omitempty"`
+
+	Sources []string `json:",omitempty"`
+	Reasons []string `json:"reason,omitempty"`
+	Revokes []bool   `json:",omitempty"`
+	Adds    []string `json:",omitempty"`
 }
 
 //RCON list
