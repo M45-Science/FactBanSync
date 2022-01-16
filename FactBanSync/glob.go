@@ -32,7 +32,7 @@ const defaultWatchSeconds = 10
 const defaultRefreshListMinutes = 60 * 12
 
 //Max banlist size
-const defaultMaxBanListSize = 250
+const defaultMaxBanListSize = 950
 
 //Global vars
 var serverConfig serverConfigData
