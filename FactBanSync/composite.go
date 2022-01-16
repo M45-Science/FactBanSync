@@ -27,10 +27,17 @@ func compositeBans() {
 				//Don't composite revoked bans
 				if !ban.Revoked {
 					found := false
-					for _, iban := range ourBanData {
+					for ipos, iban := range compositeBanlist {
 						if iban.UserName == ban.UserName {
 							found = true
 							dupes++
+							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.Name)
+
+							compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, ban.Reason)
+
+							compositeBanlist[ipos].Revokes = append(compositeBanlist[ipos].Revokes, ban.Revoked)
+
+							compositeBanlist[ipos].Adds = append(compositeBanlist[ipos].Adds, ban.Added)
 							break
 						}
 					}
@@ -47,7 +54,7 @@ func compositeBans() {
 		}
 	}
 
-	log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans.")
+	log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans. Overlap: " + strconv.Itoa(dupes))
 
 	//Sort by time added, new to old
 	sort.Slice(compositeBanlist, func(i, j int) bool {
