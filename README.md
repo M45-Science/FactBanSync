@@ -1,4 +1,6 @@
 # FactBanSync<br>
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+
 `This is currently a unfinished prototype, WIP.`<br>
 *This is free and unencumbered software released into the public domain.*<br>
 <br>
