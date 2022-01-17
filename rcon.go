@@ -4,11 +4,10 @@ import (
 	"log"
 
 	"github.com/Distortions81/rcon"
-	"github.com/bwmarrin/discordgo"
 )
 
 //For live disconnect/ban
-func SendRCON(address string, command string, password string, s *discordgo.Session) {
+func SendRCON(address string, command string, password string) {
 
 	//Connect
 	remoteConsole, err := rcon.Dial(address, password)
