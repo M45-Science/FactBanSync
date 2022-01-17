@@ -24,3 +24,4 @@ Writing out composited bans.<br>
 RCON banning live<br>
 Logfile monitoring for logins<br>
 Whitelists<br>
+Unit tests.<br>
