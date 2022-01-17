@@ -18,6 +18,8 @@ func main() {
 	var makeConfig bool
 	flag.BoolVar(&makeConfig, "makeConfig", false, "make a default config file")
 	flag.BoolVar(&runWizard, "runWizard", false, "run the setup wizard")
+	var forceFetch bool
+	flag.BoolVar(&forceFetch, "forceFetch", false, "force fetching ban lists from remotes")
 	flag.Parse()
 
 	//Make config file if requested
@@ -56,7 +58,7 @@ func main() {
 	readBanCache()
 
 	//Fetch if we don't have anything
-	if len(serverList.ServerList) == 0 {
+	if len(serverList.ServerList) == 0 || forceFetch {
 		updateServerList()
 		fetchBanLists()
 	}
