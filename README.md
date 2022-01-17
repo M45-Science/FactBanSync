@@ -2,6 +2,7 @@
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
 [![Go](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml)
 [![ReportCard](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml)
+[![CodeQL](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml)
 
 `This is currently a unfinished prototype, WIP.`<br>
 *This is free and unencumbered software released into the public domain.*<br>
