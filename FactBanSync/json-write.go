@@ -140,7 +140,7 @@ func writeCompositeBanlist() {
 	enc := json.NewEncoder(outbuf)
 	enc.SetIndent("", "\t")
 
-	err = enc.Encode(compBanData)
+	err = enc.Encode(compositeBanData)
 
 	if err != nil {
 		log.Println("writeCompositeBanlist: " + err.Error())
@@ -153,5 +153,5 @@ func writeCompositeBanlist() {
 		log.Println("writeCompositeBanlist: " + err.Error())
 	}
 
-	log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
+	log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compositeBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
 }

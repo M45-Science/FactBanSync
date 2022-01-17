@@ -81,16 +81,32 @@ func compositeBans() {
 	})
 
 	//Cut list to size, new entries are at the start
-	compBanData = []banDataType{}
+	compBan := []banDataType{}
 	for bpos, ban := range compositeBanlist {
 		if bpos < serverConfig.MaxBanlistSize {
-			compBanData = append(compBanData, ban)
+			compBan = append(compBan, ban)
 		} else {
 			log.Println("Banlist size (" + strconv.Itoa(serverConfig.MaxBanlistSize) + ") exceeded, truncating...")
 			break
 		}
 	}
-	log.Println("Composite banlist updated: " + strconv.Itoa(len(compBanData)) + " bans")
+	log.Println("Composite banlist updated: " + strconv.Itoa(len(compBan)) + " bans")
+
+	var condList []minBanDataType
+	for _, ban := range compBan {
+		if !ban.Revoked {
+			reasonList := ""
+			for rpos, reason := range ban.Reasons {
+				if rpos > 0 {
+					reasonList += ", "
+				}
+				reasonList += ban.Sources[rpos] + ": '" + reason + "'"
+			}
+			condList = append(condList, minBanDataType{
+				UserName: ban.UserName, Reason: reasonList})
+		}
+	}
+	compositeBanData = condList
 
 	writeCompositeBanlist()
 }

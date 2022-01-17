@@ -43,7 +43,7 @@ var serverList serverListData
 var configPath string
 var logDesc *os.File
 var ourBanData []banDataType
-var compBanData []banDataType
+var compositeBanData []minBanDataType
 var logsToMonitor []LogMonitorData
 var cachedBanListGz []byte
 var cachedBanList []byte
