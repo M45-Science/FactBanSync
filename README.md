@@ -25,8 +25,9 @@ Detecting when a ban is revoked.<br>
 Webserver, with cached json and json.gz<br>
 <br>
 ### What is still WIP?
-
 RCON banning live<br>
 Logfile monitoring for logins<br>
 Whitelists<br>
 Unit tests<br>
+<br>
+ChatWire currently handles rcon/log monitoring for me.
