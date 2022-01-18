@@ -44,7 +44,7 @@ func compositeBans() {
 					if !found {
 						compositeBanlist = append(compositeBanlist, banDataType{
 							UserName: ban.UserName,
-							Sources:  []string{serverConfig.Name},
+							Sources:  []string{server.Name},
 							Reasons:  []string{ban.Reason},
 							Revokes:  []bool{ban.Revoked},
 							Adds:     []string{ban.Added}})
