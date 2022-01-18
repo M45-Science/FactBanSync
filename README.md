@@ -30,4 +30,4 @@ Logfile monitoring for logins<br>
 Whitelists<br>
 Unit tests<br>
 <br>
-ChatWire currently handles rcon/log monitoring for me.
+*(ChatWire currently handles rcon/log monitoring for me.)*
