@@ -4,11 +4,42 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 )
 
 /* Lots of replicated code, but I'd rather have the duplicate code than a single overly complex function */
+
+//Save a banlist from a specific server
+func saveBanLists() {
+	os.Mkdir(serverConfig.BanCacheDir, 0777)
+	for _, server := range serverList.ServerList {
+		if server.Name == server.Name {
+			continue
+		}
+		if server.Subscribed {
+			log.Println("Saving ban list for server: " + server.Name + " (" + strconv.Itoa(len(server.BanList)) + " bans)")
+
+			outbuf := new(bytes.Buffer)
+			enc := json.NewEncoder(outbuf)
+			enc.SetIndent("", "\t")
+
+			err := enc.Encode(server.BanList)
+
+			if err != nil {
+				log.Println("Error encoding ban list file: " + err.Error())
+				os.Exit(1)
+			}
+			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.Name)+".json", outbuf.Bytes(), 0644)
+			if err != nil {
+				log.Println("Error saving ban list: " + err.Error())
+				continue
+			}
+		}
+	}
+}
 
 //Make default-value config file as an example starting point
 func makeDefaultConfigFile() {
@@ -37,7 +68,7 @@ func makeDefaultConfigFile() {
 	writeConfigFile()
 }
 
-//Write our ban list to the Factorio ban list file (indent)
+//Write our ban list to the Factorio ban list file
 func writeBanListFile() {
 	file, err := os.Create(serverConfig.FactorioBanFile)
 
@@ -128,6 +159,7 @@ func writeServerListFile() {
 	log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
+//Write out a combined list of bans
 func writeCompositeBanlist() {
 	file, err := os.Create(serverConfig.CompositeBanFile)
 

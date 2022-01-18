@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -16,6 +15,9 @@ import (
 func fetchBanLists() {
 	gDirty := 0
 	for spos, server := range serverList.ServerList {
+		if server.Name == serverConfig.Name {
+			continue
+		}
 		lDirty := 0
 		revoked := 0
 		if server.Subscribed {
@@ -136,35 +138,11 @@ func fetchBanLists() {
 			if revoked > 0 {
 				log.Printf("Found %v revoked bans for %v\n", revoked, server.Name)
 			}
+
 		}
 	}
 	if gDirty > 0 {
 		saveBanLists()
-	}
-}
-
-func saveBanLists() {
-	os.Mkdir(serverConfig.BanCacheDir, 0777)
-	for _, server := range serverList.ServerList {
-		if server.Subscribed {
-			log.Println("Saving ban list for server: " + server.Name + " (" + strconv.Itoa(len(server.BanList)) + " bans)")
-
-			outbuf := new(bytes.Buffer)
-			enc := json.NewEncoder(outbuf)
-			enc.SetIndent("", "\t")
-
-			err := enc.Encode(server.BanList)
-
-			if err != nil {
-				log.Println("Error encoding ban list file: " + err.Error())
-				os.Exit(1)
-			}
-			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.Name)+".json", outbuf.Bytes(), 0644)
-			if err != nil {
-				log.Println("Error saving ban list: " + err.Error())
-				continue
-			}
-		}
 	}
 }
 
