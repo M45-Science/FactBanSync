@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -141,7 +142,7 @@ func readServerBanList() {
 	}
 
 	for _, item := range bans {
-		if item.UserName != "" {
+		if item.UserName != "" && strings.HasPrefix(item.Reason, "[auto]") {
 			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 		}
 	}
