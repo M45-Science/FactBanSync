@@ -1,0 +1,15 @@
+name: ReportCard
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Go Release Binaries
+    uses: wangyoucao577/go-release-action@v1.22
