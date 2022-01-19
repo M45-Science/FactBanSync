@@ -1,11 +1,11 @@
 # FactBanSync<br>
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
+<br>
 [![Go](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml)
 [![ReportCard](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml)
 [![CodeQL](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml)
 [![BinaryBuild](https://github.com/Distortions81/FactBanSync/actions/workflows/build-linux64.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/build-linux64.yml)
-<br>`This is currently a unfinished prototype, WIP.`<br>
-*This is free and unencumbered software released into the public domain.*<br>
+<br>*This is free and unencumbered software released into the public domain.*<br>
 <br>
 ## Compile and setup steps<br>
 1: Install GO 1.17.x: https://go.dev/dl/<br>
