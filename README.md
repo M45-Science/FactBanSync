@@ -9,11 +9,17 @@ Grabs data in a simple and secure, decentralized fashion.<br>
 *This is free and unencumbered software released into the public domain.*<br>
 <br>
 ### Compile and setup steps<br>
+https://github.com/Distortions81/FactBanSync/releases<br>
+<br>
+Download binary, OR:<br>
 1: Install GO 1.17.x: https://go.dev/dl/<br>
 2: Go to the FactBanSync directory, run 'go get'<br>
 3: Run 'go build', then run the FactBanSync binary.<br>
-4: Use the setup wizard  *(or let it generate a default config, then edit the config file)*<br>
-5: (optional) Add your server to the list:<br>
+
+#### Setup:<br>
+1: Use the setup wizard 
+<br>*(or let it generate a default config, then edit the config file)*<br>
+(optional) 2: Add your server to the list:<br>
 https://github.com/Distortions81/Factorio-Community-List/<br>
 <br>
 ### What currently works:<br>
