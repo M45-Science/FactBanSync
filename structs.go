@@ -46,9 +46,10 @@ type serverData struct {
 	Discord  string `json:",omitempty"`
 	JsonGzip bool
 
-	Subscribed bool
-	Added      string
-	BanList    []banDataType `json:"-"`
+	Subscribed   bool
+	UseRedScrape bool
+	Added        string
+	BanList      []banDataType `json:"-"`
 }
 
 //Minimal ban data

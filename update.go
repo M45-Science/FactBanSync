@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -32,7 +33,27 @@ func fetchBanLists() {
 			if len(data) > 0 {
 
 				var names []string
-				err = json.Unmarshal(data, &names)
+				if server.Name == "RedMew" {
+					count := 0
+					var redMewNames []string
+					if server.UseRedScrape {
+						log.Println("Scraping RedMew.")
+						redMewNames = GetRedMew(server.Bans)
+					}
+
+					if redMewNames != nil {
+						for _, red := range redMewNames {
+							rLen := len(red)
+							if rLen > 0 && rLen < 48 {
+								names = append(names, red)
+								count++
+							}
+						}
+						fmt.Println("RedMew: " + strconv.Itoa(count) + " names scraped.")
+					}
+				} else {
+					err = json.Unmarshal(data, &names)
+				}
 
 				if err != nil {
 					//Not really an error, just empty array
@@ -65,70 +86,73 @@ func fetchBanLists() {
 					}
 				}
 
-				var bans []banDataType
-				err = json.Unmarshal(data, &bans)
+				if !server.UseRedScrape {
 
-				if err != nil {
-					//Ignore, just array of strings
-				}
+					var bans []banDataType
+					err = json.Unmarshal(data, &bans)
 
-				//Deal with nested json
-				if len(bans) <= 1 && len(data) > 0 {
-					datastr := string(data)
-					datastr = strings.TrimSuffix(datastr, "]")
-					datastr = strings.TrimPrefix(datastr, "[")
-
-					err = json.Unmarshal([]byte(datastr), &bans)
 					if err != nil {
-						log.Println("Error parsing ban list: " + err.Error())
+						//Ignore, just array of strings
 					}
-				}
 
-				//Read bans in standard format
-				for ipos, item := range bans {
-					if item.UserName != "" {
+					//Deal with nested json
+					if len(bans) <= 1 && len(data) > 0 {
+						datastr := string(data)
+						datastr = strings.TrimSuffix(datastr, "]")
+						datastr = strings.TrimPrefix(datastr, "[")
+
+						err = json.Unmarshal([]byte(datastr), &bans)
+						if err != nil {
+							log.Println("Error parsing ban list: " + err.Error())
+						}
+					}
+
+					//Read bans in standard format
+					for ipos, item := range bans {
+						if item.UserName != "" {
+							found := false
+							for _, ban := range server.BanList {
+								if ban.UserName == item.UserName && item.Revoked == false {
+									if item.Revoked {
+										log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+										serverList.ServerList[spos].BanList[ipos].Revoked = false
+									}
+									found = true
+								}
+							}
+							if !found {
+								gDirty++
+								lDirty++
+								serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+							}
+						}
+					}
+
+					//Detect bans that were revoked
+					oldLen := len(oldList)
+					threshold := oldLen / 10
+
+					count := 0
+					for ipos, item := range oldList {
 						found := false
 						for _, ban := range server.BanList {
-							if ban.UserName == item.UserName && item.Revoked == false {
-								if item.Revoked {
-									log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
-									serverList.ServerList[spos].BanList[ipos].Revoked = false
-								}
+							if ban.UserName == item.UserName {
 								found = true
+								break
 							}
 						}
 						if !found {
-							gDirty++
-							lDirty++
-							serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+							count++
+							revoked++
+							if oldLen > 30 && count > threshold {
+								log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
+								oldLen = 0
+							}
+							if oldLen > 0 {
+								log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
+							}
+							serverList.ServerList[spos].BanList[ipos].Revoked = true
 						}
-					}
-				}
-
-				//Detect bans that were revoked
-				oldLen := len(oldList)
-				threshold := oldLen / 10
-
-				count := 0
-				for ipos, item := range oldList {
-					found := false
-					for _, ban := range server.BanList {
-						if ban.UserName == item.UserName {
-							found = true
-							break
-						}
-					}
-					if !found {
-						count++
-						revoked++
-						if oldLen > 30 && count > threshold {
-							log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
-							oldLen = 0
-						}
-						if oldLen > 0 {
-							log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
-						}
-						serverList.ServerList[spos].BanList[ipos].Revoked = true
 					}
 				}
 
