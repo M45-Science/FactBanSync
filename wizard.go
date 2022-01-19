@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -71,5 +72,7 @@ func setupWizard() {
 	}
 
 	writeConfigFile()
+	fmt.Println("Config file written to : " + configPath + ", please add paths to your banlist file and check over the settings.")
+	os.Exit(1)
 
 }

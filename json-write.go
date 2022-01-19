@@ -56,8 +56,8 @@ func makeDefaultConfigFile() {
 	serverConfig.RunWebServer = false
 	serverConfig.WebPort = defaultWebPort
 
-	serverConfig.RCONEnabled = false
-	serverConfig.LogMonitoring = false
+	//serverConfig.RCONEnabled = false
+	//serverConfig.LogMonitoring = false
 	serverConfig.AutoSubscribe = true
 	serverConfig.RequireReason = false
 
@@ -127,7 +127,7 @@ func writeConfigFile() {
 		os.Exit(1)
 	}
 
-	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote/1024) + " kb")
+	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + "b")
 
 }
 

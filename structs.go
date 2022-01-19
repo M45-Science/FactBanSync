@@ -18,12 +18,12 @@ type serverConfigData struct {
 	GetTimeoutSeconds int
 	GetSizeLimitBytes int64
 
-	AutoSubscribe       bool
-	RCONEnabled         bool
-	LogMonitoring       bool
-	RequireReason       bool
-	RequireMultipleBans bool
-	StripReasons        bool
+	AutoSubscribe bool
+	//RCONEnabled         bool
+	//LogMonitoring       bool
+	RequireReason bool
+	//RequireMultipleBans bool
+	StripReasons bool
 
 	FetchBansSeconds   int
 	WatchFileSeconds   int
