@@ -11,5 +11,4 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Go Release Binaries
-    uses: wangyoucao577/go-release-action@v1.22
+    - uses: wangyoucao577/go-release-action@v1.22
