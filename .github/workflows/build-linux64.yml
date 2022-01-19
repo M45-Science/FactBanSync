@@ -1,4 +1,4 @@
-name: ReportCard
+name: BinaryBuild
 
 on:
   push:
