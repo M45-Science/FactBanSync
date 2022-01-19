@@ -13,8 +13,10 @@ type serverConfigData struct {
 	BanCacheDir      string
 	MaxBanlistSize   int
 
-	RunWebServer bool
-	WebPort      int
+	RunWebServer      bool
+	WebPort           int
+	GetTimeoutSeconds int
+	GetSizeLimitBytes int64
 
 	AutoSubscribe       bool
 	RCONEnabled         bool

@@ -127,7 +127,7 @@ func writeConfigFile() {
 		os.Exit(1)
 	}
 
-	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + " bytes")
+	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote/1024) + " kb")
 
 }
 
@@ -185,5 +185,5 @@ func writeCompositeBanlist() {
 		log.Println("writeCompositeBanlist: " + err.Error())
 	}
 
-	log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compositeBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
+	log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compositeBanData)) + " items, " + fmt.Sprintf("%v", wrote/1024) + " kb")
 }

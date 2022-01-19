@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -231,18 +232,39 @@ func updateServerList() {
 //Download file to byte array
 func fetchFile(url string) ([]byte, error) {
 
-	resp, err := http.Get(url)
+	timeout := defaultDownloadTimeout * time.Second
+	if serverConfig.GetTimeoutSeconds > 0 {
+		timeout = (time.Duration(serverConfig.GetTimeoutSeconds) * time.Second)
+	}
+	c := &http.Client{
+		Timeout: timeout,
+	}
+
+	resp, err := c.Get(url)
 	if err != nil {
 		return []byte{}, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return []byte{}, errors.New("HTTP Error: " + resp.Status)
+	}
+
+	maxSize := int64(defaultMaxDownloadSize)
+	if serverConfig.GetSizeLimitBytes > 0 {
+		maxSize = serverConfig.GetSizeLimitBytes
+	}
+	if resp.ContentLength > maxSize {
+		return []byte{}, errors.New("file too large")
+	}
 
 	output, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	log.Println("Fetched file: " + url + " (" + strconv.Itoa(len(output)) + " bytes)")
+	dlSize := len(output)
+	log.Println("Fetched file: " + url + " (" + strconv.Itoa(dlSize/1024) + " kb)")
 
 	return output, err
 }

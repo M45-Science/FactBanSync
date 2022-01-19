@@ -15,6 +15,8 @@ var timeFormat = time.RFC822Z
 const defaultName = "Default"
 const defaultBanFile = ""
 const defaultWebPort = 8080
+const defaultMaxDownloadSize = 1024 * 1024 //mb
+const defaultDownloadTimeout = 10
 
 //Default file paths
 const defaultConfigPath = "data/server-config.json"
