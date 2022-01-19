@@ -3,11 +3,9 @@
 [![Go](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/go.yml)
 [![ReportCard](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/report.yml)
 [![CodeQL](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/codeql-analysis.yml)
-
-`This is currently a unfinished prototype, WIP.`<br>
+[![BinaryBuild](https://github.com/Distortions81/FactBanSync/actions/workflows/build-linux64.yml/badge.svg)](https://github.com/Distortions81/FactBanSync/actions/workflows/build-linux64.yml)
+<br>`This is currently a unfinished prototype, WIP.`<br>
 *This is free and unencumbered software released into the public domain.*<br>
-<br>
-**(no binary releases yet)**<br>
 <br>
 ## Compile and setup steps<br>
 1: Install GO 1.17.x: https://go.dev/dl/<br>
@@ -25,6 +23,7 @@ Detecting when a ban is revoked.<br>
 Webserver, with cached json and json.gz<br>
 <br>
 ### What is still WIP?
+Setup Wizard<br>
 RCON banning live<br>
 Logfile monitoring for logins<br>
 Whitelists<br>
