@@ -9,6 +9,8 @@ import (
 
 func compositeBans() {
 	var compositeBanlist []banDataType
+
+	//Add our bans first
 	for _, ban := range ourBanData {
 
 		compositeBanlist = append(compositeBanlist, banDataType{
@@ -20,6 +22,8 @@ func compositeBans() {
 	}
 
 	dupes := 0
+
+	//Now add the bans from other servers
 	for _, server := range serverList.ServerList {
 		//Only if subscribed, and skip self
 		if server.Subscribed && server.Name != serverConfig.Name {
@@ -28,6 +32,7 @@ func compositeBans() {
 				if !ban.Revoked {
 					found := false
 					for ipos, iban := range compositeBanlist {
+						//Duplicate, add data to existing entry
 						if iban.UserName == ban.UserName {
 							found = true
 							dupes++
@@ -41,6 +46,7 @@ func compositeBans() {
 							break
 						}
 					}
+					//This isn't already in the list, so add it (avoid dupes)
 					if !found {
 						compositeBanlist = append(compositeBanlist, banDataType{
 							UserName: ban.UserName,
@@ -93,6 +99,7 @@ func compositeBans() {
 	log.Println("Composite banlist updated: " + strconv.Itoa(len(compBan)) + " bans")
 
 	var condList []minBanDataType
+	//Minimize and output as a Factorio-friendly list
 	for _, ban := range compBan {
 		if !ban.Revoked {
 			reasonList := ""
