@@ -14,7 +14,7 @@ var timeFormat = time.RFC822Z
 
 const defaultName = "Default"
 const defaultBanFile = ""
-const defaultWebPort = 8080
+const defaultWebPort = 8008
 const defaultMaxDownloadSize = 1024 * 1024 //mb
 const defaultDownloadTimeout = 10
 
@@ -32,7 +32,7 @@ const defaultLogDir = "data/logs"
 const defaultBanFileDir = "data/banCache"
 
 //Default delay times
-const defaultFetchBansSeconds = 300
+const defaultFetchBansSeconds = 900
 const defaultWatchSeconds = 10
 const defaultRefreshListMinutes = 60 * 12
 
