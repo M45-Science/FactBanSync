@@ -38,13 +38,20 @@ func compositeBans() {
 							dupes++
 							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.Name)
 
-							compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, ban.Reason)
+							if server.StripReasons {
+								compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, "")
+							} else {
+								compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, ban.Reason)
+							}
 
 							compositeBanlist[ipos].Revokes = append(compositeBanlist[ipos].Revokes, ban.Revoked)
 
 							compositeBanlist[ipos].Adds = append(compositeBanlist[ipos].Adds, ban.Added)
 							break
 						}
+					}
+					if server.StripReasons {
+						ban.Reason = ""
 					}
 					//This isn't already in the list, so add it (avoid dupes)
 					if !found {

@@ -48,6 +48,7 @@ type serverData struct {
 
 	Subscribed   bool
 	UseRedScrape bool
+	StripReasons bool
 	Added        string
 	BanList      []banDataType `json:"-"`
 }
