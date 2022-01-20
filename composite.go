@@ -107,7 +107,11 @@ func compositeBans() {
 				if rpos > 0 {
 					reasonList += ", "
 				}
-				reasonList += ban.Sources[rpos] + ": '" + reason + "'"
+				if reason != "" {
+					reasonList += ban.Sources[rpos] + ": '" + reason + "'"
+				} else {
+					reasonList += ban.Sources[rpos]
+				}
 			}
 			condList = append(condList, minBanDataType{
 				UserName: ban.UserName, Reason: reasonList})
