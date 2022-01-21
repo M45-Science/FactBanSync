@@ -1,11 +1,13 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 const version = "0.0.1"
@@ -43,9 +45,15 @@ func main() {
 	//TODO offer HTTPs with directions to make cert
 	if serverConfig.RunWebServer {
 		http.HandleFunc("/", handleFileRequest)
-		go func(serverConfig serverConfigData) {
-			http.ListenAndServeTLS(":"+strconv.Itoa(serverConfig.SSLWebPort), serverConfig.SSLCertFile, serverConfig.SSLKeyFile, nil)
-		}(serverConfig)
+		server := &http.Server{
+			Addr:         ":" + strconv.Itoa(serverConfig.SSLWebPort),
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 5 * time.Second,
+			TLSConfig:    &tls.Config{ServerName: serverConfig.DomainName},
+		}
+		go func(sc serverConfigData, serv *http.Server) {
+			serv.ListenAndServeTLS(sc.SSLCertFile, sc.SSLKeyFile)
+		}(serverConfig, server)
 		log.Println("Web server started:")
 		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
 		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName)

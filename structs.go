@@ -6,6 +6,7 @@ type serverConfigData struct {
 	ListURL string
 
 	Name             string
+	DomainName       string
 	FactorioBanFile  string
 	ServerListFile   string
 	CompositeBanFile string

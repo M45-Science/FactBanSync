@@ -38,6 +38,15 @@ func setupWizard() {
 			serverConfig.SSLWebPort, _ = strconv.Atoi(webPort)
 		}
 
+		fmt.Println("Domain name (REQUIRED): ")
+
+		var domainName string
+		fmt.Scanln(&domainName)
+		if domainName == "" {
+			domainName = "test.com"
+		}
+		serverConfig.DomainName = domainName
+
 		fmt.Println("You will need a certificate and key file for HTTPS. Put them in the data directory and put the paths in the config file. On most systems you can use the provided make-https-cert.sh script to generate self-signed certificates.")
 		fmt.Println("Would you like to (attempt) to auto-run the script at the end of the setup? (Y/n)")
 
