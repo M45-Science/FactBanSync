@@ -55,8 +55,8 @@ func main() {
 			serv.ListenAndServeTLS(sc.SSLCertFile, sc.SSLKeyFile)
 		}(serverConfig, server)
 		log.Println("Web server started:")
-		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
-		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName)
+		log.Println(" https://" + serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
+		log.Println(" https://" + serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName)
 	}
 
 	if serverConfig.FactorioBanFile != "" {
