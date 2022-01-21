@@ -26,8 +26,8 @@ const defaultRCONFile = "data/server-rcon.json"
 const defaultLogMonitorFile = "data/log-monitor.json"
 const defaultCompositeFile = "data/composite.json"
 const defaultFileWebName = "server-banlist.json"
-const defaultSSLKeyFile = "data/server-key.pem"
-const defaultSSLCertFile = "data/server-cert.pem"
+const defaultSSLKeyFile = "data/server.key"
+const defaultSSLCertFile = "data/server.crt"
 
 //Default directories
 const defaultDataDir = "data"

@@ -39,11 +39,11 @@ func setupWizard() {
 		}
 
 		fmt.Println("You will need a certificate and key file for HTTPS. Put them in the data directory and put the paths in the config file. On most systems you can use the provided make-https-cert.sh script to generate self-signed certificates.")
-		fmt.Println("Would you like to (attempt) to auto-run the script at the end of the setup? (y/N)")
+		fmt.Println("Would you like to (attempt) to auto-run the script at the end of the setup? (Y/n)")
 
 		var runMakeHttpsCert string
 		fmt.Scanln(&runMakeHttpsCert)
-		if runMakeHttpsCert == "Y" || runMakeHttpsCert == "y" {
+		if runMakeHttpsCert == "Y" || runMakeHttpsCert == "y" || runMakeHttpsCert == "" {
 			makeHTTPs = true
 		}
 
@@ -52,26 +52,6 @@ func setupWizard() {
 		serverConfig.RunWebServer = false
 	}
 
-	fmt.Println("Run a HTTP (standard) webserver, to provide server-banlist.json? (y/N)")
-
-	var runWebServer string
-	fmt.Scanln(&runWebServer)
-	if runWebServer == "Y" || runWebServer == "y" {
-		serverConfig.RunWebServer = true
-
-		fmt.Println("HTTP Web server port (8008): ")
-
-		var webPort string
-		fmt.Scanln(&webPort)
-		if webPort == "" {
-			serverConfig.WebPort = defaultWebPort
-		} else {
-			serverConfig.WebPort, _ = strconv.Atoi(webPort)
-		}
-	} else {
-		serverConfig.WebPort = 0
-		serverConfig.RunWebServer = false
-	}
 	fmt.Println("Auto-subscribe to new servers? (Y/n)")
 
 	var autoSubscribe string

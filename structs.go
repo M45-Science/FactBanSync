@@ -14,7 +14,6 @@ type serverConfigData struct {
 	MaxBanlistSize   int
 
 	RunWebServer      bool
-	WebPort           int
 	SSLWebPort        int
 	SSLKeyFile        string
 	SSLCertFile       string

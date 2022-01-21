@@ -56,7 +56,6 @@ func makeDefaultConfigFile() {
 	serverConfig.RunWebServer = false
 	serverConfig.SSLKeyFile = defaultSSLKeyFile
 	serverConfig.SSLCertFile = defaultSSLCertFile
-	serverConfig.WebPort = defaultWebPort
 	serverConfig.SSLWebPort = defaultSSLWebPort
 
 	//serverConfig.RCONEnabled = false

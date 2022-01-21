@@ -42,18 +42,13 @@ func main() {
 	//Run a webserver, if requested
 	//TODO offer HTTPs with directions to make cert
 	if serverConfig.RunWebServer {
-		go func(WebPort int) {
-			http.HandleFunc("/", handleFileRequest)
-			http.ListenAndServe(":"+strconv.Itoa(serverConfig.WebPort), nil)
-		}(serverConfig.WebPort)
+		http.HandleFunc("/", handleFileRequest)
+		go func(serverConfig serverConfigData) {
+			http.ListenAndServeTLS(":"+strconv.Itoa(serverConfig.SSLWebPort), serverConfig.SSLCertFile, serverConfig.SSLKeyFile, nil)
+		}(serverConfig)
 		log.Println("Web server started:")
-		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName + ".gz")
-		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName)
-
-		go func(WebPort int) {
-			http.HandleFunc("/", handleFileRequest)
-
-		}(serverConfig.WebPort)
+		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
+		log.Println(" https://localhost:" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName)
 	}
 
 	if serverConfig.FactorioBanFile != "" {
