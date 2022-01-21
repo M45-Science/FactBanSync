@@ -3,13 +3,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 )
 
 func setupWizard() {
 	makeDefaultConfigFile()
+	makeHTTPs := false
 
-	fmt.Println("Community or server name: ")
+	fmt.Println("Pressing enter on a question will accept the default value.")
+	fmt.Println("Community or server name: (Used to skip ourselves in the server list)")
 
 	var communityName string
 	fmt.Scanln(&communityName)
@@ -18,14 +21,45 @@ func setupWizard() {
 	}
 	serverConfig.Name = communityName
 
-	fmt.Println("Run a webserver to provide server-banlist.json? (y/N)")
+	fmt.Println("Run a HTTPS (SSL) webserver, to provide server-banlist.json? (Y/n)")
+
+	var runSSLWebServer string
+	fmt.Scanln(&runSSLWebServer)
+	if runSSLWebServer == "" || runSSLWebServer == "y" || runSSLWebServer == "Y" {
+		serverConfig.RunWebServer = true
+
+		fmt.Println("HTTPS Web server port (8443): ")
+
+		var webPort string
+		fmt.Scanln(&webPort)
+		if webPort == "" {
+			serverConfig.SSLWebPort = defaultSSLWebPort
+		} else {
+			serverConfig.SSLWebPort, _ = strconv.Atoi(webPort)
+		}
+
+		fmt.Println("You will need a certificate and key file for HTTPS. Put them in the data directory and put the paths in the config file. On most systems you can use the provided make-https-cert.sh script to generate self-signed certificates.")
+		fmt.Println("Would you like to (attempt) to auto-run the script at the end of the setup? (y/N)")
+
+		var runMakeHttpsCert string
+		fmt.Scanln(&runMakeHttpsCert)
+		if runMakeHttpsCert == "Y" || runMakeHttpsCert == "y" {
+			makeHTTPs = true
+		}
+
+	} else {
+		serverConfig.SSLWebPort = 0
+		serverConfig.RunWebServer = false
+	}
+
+	fmt.Println("Run a HTTP (standard) webserver, to provide server-banlist.json? (y/N)")
 
 	var runWebServer string
 	fmt.Scanln(&runWebServer)
 	if runWebServer == "Y" || runWebServer == "y" {
 		serverConfig.RunWebServer = true
 
-		fmt.Println("Web server port (8080): ")
+		fmt.Println("HTTP Web server port (8008): ")
 
 		var webPort string
 		fmt.Scanln(&webPort)
@@ -35,9 +69,9 @@ func setupWizard() {
 			serverConfig.WebPort, _ = strconv.Atoi(webPort)
 		}
 	} else {
+		serverConfig.WebPort = 0
 		serverConfig.RunWebServer = false
 	}
-
 	fmt.Println("Auto-subscribe to new servers? (Y/n)")
 
 	var autoSubscribe string
@@ -71,8 +105,40 @@ func setupWizard() {
 		serverConfig.StripReasons = false
 	}
 
+	fmt.Println("How often do you want to refresh the list of servers (in hours)? (12)")
+
+	var refreshListHours string
+	fmt.Scanln(&refreshListHours)
+	if refreshListHours == "" {
+		serverConfig.RefreshListHours = defaultRefreshListHours
+	} else {
+		serverConfig.RefreshListHours, _ = strconv.Atoi(refreshListHours)
+	}
+
+	fmt.Println("How often do you want to fetch ban lists from server (in minutes)? (15)")
+
+	var fetchBansMinutes string
+	fmt.Scanln(&fetchBansMinutes)
+	if fetchBansMinutes == "" {
+		serverConfig.FetchBansMinutes = defaultFetchBansMinutes
+	} else {
+		serverConfig.FetchBansMinutes, _ = strconv.Atoi(fetchBansMinutes)
+	}
+
 	writeConfigFile()
 	fmt.Println("Config file written to : " + configPath + ", please add paths to your banlist file and check over the settings.")
+
+	if makeHTTPs {
+		fmt.Println("Running make-https-cert.sh script...")
+
+		path, _ := os.Getwd()
+		os.Chdir(path)
+		cmd := exec.Command("/bin/bash", "make-https-cert.sh")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		_ = cmd.Run() // add error checking
+	}
 	os.Exit(1)
 
 }

@@ -15,6 +15,7 @@ var timeFormat = time.RFC822Z
 const defaultName = "Default"
 const defaultBanFile = ""
 const defaultWebPort = 8008
+const defaultSSLWebPort = 8443
 const defaultMaxDownloadSize = 1024 * 1024 //mb
 const defaultDownloadTimeout = 10
 
@@ -25,6 +26,8 @@ const defaultRCONFile = "data/server-rcon.json"
 const defaultLogMonitorFile = "data/log-monitor.json"
 const defaultCompositeFile = "data/composite.json"
 const defaultFileWebName = "server-banlist.json"
+const defaultSSLKeyFile = "data/server-key.pem"
+const defaultSSLCertFile = "data/server-cert.pem"
 
 //Default directories
 const defaultDataDir = "data"
@@ -32,9 +35,9 @@ const defaultLogDir = "data/logs"
 const defaultBanFileDir = "data/banCache"
 
 //Default delay times
-const defaultFetchBansSeconds = 900
+const defaultFetchBansMinutes = 15
 const defaultWatchSeconds = 10
-const defaultRefreshListMinutes = 60 * 12
+const defaultRefreshListHours = 12
 
 //Max banlist size
 const defaultMaxBanListSize = 950

@@ -49,6 +49,11 @@ func main() {
 		log.Println("Web server started:")
 		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName + ".gz")
 		log.Println(" http://localhost:" + strconv.Itoa(serverConfig.WebPort) + "/" + defaultFileWebName)
+
+		go func(WebPort int) {
+			http.HandleFunc("/", handleFileRequest)
+
+		}(serverConfig.WebPort)
 	}
 
 	if serverConfig.FactorioBanFile != "" {

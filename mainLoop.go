@@ -11,7 +11,7 @@ func mainLoop() {
 	for serverRunning {
 		time.Sleep(time.Second)
 
-		if time.Since(LastFetchBans).Seconds() >= float64(serverConfig.FetchBansSeconds) {
+		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.FetchBansMinutes) {
 			LastFetchBans = time.Now()
 
 			fetchBanLists()
@@ -22,7 +22,7 @@ func mainLoop() {
 				watchBanFile()
 			}
 		}
-		if time.Since(LastRefresh).Minutes() >= float64(serverConfig.RefreshListMinutes) {
+		if time.Since(LastRefresh).Hours() >= float64(serverConfig.RefreshListHours) {
 			LastRefresh = time.Now()
 
 			updateServerList()

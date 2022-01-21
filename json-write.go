@@ -54,16 +54,22 @@ func makeDefaultConfigFile() {
 	serverConfig.MaxBanlistSize = defaultMaxBanListSize
 
 	serverConfig.RunWebServer = false
+	serverConfig.SSLKeyFile = defaultSSLKeyFile
+	serverConfig.SSLCertFile = defaultSSLCertFile
 	serverConfig.WebPort = defaultWebPort
+	serverConfig.SSLWebPort = defaultSSLWebPort
 
 	//serverConfig.RCONEnabled = false
 	//serverConfig.LogMonitoring = false
 	serverConfig.AutoSubscribe = true
 	serverConfig.RequireReason = false
 
-	serverConfig.FetchBansSeconds = defaultFetchBansSeconds
+	serverConfig.FetchBansMinutes = defaultFetchBansMinutes
 	serverConfig.WatchFileSeconds = defaultWatchSeconds
-	serverConfig.RefreshListMinutes = defaultRefreshListMinutes
+	serverConfig.RefreshListHours = defaultRefreshListHours
+
+	serverConfig.CompositeBanFile = defaultCompositeFile
+	serverConfig.FactorioBanFile = defaultBanFile
 
 	writeConfigFile()
 }
@@ -161,6 +167,7 @@ func writeServerListFile() {
 
 //Write out a combined list of bans
 func writeCompositeBanlist() {
+
 	file, err := os.Create(serverConfig.CompositeBanFile)
 
 	if err != nil {

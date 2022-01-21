@@ -15,6 +15,9 @@ type serverConfigData struct {
 
 	RunWebServer      bool
 	WebPort           int
+	SSLWebPort        int
+	SSLKeyFile        string
+	SSLCertFile       string
 	GetTimeoutSeconds int
 	GetSizeLimitBytes int64
 
@@ -25,9 +28,9 @@ type serverConfigData struct {
 	//RequireMultipleBans bool
 	StripReasons bool
 
-	FetchBansSeconds   int
-	WatchFileSeconds   int
-	RefreshListMinutes int
+	FetchBansMinutes int
+	WatchFileSeconds int
+	RefreshListHours int
 }
 
 //List of servers

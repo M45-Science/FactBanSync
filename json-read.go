@@ -85,12 +85,12 @@ func readConfigFile() {
 		os.Mkdir(defaultDataDir, 0755)
 		makeDefaultConfigFile()
 
-		fmt.Println("Would you like to use the setup wizard? (y/N)")
+		fmt.Println("Would you like to use the setup wizard? (Y/n)")
 
 		var input string
 		fmt.Scanln(&input)
 
-		if input == "y" || input == "Y" {
+		if input == "y" || input == "Y" || input == "" {
 			setupWizard()
 			return
 		}
