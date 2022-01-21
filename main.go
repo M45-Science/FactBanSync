@@ -46,7 +46,7 @@ func main() {
 	if serverConfig.RunWebServer {
 		http.HandleFunc("/", handleFileRequest)
 		server := &http.Server{
-			Addr:         ":" + strconv.Itoa(serverConfig.SSLWebPort),
+			Addr:         serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort),
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 5 * time.Second,
 			TLSConfig:    &tls.Config{ServerName: serverConfig.DomainName},
