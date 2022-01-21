@@ -52,7 +52,10 @@ func main() {
 			TLSConfig:    &tls.Config{ServerName: serverConfig.DomainName},
 		}
 		go func(sc serverConfigData, serv *http.Server) {
-			serv.ListenAndServeTLS(sc.SSLCertFile, sc.SSLKeyFile)
+			err := serv.ListenAndServeTLS(sc.SSLCertFile, sc.SSLKeyFile)
+			if err != nil {
+				log.Println(err)
+			}
 		}(serverConfig, server)
 		log.Println("Web server started:")
 		log.Println(" https://" + serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
