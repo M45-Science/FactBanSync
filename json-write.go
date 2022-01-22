@@ -104,7 +104,9 @@ func writeConfigFile() {
 		os.Exit(1)
 	}
 
-	log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + "b")
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + "b")
+	}
 
 }
 
