@@ -51,7 +51,9 @@ func fetchBanLists() {
 								count++
 							}
 						}
-						fmt.Println("RedMew: " + strconv.Itoa(count) + " names scraped.")
+						if serverConfig.ServerPrefs.VerboseLogging {
+							fmt.Println("RedMew: " + strconv.Itoa(count) + " names scraped.")
+						}
 					}
 				} else {
 					err = json.Unmarshal(data, &names)
