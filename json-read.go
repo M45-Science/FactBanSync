@@ -17,7 +17,7 @@ func readBanCache() {
 		if server.Name == serverConfig.Name {
 			continue
 		}
-		serverList.ServerList[spos].BanList = readBanCacheFile(spos, server.Name)
+		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(spos, server.Name)
 	}
 }
 
@@ -25,7 +25,7 @@ func readBanCacheFile(spos int, serverName string) []banDataType {
 
 	bandata := []banDataType{}
 	serverName = FileNameFilter(serverName)
-	path := serverConfig.BanCacheDir + "/" + serverName + ".json"
+	path := serverConfig.PathData.BanCacheDir + "/" + serverName + ".json"
 	file, err := ioutil.ReadFile(path)
 
 	if file != nil && err == nil {
@@ -42,14 +42,23 @@ func readBanCacheFile(spos int, serverName string) []banDataType {
 
 //Read list of servers from file
 func readServerListFile() {
-	file, err := ioutil.ReadFile(serverConfig.ServerListFile)
+	file, err := ioutil.ReadFile(serverConfig.PathData.ServerListFile)
 
 	//Read server list file if it exists
 	if file != nil && !os.IsNotExist(err) {
-		err = json.Unmarshal(file, &serverList)
+		var temp serverListData
+		err = json.Unmarshal(file, &temp)
 
 		if err != nil {
 			log.Println("Error reading server list file: " + err.Error())
+			os.Exit(1)
+		}
+
+		if temp.Version == "0.0.1" {
+			serverList = temp
+		} else {
+			log.Print("Server list file version is not supported, exiting.")
+			time.Sleep(time.Minute)
 			os.Exit(1)
 		}
 	} else {
@@ -67,7 +76,8 @@ func readConfigFile() {
 	file, err := ioutil.ReadFile(configPath)
 
 	if file != nil && err == nil {
-		err = json.Unmarshal(file, &serverConfig)
+		var temp serverConfigData
+		err = json.Unmarshal(file, &temp)
 
 		if err != nil {
 			log.Println("Error reading config file: " + err.Error())
@@ -77,6 +87,14 @@ func readConfigFile() {
 		//Let user know further config is required
 		if serverConfig.Name == "Default" {
 			log.Println("Please change ServerName in the config file, or use --runWizard")
+			os.Exit(1)
+		}
+
+		if temp.Version == "0.0.2" {
+			serverConfig = temp
+		} else {
+			log.Print("Config file version is not supported, exiting.")
+			time.Sleep(time.Minute)
 			os.Exit(1)
 		}
 	} else {
@@ -103,7 +121,7 @@ func readConfigFile() {
 //Read the Factorio ban list file locally
 func readServerBanList() {
 
-	file, err := os.Open(serverConfig.FactorioBanFile)
+	file, err := os.Open(serverConfig.PathData.FactorioBanFile)
 
 	if err != nil {
 		log.Println(err)
@@ -138,7 +156,7 @@ func readServerBanList() {
 	err = json.Unmarshal(data, &bans)
 
 	if err != nil {
-		//Ignore, just array of strings
+		fmt.Print("") //Annoying warning remover
 	}
 
 	for _, item := range bans {

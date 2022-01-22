@@ -11,18 +11,18 @@ func mainLoop() {
 	for serverRunning {
 		time.Sleep(time.Second)
 
-		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.FetchBansMinutes) {
+		if time.Since(LastFetchBans).Minutes() >= float64(serverConfig.ServerPrefs.FetchBansMinutes) {
 			LastFetchBans = time.Now()
 
 			fetchBanLists()
 		}
-		if time.Since(LastWatch).Seconds() >= float64(serverConfig.WatchFileSeconds) {
+		if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
 			LastWatch = time.Now()
-			if serverConfig.FactorioBanFile != "" {
+			if serverConfig.PathData.FactorioBanFile != "" {
 				watchBanFile()
 			}
 		}
-		if time.Since(LastRefresh).Hours() >= float64(serverConfig.RefreshListHours) {
+		if time.Since(LastRefresh).Hours() >= float64(serverConfig.ServerPrefs.RefreshListHours) {
 			LastRefresh = time.Now()
 
 			updateServerList()

@@ -14,19 +14,19 @@ import (
 
 //Save a banlist from a specific server
 func saveBanLists() {
-	os.Mkdir(serverConfig.BanCacheDir, 0777)
+	os.Mkdir(serverConfig.PathData.BanCacheDir, 0777)
 	for _, server := range serverList.ServerList {
-		if server.Name == server.Name {
+		if server.Name == serverConfig.Name {
 			continue
 		}
-		if server.Subscribed {
-			log.Println("Saving ban list for server: " + server.Name + " (" + strconv.Itoa(len(server.BanList)) + " bans)")
+		if server.LocalData.Subscribed {
+			log.Println("Saving ban list for server: " + server.Name + " (" + strconv.Itoa(len(server.LocalData.BanList)) + " bans)")
 
 			outbuf := new(bytes.Buffer)
 			enc := json.NewEncoder(outbuf)
 			enc.SetIndent("", "\t")
 
-			err := enc.Encode(server.BanList)
+			err := enc.Encode(server.LocalData.BanList)
 
 			if err != nil {
 				log.Println("Error encoding ban list file: " + err.Error())
@@ -43,64 +43,31 @@ func saveBanLists() {
 
 //Make default-value config file as an example starting point
 func makeDefaultConfigFile() {
-	serverConfig.Version = version
 	serverConfig.ListURL = defaultListURL
 
 	serverConfig.Name = defaultName
-	serverConfig.FactorioBanFile = defaultBanFile
-	serverConfig.ServerListFile = defaultServerListFile
-	serverConfig.LogDir = defaultLogDir
-	serverConfig.BanCacheDir = defaultBanFileDir
-	serverConfig.MaxBanlistSize = defaultMaxBanListSize
+	serverConfig.PathData.FactorioBanFile = defaultBanFile
+	serverConfig.PathData.ServerListFile = defaultServerListFile
+	serverConfig.PathData.LogDir = defaultLogDir
+	serverConfig.PathData.BanCacheDir = defaultBanFileDir
+	serverConfig.PathData.CompositeBanFile = defaultCompositeFile
+	serverConfig.PathData.FactorioBanFile = defaultBanFile
 
-	serverConfig.RunWebServer = false
-	serverConfig.SSLKeyFile = defaultSSLKeyFile
-	serverConfig.SSLCertFile = defaultSSLCertFile
-	serverConfig.SSLWebPort = defaultSSLWebPort
+	serverConfig.WebServer.RunWebServer = false
+	serverConfig.WebServer.SSLKeyFile = defaultSSLKeyFile
+	serverConfig.WebServer.SSLCertFile = defaultSSLCertFile
+	serverConfig.WebServer.SSLWebPort = defaultSSLWebPort
 
 	//serverConfig.RCONEnabled = false
 	//serverConfig.LogMonitoring = false
-	serverConfig.AutoSubscribe = true
-	serverConfig.RequireReason = false
-
-	serverConfig.FetchBansMinutes = defaultFetchBansMinutes
-	serverConfig.WatchFileSeconds = defaultWatchSeconds
-	serverConfig.RefreshListHours = defaultRefreshListHours
-
-	serverConfig.CompositeBanFile = defaultCompositeFile
-	serverConfig.FactorioBanFile = defaultBanFile
+	serverConfig.ServerPrefs.AutoSubscribe = true
+	serverConfig.ServerPrefs.RequireReason = false
+	serverConfig.ServerPrefs.MaxBanOutputSize = defaultMaxBanListSize
+	serverConfig.ServerPrefs.FetchBansMinutes = defaultFetchBansMinutes
+	serverConfig.ServerPrefs.WatchFileSeconds = defaultWatchSeconds
+	serverConfig.ServerPrefs.RefreshListHours = defaultRefreshListHours
 
 	writeConfigFile()
-}
-
-//Write our ban list to the Factorio ban list file
-func writeBanListFile() {
-	file, err := os.Create(serverConfig.FactorioBanFile)
-
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-
-	outbuf := new(bytes.Buffer)
-	enc := json.NewEncoder(outbuf)
-	enc.SetIndent("", "\t")
-
-	err = enc.Encode(ourBanData)
-
-	if err != nil {
-		log.Println("Error encoding ban list file: " + err.Error())
-		os.Exit(1)
-	}
-
-	wrote, err := file.Write(outbuf.Bytes())
-
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-
-	log.Println("Wrote banlist of " + fmt.Sprintf("%v", len(ourBanData)) + " items, " + fmt.Sprintf("%v", wrote) + " bytes")
 }
 
 //Write our server list to the server list file (indent)
@@ -112,9 +79,7 @@ func writeConfigFile() {
 		os.Exit(1)
 	}
 
-	serverConfig.Version = "0.0.1"
-	//Add config file comments
-
+	serverConfig.Version = "0.0.2"
 	outbuf := new(bytes.Buffer)
 	enc := json.NewEncoder(outbuf)
 	enc.SetIndent("", "\t")
@@ -138,7 +103,7 @@ func writeConfigFile() {
 
 //Write list of servers to file
 func writeServerListFile() {
-	file, err := os.Create(serverConfig.ServerListFile)
+	file, err := os.Create(serverConfig.PathData.ServerListFile)
 
 	if err != nil {
 		log.Println(err)
@@ -167,7 +132,7 @@ func writeServerListFile() {
 //Write out a combined list of bans
 func writeCompositeBanlist() {
 
-	file, err := os.Create(serverConfig.CompositeBanFile)
+	file, err := os.Create(serverConfig.PathData.CompositeBanFile)
 
 	if err != nil {
 		log.Println(err)

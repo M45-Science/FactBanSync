@@ -14,6 +14,7 @@ func GetRedMew(url string) []string {
 		fmt.Println("Error:", err)
 	}
 
+	//This will eventually break, probably.
 	if resp.StatusCode == 200 {
 		if resp.Body != nil {
 			data, err := ioutil.ReadAll(resp.Body)

@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-const version = "0.0.1"
-
 func main() {
 	var runWizard bool
 
@@ -39,30 +37,46 @@ func main() {
 
 	//Logging
 	startLog()
-	log.Println(fmt.Sprintf("FactBanSync v%v", version))
+	log.Println(fmt.Sprintf("FactBanSync v%v", Version))
 
 	//Run a webserver, if requested
-	//TODO offer HTTPs with directions to make cert
-	if serverConfig.RunWebServer {
-		http.HandleFunc("/", handleFileRequest)
-		server := &http.Server{
-			Addr:         serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort),
-			ReadTimeout:  5 * time.Second,
-			WriteTimeout: 5 * time.Second,
-			TLSConfig:    &tls.Config{ServerName: serverConfig.DomainName},
+	exit := false
+	if serverConfig.WebServer.RunWebServer {
+		if serverConfig.PathData.FactorioBanFile == "" {
+			log.Println("No factorio banlist file specified in config file")
+			exit = true
 		}
-		go func(sc serverConfigData, serv *http.Server) {
-			err := serv.ListenAndServeTLS(sc.SSLCertFile, sc.SSLKeyFile)
-			if err != nil {
-				log.Println(err)
+		if serverConfig.WebServer.SSLCertFile == "" || serverConfig.WebServer.SSLKeyFile == "" {
+			log.Println("No SSL certificate or key file specified in config file")
+			exit = true
+		}
+		if serverConfig.WebServer.DomainName == "" {
+			log.Println("No domain name specified in config file")
+			exit = true
+		}
+		if !exit {
+			http.HandleFunc("/", handleFileRequest)
+			server := &http.Server{
+				Addr:         serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort),
+				ReadTimeout:  5 * time.Second,
+				WriteTimeout: 5 * time.Second,
+				TLSConfig:    &tls.Config{ServerName: serverConfig.WebServer.DomainName},
 			}
-		}(serverConfig, server)
-		log.Println("Web server started:")
-		log.Println(" https://" + serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName + ".gz")
-		log.Println(" https://" + serverConfig.DomainName + ":" + strconv.Itoa(serverConfig.SSLWebPort) + "/" + defaultFileWebName)
+			go func(sc serverConfigData, serv *http.Server) {
+				err := serv.ListenAndServeTLS(sc.WebServer.SSLCertFile, sc.WebServer.SSLKeyFile)
+				if err != nil {
+					log.Println(err)
+				}
+			}(serverConfig, server)
+			log.Println("Web server started:")
+			log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName + ".gz")
+			log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName)
+			log.Print()
+		} else {
+			log.Println("Web server not started.")
+		}
 	}
-
-	if serverConfig.FactorioBanFile != "" {
+	if serverConfig.PathData.FactorioBanFile != "" {
 		readServerBanList()
 	}
 	readServerListFile()

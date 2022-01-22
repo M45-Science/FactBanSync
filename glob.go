@@ -2,56 +2,53 @@ package main
 
 import (
 	"io/fs"
-	"os"
 	"sync"
 	"time"
 )
 
-//Server defaults
-var serverRunning = true
-var defaultListURL = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
-var timeFormat = time.RFC822Z
+const Version string = "0.0.2"
 
-const defaultName = "Default"
-const defaultBanFile = ""
-const defaultWebPort = 8008
-const defaultSSLWebPort = 8443
-const defaultMaxDownloadSize = 1024 * 1024 //mb
-const defaultDownloadTimeout = 10
+//Globals
+var (
+	serverRunning     = true
+	serverConfig      serverConfigData
+	serverList        serverListData
+	configPath        string
+	ourBanData        []banDataType
+	compositeBanData  []minBanDataType
+	cachedBanListGz   []byte
+	cachedBanList     []byte
+	cachedBanListLock sync.Mutex
+	initialStat       fs.FileInfo
+)
 
-//Default file paths
-const defaultConfigPath = "data/server-config.json"
-const defaultServerListFile = "data/server-list.json"
-const defaultRCONFile = "data/server-rcon.json"
-const defaultLogMonitorFile = "data/log-monitor.json"
-const defaultCompositeFile = "data/composite.json"
-const defaultFileWebName = "server-banlist.json"
-const defaultSSLKeyFile = "data/server.key"
-const defaultSSLCertFile = "data/server.crt"
+const (
+	defaultListURL         = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
+	timeFormat             = time.RFC822Z
+	defaultName            = "Default"
+	defaultBanFile         = ""
+	defaultSSLWebPort      = 8443
+	defaultMaxDownloadSize = 1024 * 1024 //mb
+	defaultDownloadTimeout = 10
 
-//Default directories
-const defaultDataDir = "data"
-const defaultLogDir = "data/logs"
-const defaultBanFileDir = "data/banCache"
+	//Default file paths
+	defaultConfigPath     = "data/server-config.json"
+	defaultServerListFile = "data/server-list.json"
+	defaultCompositeFile  = "data/composite.json"
+	defaultFileWebName    = "server-banlist.json"
+	defaultSSLKeyFile     = "data/server.key"
+	defaultSSLCertFile    = "data/server.crt"
 
-//Default delay times
-const defaultFetchBansMinutes = 15
-const defaultWatchSeconds = 10
-const defaultRefreshListHours = 12
+	//Default directories
+	defaultDataDir    = "data"
+	defaultLogDir     = "data/logs"
+	defaultBanFileDir = "data/banCache"
 
-//Max banlist size
-const defaultMaxBanListSize = 950
+	//Default delay times
+	defaultFetchBansMinutes = 15
+	defaultWatchSeconds     = 10
+	defaultRefreshListHours = 12
 
-//Global vars
-var serverConfig serverConfigData
-var serverList serverListData
-var configPath string
-var logDesc *os.File
-var ourBanData []banDataType
-var compositeBanData []minBanDataType
-var logsToMonitor []LogMonitorData
-var cachedBanListGz []byte
-var cachedBanList []byte
-var cachedBanListLock sync.Mutex
-
-var initialStat fs.FileInfo
+	//Max banlist size
+	defaultMaxBanListSize = 950
+)

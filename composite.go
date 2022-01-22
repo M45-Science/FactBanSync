@@ -26,8 +26,8 @@ func compositeBans() {
 	//Now add the bans from other servers
 	for _, server := range serverList.ServerList {
 		//Only if subscribed, and skip self
-		if server.Subscribed && server.Name != serverConfig.Name {
-			for _, ban := range server.BanList {
+		if server.LocalData.Subscribed && server.Name != serverConfig.Name {
+			for _, ban := range server.LocalData.BanList {
 				//Don't composite revoked bans
 				if !ban.Revoked {
 					found := false
@@ -38,7 +38,7 @@ func compositeBans() {
 							dupes++
 							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.Name)
 
-							if server.StripReasons {
+							if server.LocalData.StripReasons {
 								compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, "")
 							} else {
 								compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, ban.Reason)
@@ -50,7 +50,7 @@ func compositeBans() {
 							break
 						}
 					}
-					if server.StripReasons {
+					if server.LocalData.StripReasons {
 						ban.Reason = ""
 					}
 					//This isn't already in the list, so add it (avoid dupes)
@@ -96,10 +96,10 @@ func compositeBans() {
 	//Cut list to size, new entries are at the start
 	compBan := []banDataType{}
 	for bpos, ban := range compositeBanlist {
-		if bpos < serverConfig.MaxBanlistSize {
+		if bpos < serverConfig.ServerPrefs.MaxBanOutputSize {
 			compBan = append(compBan, ban)
 		} else {
-			log.Println("Banlist size (" + strconv.Itoa(serverConfig.MaxBanlistSize) + ") exceeded, truncating...")
+			log.Println("Banlist size (" + strconv.Itoa(serverConfig.ServerPrefs.MaxBanOutputSize) + ") exceeded, truncating...")
 			break
 		}
 	}

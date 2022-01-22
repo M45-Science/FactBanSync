@@ -22,8 +22,8 @@ func fetchBanLists() {
 		}
 		lDirty := 0
 		revoked := 0
-		if server.Subscribed {
-			oldList := server.BanList
+		if server.LocalData.Subscribed {
+			oldList := server.LocalData.BanList
 
 			data, err := fetchFile(server.Bans)
 			if err != nil {
@@ -65,13 +65,13 @@ func fetchBanLists() {
 					if len(names) > 0 {
 						for _, name := range names {
 							if name != "" {
-								for ipos, item := range server.BanList {
+								for ipos, item := range server.LocalData.BanList {
 									if item.UserName == name {
 										if item.Revoked {
 											log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
 
-											serverList.ServerList[spos].BanList[ipos].Revoked = false
-											serverList.ServerList[spos].BanList[ipos].Added = time.Now().Format(time.RFC3339)
+											serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
+											serverList.ServerList[spos].LocalData.BanList[ipos].Added = time.Now().Format(time.RFC3339)
 										}
 										found = true
 									}
@@ -79,7 +79,7 @@ func fetchBanLists() {
 								if !found {
 									gDirty++
 									lDirty++
-									serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
+									serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
 								}
 							}
 						}
@@ -92,7 +92,7 @@ func fetchBanLists() {
 					err = json.Unmarshal(data, &bans)
 
 					if err != nil {
-						//Ignore, just array of strings
+						fmt.Print("") //Remove annoying warning
 					}
 
 					//Deal with nested json
@@ -111,11 +111,11 @@ func fetchBanLists() {
 					for ipos, item := range bans {
 						if item.UserName != "" {
 							found := false
-							for _, ban := range server.BanList {
-								if ban.UserName == item.UserName && item.Revoked == false {
+							for _, ban := range server.LocalData.BanList {
+								if ban.UserName == item.UserName && !item.Revoked {
 									if item.Revoked {
 										log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
-										serverList.ServerList[spos].BanList[ipos].Revoked = false
+										serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
 									}
 									found = true
 								}
@@ -123,7 +123,7 @@ func fetchBanLists() {
 							if !found {
 								gDirty++
 								lDirty++
-								serverList.ServerList[spos].BanList = append(serverList.ServerList[spos].BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+								serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 							}
 						}
 					}
@@ -135,7 +135,7 @@ func fetchBanLists() {
 					count := 0
 					for ipos, item := range oldList {
 						found := false
-						for _, ban := range server.BanList {
+						for _, ban := range server.LocalData.BanList {
 							if ban.UserName == item.UserName {
 								found = true
 								break
@@ -151,7 +151,7 @@ func fetchBanLists() {
 							if oldLen > 0 {
 								log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
 							}
-							serverList.ServerList[spos].BanList[ipos].Revoked = true
+							serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
 						}
 					}
 				}
@@ -230,13 +230,13 @@ func updateServerList() {
 					}
 					if !foundl {
 						//New entry, subscribe automatically if chosen
-						if serverConfig.AutoSubscribe {
-							server.Subscribed = true
+						if serverConfig.ServerPrefs.AutoSubscribe {
+							server.LocalData.Subscribed = true
 						} else {
-							server.Subscribed = false
+							server.LocalData.Subscribed = false
 						}
 						//Add, datestamp
-						server.Added = time.Now().Format(timeFormat)
+						server.LocalData.Added = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						updated = true
 						log.Println("Added server: " + server.Name)
@@ -257,8 +257,8 @@ func updateServerList() {
 func fetchFile(url string) ([]byte, error) {
 
 	timeout := defaultDownloadTimeout * time.Second
-	if serverConfig.GetTimeoutSeconds > 0 {
-		timeout = (time.Duration(serverConfig.GetTimeoutSeconds) * time.Second)
+	if serverConfig.ServerPrefs.DownloadTimeoutSeconds > 0 {
+		timeout = (time.Duration(serverConfig.ServerPrefs.DownloadTimeoutSeconds) * time.Second)
 	}
 	c := &http.Client{
 		Timeout: timeout,
@@ -275,8 +275,8 @@ func fetchFile(url string) ([]byte, error) {
 	}
 
 	maxSize := int64(defaultMaxDownloadSize)
-	if serverConfig.GetSizeLimitBytes > 0 {
-		maxSize = serverConfig.GetSizeLimitBytes
+	if serverConfig.ServerPrefs.DownloadSizeLimitBytes > 0 {
+		maxSize = serverConfig.ServerPrefs.DownloadSizeLimitBytes
 	}
 	if resp.ContentLength > maxSize {
 		return []byte{}, errors.New("file too large")
@@ -297,7 +297,7 @@ func fetchFile(url string) ([]byte, error) {
 func watchBanFile() {
 	var err error
 
-	filePath := serverConfig.FactorioBanFile
+	filePath := serverConfig.PathData.FactorioBanFile
 	//Save current profile
 	if initialStat == nil {
 		initialStat, err = os.Stat(filePath)

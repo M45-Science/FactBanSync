@@ -21,21 +21,22 @@ func setupWizard() {
 	}
 	serverConfig.Name = communityName
 
-	fmt.Println("Run a HTTPS (SSL) webserver, to provide server-banlist.json? (Y/n)")
+	fmt.Println("You will need a certificate and key file for HTTPS.")
+	fmt.Println("Run a rate-limited, cached HTTPS (SSL) webserver, to provide server-banlist.json? (Y/n)")
 
 	var runSSLWebServer string
 	fmt.Scanln(&runSSLWebServer)
 	if runSSLWebServer == "" || runSSLWebServer == "y" || runSSLWebServer == "Y" {
-		serverConfig.RunWebServer = true
+		serverConfig.WebServer.RunWebServer = true
 
 		fmt.Println("HTTPS Web server port (8443): ")
 
 		var webPort string
 		fmt.Scanln(&webPort)
 		if webPort == "" {
-			serverConfig.SSLWebPort = defaultSSLWebPort
+			serverConfig.WebServer.SSLWebPort = defaultSSLWebPort
 		} else {
-			serverConfig.SSLWebPort, _ = strconv.Atoi(webPort)
+			serverConfig.WebServer.SSLWebPort, _ = strconv.Atoi(webPort)
 		}
 
 		fmt.Println("Domain name (REQUIRED): ")
@@ -45,20 +46,11 @@ func setupWizard() {
 		if domainName == "" {
 			domainName = "test.com"
 		}
-		serverConfig.DomainName = domainName
-
-		fmt.Println("You will need a certificate and key file for HTTPS. Put them in the data directory and put the paths in the config file. On most systems you can use the provided make-https-cert.sh script to generate self-signed certificates.")
-		fmt.Println("Would you like to (attempt) to auto-run the script at the end of the setup? (Y/n)")
-
-		var runMakeHttpsCert string
-		fmt.Scanln(&runMakeHttpsCert)
-		if runMakeHttpsCert == "Y" || runMakeHttpsCert == "y" || runMakeHttpsCert == "" {
-			makeHTTPs = true
-		}
+		serverConfig.WebServer.DomainName = domainName
 
 	} else {
-		serverConfig.SSLWebPort = 0
-		serverConfig.RunWebServer = false
+		serverConfig.WebServer.SSLWebPort = 0
+		serverConfig.WebServer.RunWebServer = false
 	}
 
 	fmt.Println("Auto-subscribe to new servers? (Y/n)")
@@ -67,9 +59,9 @@ func setupWizard() {
 	fmt.Scanln(&autoSubscribe)
 
 	if autoSubscribe == "N" || autoSubscribe == "n" {
-		serverConfig.AutoSubscribe = false
+		serverConfig.ServerPrefs.AutoSubscribe = false
 	} else {
-		serverConfig.AutoSubscribe = true
+		serverConfig.ServerPrefs.AutoSubscribe = true
 	}
 
 	fmt.Println("Require reason for bans? (y/N)")
@@ -78,9 +70,9 @@ func setupWizard() {
 	fmt.Scanln(&requireReason)
 
 	if requireReason == "Y" || requireReason == "y" {
-		serverConfig.RequireReason = true
+		serverConfig.ServerPrefs.RequireReason = true
 	} else {
-		serverConfig.RequireReason = false
+		serverConfig.ServerPrefs.RequireReason = false
 	}
 
 	fmt.Println("Strip ban reasons from public ban list? (y/N)")
@@ -89,9 +81,9 @@ func setupWizard() {
 	fmt.Scanln(&stripReasons)
 
 	if stripReasons == "Y" || stripReasons == "y" {
-		serverConfig.StripReasons = true
+		serverConfig.ServerPrefs.StripReasons = true
 	} else {
-		serverConfig.StripReasons = false
+		serverConfig.ServerPrefs.StripReasons = false
 	}
 
 	fmt.Println("How often do you want to refresh the list of servers (in hours)? (12)")
@@ -99,9 +91,9 @@ func setupWizard() {
 	var refreshListHours string
 	fmt.Scanln(&refreshListHours)
 	if refreshListHours == "" {
-		serverConfig.RefreshListHours = defaultRefreshListHours
+		serverConfig.ServerPrefs.RefreshListHours = defaultRefreshListHours
 	} else {
-		serverConfig.RefreshListHours, _ = strconv.Atoi(refreshListHours)
+		serverConfig.ServerPrefs.RefreshListHours, _ = strconv.Atoi(refreshListHours)
 	}
 
 	fmt.Println("How often do you want to fetch ban lists from server (in minutes)? (15)")
@@ -109,9 +101,9 @@ func setupWizard() {
 	var fetchBansMinutes string
 	fmt.Scanln(&fetchBansMinutes)
 	if fetchBansMinutes == "" {
-		serverConfig.FetchBansMinutes = defaultFetchBansMinutes
+		serverConfig.ServerPrefs.FetchBansMinutes = defaultFetchBansMinutes
 	} else {
-		serverConfig.FetchBansMinutes, _ = strconv.Atoi(fetchBansMinutes)
+		serverConfig.ServerPrefs.FetchBansMinutes, _ = strconv.Atoi(fetchBansMinutes)
 	}
 
 	writeConfigFile()

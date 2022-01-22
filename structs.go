@@ -3,34 +3,49 @@ package main
 //Our config data
 type serverConfigData struct {
 	Version string
+	Name    string
 	ListURL string
 
-	Name             string
-	DomainName       string
-	FactorioBanFile  string
-	ServerListFile   string
-	CompositeBanFile string
-	LogDir           string
-	BanCacheDir      string
-	MaxBanlistSize   int
+	PathData    filePathData
+	ServerPrefs serverPrefs
+	WebServer   webServerConfigData
+}
 
-	RunWebServer      bool
-	SSLWebPort        int
-	SSLKeyFile        string
-	SSLCertFile       string
-	GetTimeoutSeconds int
-	GetSizeLimitBytes int64
-
+type serverPrefs struct {
 	AutoSubscribe bool
+	RequireReason bool
+	StripReasons  bool
+
 	//RCONEnabled         bool
 	//LogMonitoring       bool
-	RequireReason bool
 	//RequireMultipleBans bool
-	StripReasons bool
+
+	MaxBanOutputSize int
 
 	FetchBansMinutes int
 	WatchFileSeconds int
 	RefreshListHours int
+
+	DownloadTimeoutSeconds int
+	DownloadSizeLimitBytes int64
+}
+
+type filePathData struct {
+	FactorioBanFile   string
+	FactorioWhitelist string
+	ServerListFile    string
+	CompositeBanFile  string
+	LogDir            string
+	BanCacheDir       string
+}
+
+type webServerConfigData struct {
+	RunWebServer         bool
+	DomainName           string
+	SSLWebPort           int
+	SSLKeyFile           string
+	SSLCertFile          string
+	MaxRequestsPerSecond int
 }
 
 //List of servers
@@ -41,16 +56,20 @@ type serverListData struct {
 
 //Server data
 type serverData struct {
-	Name     string
-	Bans     string
-	Trusts   string `json:",omitempty"`
-	Logs     string `json:",omitempty"`
-	Website  string `json:",omitempty"`
-	Discord  string `json:",omitempty"`
-	JsonGzip bool
-
-	Subscribed   bool
+	Name         string
+	Bans         string
+	Trusts       string `json:",omitempty"`
+	Logs         string `json:",omitempty"`
+	Website      string `json:",omitempty"`
+	Discord      string `json:",omitempty"`
+	JsonGzip     bool
 	UseRedScrape bool
+
+	LocalData localData
+}
+
+type localData struct {
+	Subscribed   bool
 	StripReasons bool
 	Added        string
 	BanList      []banDataType `json:"-"`

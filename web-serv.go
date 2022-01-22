@@ -61,7 +61,7 @@ func updateWebCache() {
 
 			name = item.UserName
 
-			if !serverConfig.StripReasons {
+			if !serverConfig.ServerPrefs.StripReasons {
 				reason = item.Reason
 			}
 
@@ -81,7 +81,7 @@ func updateWebCache() {
 	}
 
 	//Cache a normal and gzip version of the ban list
-	if serverConfig.RunWebServer {
+	if serverConfig.WebServer.RunWebServer {
 		cachedBanListLock.Lock()
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
