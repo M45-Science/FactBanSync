@@ -55,7 +55,13 @@ func startWebserver() {
 
 //Web server
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
-	defer time.Sleep(time.Millisecond * 100) //Max 10 requests per second
+
+	//Limit requests per second
+	delay := 1000000 / serverConfig.WebServer.MaxRequestsPerSecond
+	if delay < 1 {
+		delay = 1
+	}
+	defer time.Sleep(time.Duration(delay) * time.Microsecond)
 
 	//Cached gzip copy
 	if r.URL.Path == "/"+defaultFileWebName+".gz" {
