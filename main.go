@@ -15,7 +15,13 @@ func main() {
 	flag.BoolVar(&runWizard, "runWizard", false, "run the setup wizard")
 	var forceFetch bool
 	flag.BoolVar(&forceFetch, "forceFetch", false, "force startup fetching ban lists from remotes")
+	var verboseLogging bool
+	flag.BoolVar(&verboseLogging, "verboseLogging", false, "force enable verbose logging")
 	flag.Parse()
+
+	if verboseLogging {
+		serverConfig.ServerPrefs.VerboseLogging = true
+	}
 
 	//Make config file if requested
 	if makeConfig {
