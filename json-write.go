@@ -66,7 +66,7 @@ func makeDefaultConfigFile() {
 
 	serverConfig.ServerPrefs.AutoSubscribe = defaultAutoSubscribe
 	serverConfig.ServerPrefs.RequireReason = defaultRequireReason
-	serverConfig.ServerPrefs.MaxBanOutputSize = defaultMaxBanListSize
+	serverConfig.ServerPrefs.MaxBanOutputCount = defaultMaxBanOutputCount
 	serverConfig.ServerPrefs.FetchBansMinutes = defaultFetchBansMinutes
 	serverConfig.ServerPrefs.WatchFileSeconds = defaultWatchSeconds
 	serverConfig.ServerPrefs.RefreshListHours = defaultRefreshListHours

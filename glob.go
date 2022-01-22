@@ -53,7 +53,7 @@ const (
 	defaultRefreshListHours = 12
 
 	//Max banlist size
-	defaultMaxBanListSize = 10000
+	defaultMaxBanOutputCount = 10000
 
 	defaultVerboseLogging = false
 )

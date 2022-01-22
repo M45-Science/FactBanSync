@@ -16,10 +16,10 @@ type serverPrefs struct {
 	RequireReason bool
 	StripReasons  bool
 
-	MaxBanOutputSize int
-	WatchFileSeconds int
-	FetchBansMinutes int
-	RefreshListHours int
+	MaxBanOutputCount int
+	WatchFileSeconds  int
+	FetchBansMinutes  int
+	RefreshListHours  int
 
 	DownloadTimeoutSeconds int
 	DownloadSizeLimitKB    int64

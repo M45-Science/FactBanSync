@@ -103,10 +103,10 @@ func compositeBans() {
 	//Cut list to size, new entries are at the start
 	compBan := []banDataType{}
 	for bpos, ban := range compositeBanlist {
-		if bpos < serverConfig.ServerPrefs.MaxBanOutputSize {
+		if bpos < serverConfig.ServerPrefs.MaxBanOutputCount {
 			compBan = append(compBan, ban)
 		} else {
-			log.Println("Banlist size (" + strconv.Itoa(serverConfig.ServerPrefs.MaxBanOutputSize) + ") exceeded, truncating...")
+			log.Println("Banlist size (" + strconv.Itoa(serverConfig.ServerPrefs.MaxBanOutputCount) + ") exceeded, truncating...")
 			break
 		}
 	}
