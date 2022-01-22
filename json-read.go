@@ -99,7 +99,7 @@ func readConfigFile() {
 		}
 	} else {
 		//Make example config file, with reasonable defaults
-		fmt.Println("No config file found, generating defaults, saving to " + configPath)
+		fmt.Println("No config file found, generating defaults and saving to " + configPath)
 		os.Mkdir(defaultDataDir, 0755)
 		makeDefaultConfigFile()
 
@@ -111,6 +111,8 @@ func readConfigFile() {
 		if input == "y" || input == "Y" || input == "" {
 			setupWizard()
 			return
+		} else {
+			log.Println("Please edit the config file, or use --runWizard")
 		}
 
 		log.Println("Exiting...")
