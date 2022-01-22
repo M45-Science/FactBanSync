@@ -50,11 +50,16 @@ func compositeBans() {
 							break
 						}
 					}
+					//Strip ban reasons if set to
 					if server.LocalData.StripReasons {
 						ban.Reason = ""
 					}
 					//This isn't already in the list, so add it (avoid dupes)
 					if !found {
+						//If we require a reason, and there isn't one... skip
+						if serverConfig.ServerPrefs.RequireReason && ban.Reason == "" {
+							continue
+						}
 						compositeBanlist = append(compositeBanlist, banDataType{
 							UserName: ban.UserName,
 							Sources:  []string{server.CommunityName},
