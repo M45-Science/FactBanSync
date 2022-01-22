@@ -38,9 +38,7 @@ func main() {
 
 	//Logging
 	startLog()
-	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println(fmt.Sprintf("FactBanSync v%v", ProgVersion))
-	}
+	log.Println(fmt.Sprintf("FactBanSync v%v", ProgVersion))
 
 	//Run a webserver, if requested
 	exit := false
