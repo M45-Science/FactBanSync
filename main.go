@@ -19,10 +19,6 @@ func main() {
 	flag.BoolVar(&verboseLogging, "verboseLogging", false, "force enable verbose logging")
 	flag.Parse()
 
-	if verboseLogging {
-		serverConfig.ServerPrefs.VerboseLogging = true
-	}
-
 	//Make config file if requested
 	if makeConfig {
 		makeDefaultConfigFile()
@@ -35,6 +31,9 @@ func main() {
 	}
 
 	readConfigFile()
+	if verboseLogging {
+		serverConfig.ServerPrefs.VerboseLogging = true
+	}
 	writeConfigFile() //Clean up
 
 	//Logging
