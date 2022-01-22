@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -46,13 +45,13 @@ func fetchBanLists() {
 					if redMewNames != nil {
 						for _, red := range redMewNames {
 							rLen := len(red)
-							if rLen > 0 && rLen < 48 {
+							if rLen > 0 && rLen < 128 {
 								names = append(names, red)
 								count++
 							}
 						}
 						if serverConfig.ServerPrefs.VerboseLogging {
-							fmt.Println("RedMew: " + strconv.Itoa(count) + " names scraped.")
+							log.Printf("Redmew: %v names scraped.\n", count)
 						}
 					}
 				} else {
@@ -216,24 +215,30 @@ func updateServerList() {
 								serverList.ServerList[ipos].BanListURL = server.BanListURL
 								updated = true
 							}
-							if serverList.ServerList[ipos].DiscordURL != server.DiscordURL {
-								serverList.ServerList[ipos].DiscordURL = server.DiscordURL
-								updated = true
-							}
-							if serverList.ServerList[ipos].WebsiteURL != server.WebsiteURL {
-								serverList.ServerList[ipos].WebsiteURL = server.WebsiteURL
+							if serverList.ServerList[ipos].WhiteListURL != server.WhiteListURL {
+								serverList.ServerList[ipos].WhiteListURL = server.WhiteListURL
 								updated = true
 							}
 							if serverList.ServerList[ipos].LogFileURL != server.LogFileURL {
 								serverList.ServerList[ipos].LogFileURL = server.LogFileURL
 								updated = true
 							}
+							if serverList.ServerList[ipos].WebsiteURL != server.WebsiteURL {
+								serverList.ServerList[ipos].WebsiteURL = server.WebsiteURL
+								updated = true
+							}
+							if serverList.ServerList[ipos].DiscordURL != server.DiscordURL {
+								serverList.ServerList[ipos].DiscordURL = server.DiscordURL
+								updated = true
+							}
 							if serverList.ServerList[ipos].JsonGzip != server.JsonGzip {
 								serverList.ServerList[ipos].JsonGzip = server.JsonGzip
 								updated = true
 							}
-							//Add
-
+							if serverList.ServerList[ipos].UseRedScrape != server.UseRedScrape {
+								serverList.ServerList[ipos].UseRedScrape = server.UseRedScrape
+								updated = true
+							}
 						}
 					}
 					if !foundl {
@@ -247,7 +252,7 @@ func updateServerList() {
 						server.LocalData.Added = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						updated = true
-						log.Println("Added: " + server.CommunityName)
+						log.Println("Found new community: " + server.CommunityName)
 						writeServerListFile()
 					}
 				}
@@ -297,7 +302,7 @@ func fetchFile(url string) ([]byte, error) {
 
 	dlSize := len(output)
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Fetched file: " + url + " (" + strconv.Itoa(dlSize/1024) + " kb)")
+		log.Printf("Fetched file: %s (%d kb)\n", url, dlSize/1024)
 	}
 
 	return output, err

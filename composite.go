@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"sort"
-	"strconv"
 	"time"
 )
 
@@ -73,7 +72,7 @@ func compositeBans() {
 	}
 
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans. Overlap: " + strconv.Itoa(dupes))
+		log.Printf("Composited %v bans, %v duplicates.\n", len(compositeBanlist), dupes)
 	}
 
 	//Sort by time added, new to old
@@ -106,12 +105,12 @@ func compositeBans() {
 		if bpos < serverConfig.ServerPrefs.MaxBanOutputCount {
 			compBan = append(compBan, ban)
 		} else {
-			log.Println("Banlist size (" + strconv.Itoa(serverConfig.ServerPrefs.MaxBanOutputCount) + ") exceeded, truncating...")
+			log.Printf(" Banlist max size exceeded (%v items), truncating...\n", serverConfig.ServerPrefs.MaxBanOutputCount)
 			break
 		}
 	}
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Composite banlist updated: " + strconv.Itoa(len(compBan)) + " bans")
+		log.Printf("Composite banlist updated: %v items.\n", len(compBan))
 	}
 
 	var condList []minBanDataType

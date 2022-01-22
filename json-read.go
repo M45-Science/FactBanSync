@@ -99,7 +99,7 @@ func readConfigFile() {
 		}
 	} else {
 		//Make example config file, with reasonable defaults
-		fmt.Println("No config file found, generating defaults and saving to " + configPath)
+		log.Println("No config file found, generating defaults and saving to " + configPath)
 		os.Mkdir(defaultDataDir, 0755)
 		makeDefaultConfigFile()
 
@@ -170,7 +170,7 @@ func readServerBanList() {
 	ourBanData = bData
 
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
+		log.Printf("Read %v bans from banlist.\n", len(bData))
 	}
 	updateWebCache()
 	compositeBans()

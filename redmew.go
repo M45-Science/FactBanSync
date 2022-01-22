@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -11,7 +11,7 @@ func GetRedMew(url string) []string {
 	resp, err := http.Get(url)
 
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
 	}
 
 	//This will eventually break, probably -- 1/2022
@@ -19,7 +19,7 @@ func GetRedMew(url string) []string {
 		if resp.Body != nil {
 			data, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				fmt.Println("Error:", err)
+				log.Println("Error:", err)
 			}
 			dstr := string(data)
 			spltStr := strings.SplitAfter(dstr, "<ul>")
@@ -40,7 +40,7 @@ func GetRedMew(url string) []string {
 			return lines
 		}
 	} else {
-		fmt.Println("Error:", resp.StatusCode)
+		log.Println("Error:", resp.StatusCode)
 	}
 
 	return nil

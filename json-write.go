@@ -3,11 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 )
 
 /* Lots of replicated code, but I'd rather have the duplicate code than a single overly complex function */
@@ -21,7 +19,7 @@ func saveBanLists() {
 		}
 		if server.LocalData.Subscribed {
 			if serverConfig.ServerPrefs.VerboseLogging {
-				log.Println("Saving ban list for server: " + server.CommunityName + " (" + strconv.Itoa(len(server.LocalData.BanList)) + " bans)")
+				log.Printf("Saving bans list for community %v, %v bans.\n", server.CommunityName, len(server.LocalData.BanList))
 			}
 
 			outbuf := new(bytes.Buffer)
@@ -105,7 +103,7 @@ func writeConfigFile() {
 	}
 
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Wrote config file: " + fmt.Sprintf("%v", wrote) + "b")
+		log.Printf("Wrote config file: %v bytes\n", wrote)
 	}
 
 }
@@ -136,7 +134,7 @@ func writeServerListFile() {
 		os.Exit(1)
 	}
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Print("Wrote server list file: " + fmt.Sprintf("%v", wrote) + " bytes")
+		log.Printf("Wrote server list file:  %v bytes\n", wrote)
 	}
 }
 
@@ -168,6 +166,6 @@ func writeCompositeBanlist() {
 	}
 
 	if serverConfig.ServerPrefs.VerboseLogging {
-		log.Println("Wrote composite banlist of " + fmt.Sprintf("%v", len(compositeBanData)) + " items, " + fmt.Sprintf("%v", wrote/1024) + " kb")
+		log.Printf("Wrote composite banlist of %v items, %v kb.\n", len(compositeBanData), wrote/1024)
 	}
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 )
 
@@ -34,7 +33,7 @@ func main() {
 
 	//Logging
 	startLog()
-	log.Println(fmt.Sprintf("FactBanSync v%v", ProgVersion))
+	log.Printf("FactBanSync v%v\n", ProgVersion)
 
 	//Read banlist
 	if serverConfig.PathData.FactorioBanFile != "" {

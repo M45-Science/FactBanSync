@@ -44,8 +44,8 @@ func startWebserver() {
 			}(serverConfig, server)
 			if serverConfig.ServerPrefs.VerboseLogging {
 				log.Println("Web server started:")
-				log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName + ".gz")
-				log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName)
+				log.Printf("https://%s:%d/%s.gz\n", serverConfig.WebServer.DomainName, serverConfig.WebServer.SSLWebPort, defaultFileWebName)
+				log.Printf("https://%s:%d/%s\n", serverConfig.WebServer.DomainName, serverConfig.WebServer.SSLWebPort, defaultFileWebName)
 			}
 		} else {
 			log.Println("Web server not started.")
@@ -91,14 +91,14 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		//Not found
 		w.WriteHeader(http.StatusNotFound)
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
-		fmt.Fprintf(w, "404: File not found")
+		fmt.Fprintf(w, "404: File not found\n")
 	}
 }
 
 func noDataReply(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
-	fmt.Fprintf(w, "No ban data")
+	fmt.Fprintf(w, "No ban data\n")
 }
 
 func updateWebCache() {
@@ -135,7 +135,7 @@ func updateWebCache() {
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
 		if serverConfig.ServerPrefs.VerboseLogging {
-			log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+			log.Printf("Cached response: json: %v gz: %v (bytes)\n", len(cachedBanList), len(cachedBanListGz))
 		}
 		cachedBanListLock.Unlock()
 	}
