@@ -85,7 +85,9 @@ func updateWebCache() {
 		cachedBanListLock.Lock()
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
-		log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Println("Cached response: " + fmt.Sprintf("%v", len(cachedBanList)) + " json / " + fmt.Sprintf("%v", len(cachedBanListGz)) + " gz")
+		}
 		cachedBanListLock.Unlock()
 	}
 }

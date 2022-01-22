@@ -15,7 +15,7 @@ func compositeBans() {
 
 		compositeBanlist = append(compositeBanlist, banDataType{
 			UserName: ban.UserName,
-			Sources:  []string{serverConfig.Name},
+			Sources:  []string{serverConfig.CommunityName},
 			Reasons:  []string{ban.Reason},
 			Revokes:  []bool{ban.Revoked},
 			Adds:     []string{ban.Added}})
@@ -26,7 +26,7 @@ func compositeBans() {
 	//Now add the bans from other servers
 	for _, server := range serverList.ServerList {
 		//Only if subscribed, and skip self
-		if server.LocalData.Subscribed && server.Name != serverConfig.Name {
+		if server.LocalData.Subscribed && server.CommunityName != serverConfig.CommunityName {
 			for _, ban := range server.LocalData.BanList {
 				//Don't composite revoked bans
 				if !ban.Revoked {
@@ -36,7 +36,7 @@ func compositeBans() {
 						if iban.UserName == ban.UserName {
 							found = true
 							dupes++
-							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.Name)
+							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.CommunityName)
 
 							if server.LocalData.StripReasons {
 								compositeBanlist[ipos].Reasons = append(compositeBanlist[ipos].Reasons, "")
@@ -57,7 +57,7 @@ func compositeBans() {
 					if !found {
 						compositeBanlist = append(compositeBanlist, banDataType{
 							UserName: ban.UserName,
-							Sources:  []string{server.Name},
+							Sources:  []string{server.CommunityName},
 							Reasons:  []string{ban.Reason},
 							Revokes:  []bool{ban.Revoked},
 							Adds:     []string{ban.Added}})
@@ -67,7 +67,9 @@ func compositeBans() {
 		}
 	}
 
-	log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans. Overlap: " + strconv.Itoa(dupes))
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Composited " + strconv.Itoa(len(compositeBanlist)) + " bans. Overlap: " + strconv.Itoa(dupes))
+	}
 
 	//Sort by time added, new to old
 	sort.Slice(compositeBanlist, func(i, j int) bool {
@@ -103,10 +105,12 @@ func compositeBans() {
 			break
 		}
 	}
-	log.Println("Composite banlist updated: " + strconv.Itoa(len(compBan)) + " bans")
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Composite banlist updated: " + strconv.Itoa(len(compBan)) + " bans")
+	}
 
 	var condList []minBanDataType
-	//Minimize and output as a Factorio-friendly list
+	//output as a Factorio-friendly list
 	for _, ban := range compBan {
 		if !ban.Revoked {
 			reasonList := ""

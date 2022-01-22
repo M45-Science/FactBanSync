@@ -17,7 +17,7 @@ import (
 func fetchBanLists() {
 	gDirty := 0
 	for spos, server := range serverList.ServerList {
-		if server.Name == serverConfig.Name {
+		if server.CommunityName == serverConfig.CommunityName {
 			continue
 		}
 		lDirty := 0
@@ -25,7 +25,7 @@ func fetchBanLists() {
 		if server.LocalData.Subscribed {
 			oldList := server.LocalData.BanList
 
-			data, err := fetchFile(server.Bans)
+			data, err := fetchFile(server.BanListURL)
 			if err != nil {
 				log.Println("Error updating ban list: " + err.Error())
 				continue
@@ -33,12 +33,14 @@ func fetchBanLists() {
 			if len(data) > 0 {
 
 				var names []string
-				if server.Name == "RedMew" {
+				if server.CommunityName == "RedMew" {
 					count := 0
 					var redMewNames []string
 					if server.UseRedScrape {
-						log.Println("Scraping RedMew.")
-						redMewNames = GetRedMew(server.Bans)
+						if serverConfig.ServerPrefs.VerboseLogging {
+							log.Println("Scraping RedMew.")
+						}
+						redMewNames = GetRedMew(server.BanListURL)
 					}
 
 					if redMewNames != nil {
@@ -68,7 +70,9 @@ func fetchBanLists() {
 								for ipos, item := range server.LocalData.BanList {
 									if item.UserName == name {
 										if item.Revoked {
-											log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+											if serverConfig.ServerPrefs.VerboseLogging {
+												log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
+											}
 
 											serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
 											serverList.ServerList[spos].LocalData.BanList[ipos].Added = time.Now().Format(time.RFC3339)
@@ -114,7 +118,9 @@ func fetchBanLists() {
 							for _, ban := range server.LocalData.BanList {
 								if ban.UserName == item.UserName && !item.Revoked {
 									if item.Revoked {
-										log.Println(server.Name + ": Revoked ban was reinstated: " + item.UserName)
+										if serverConfig.ServerPrefs.VerboseLogging {
+											log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
+										}
 										serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
 									}
 									found = true
@@ -145,11 +151,15 @@ func fetchBanLists() {
 							count++
 							revoked++
 							if oldLen > 30 && count > threshold {
-								log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
+								if serverConfig.ServerPrefs.VerboseLogging {
+									log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
+								}
 								oldLen = 0
 							}
 							if oldLen > 0 {
-								log.Println(server.Name + ": Ban for " + item.UserName + " was revoked")
+								if serverConfig.ServerPrefs.VerboseLogging {
+									log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
+								}
 							}
 							serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
 						}
@@ -158,10 +168,10 @@ func fetchBanLists() {
 
 			}
 			if lDirty > 0 {
-				log.Printf("Found %v new bans for %v\n", lDirty, server.Name)
+				log.Printf("Found %v new bans for %v\n", lDirty, server.CommunityName)
 			}
 			if revoked > 0 {
-				log.Printf("Found %v revoked bans for %v\n", revoked, server.Name)
+				log.Printf("Found %v revoked bans for %v\n", revoked, server.CommunityName)
 			}
 
 		}
@@ -175,8 +185,10 @@ func fetchBanLists() {
 func updateServerList() {
 
 	//Update server list
-	log.Println("Updating server list")
-	data, err := fetchFile(serverConfig.ListURL)
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Updating server list")
+	}
+	data, err := fetchFile(serverConfig.ServerListURL)
 	if err != nil {
 		log.Println("Error updating server list: " + err.Error())
 	}
@@ -185,13 +197,6 @@ func updateServerList() {
 	if len(data) > 0 {
 		var sList serverListData
 
-		//handle 404 error (TODO: check headers)
-		lData := strings.ToLower(string(data))
-		if strings.Contains(lData, "404: not found") {
-			log.Println("Error updating server list: 404: Not Found")
-			return
-		}
-
 		//Decode json
 		err = json.Unmarshal([]byte(data), &sList)
 		if err == nil {
@@ -199,32 +204,33 @@ func updateServerList() {
 			//Check the new data against our current list
 			for _, server := range sList.ServerList {
 				foundl := false
-				if server.Name != "" && server.Bans != "" {
+				if server.CommunityName != "" && server.BanListURL != "" {
 					for ipos, s := range serverList.ServerList {
 						//Found existing entry
-						if s.Name == server.Name {
+						if s.CommunityName == server.CommunityName {
 							foundl = true
 
-							if serverList.ServerList[ipos].Bans != server.Bans {
-								serverList.ServerList[ipos].Bans = server.Bans
+							if serverList.ServerList[ipos].BanListURL != server.BanListURL {
+								serverList.ServerList[ipos].BanListURL = server.BanListURL
 								updated = true
 							}
-							if serverList.ServerList[ipos].Discord != server.Discord {
-								serverList.ServerList[ipos].Discord = server.Discord
+							if serverList.ServerList[ipos].DiscordURL != server.DiscordURL {
+								serverList.ServerList[ipos].DiscordURL = server.DiscordURL
 								updated = true
 							}
-							if serverList.ServerList[ipos].Website != server.Website {
-								serverList.ServerList[ipos].Website = server.Website
+							if serverList.ServerList[ipos].WebsiteURL != server.WebsiteURL {
+								serverList.ServerList[ipos].WebsiteURL = server.WebsiteURL
 								updated = true
 							}
-							if serverList.ServerList[ipos].Logs != server.Logs {
-								serverList.ServerList[ipos].Logs = server.Logs
+							if serverList.ServerList[ipos].LogFileURL != server.LogFileURL {
+								serverList.ServerList[ipos].LogFileURL = server.LogFileURL
 								updated = true
 							}
 							if serverList.ServerList[ipos].JsonGzip != server.JsonGzip {
 								serverList.ServerList[ipos].JsonGzip = server.JsonGzip
 								updated = true
 							}
+							//Add
 
 						}
 					}
@@ -239,7 +245,7 @@ func updateServerList() {
 						server.LocalData.Added = time.Now().Format(timeFormat)
 						serverList.ServerList = append(serverList.ServerList, server)
 						updated = true
-						log.Println("Added server: " + server.Name)
+						log.Println("Added: " + server.CommunityName)
 						writeServerListFile()
 					}
 				}
@@ -256,7 +262,7 @@ func updateServerList() {
 //Download file to byte array
 func fetchFile(url string) ([]byte, error) {
 
-	timeout := defaultDownloadTimeout * time.Second
+	timeout := (time.Duration(serverConfig.ServerPrefs.DownloadTimeoutSeconds) * time.Second)
 	if serverConfig.ServerPrefs.DownloadTimeoutSeconds > 0 {
 		timeout = (time.Duration(serverConfig.ServerPrefs.DownloadTimeoutSeconds) * time.Second)
 	}
@@ -274,9 +280,9 @@ func fetchFile(url string) ([]byte, error) {
 		return []byte{}, errors.New("HTTP Error: " + resp.Status)
 	}
 
-	maxSize := int64(defaultMaxDownloadSize)
-	if serverConfig.ServerPrefs.DownloadSizeLimitBytes > 0 {
-		maxSize = serverConfig.ServerPrefs.DownloadSizeLimitBytes
+	maxSize := int64(serverConfig.ServerPrefs.DownloadSizeLimitKB * 1024)
+	if serverConfig.ServerPrefs.DownloadSizeLimitKB > 0 {
+		maxSize = serverConfig.ServerPrefs.DownloadSizeLimitKB * 1024
 	}
 	if resp.ContentLength > maxSize {
 		return []byte{}, errors.New("file too large")
@@ -288,7 +294,9 @@ func fetchFile(url string) ([]byte, error) {
 	}
 
 	dlSize := len(output)
-	log.Println("Fetched file: " + url + " (" + strconv.Itoa(dlSize/1024) + " kb)")
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Fetched file: " + url + " (" + strconv.Itoa(dlSize/1024) + " kb)")
+	}
 
 	return output, err
 }
@@ -317,7 +325,9 @@ func watchBanFile() {
 
 		//Detect file change
 		if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
-			log.Println("watchBanFile: file changed")
+			if serverConfig.ServerPrefs.VerboseLogging {
+				log.Println("watchBanFile: file changed")
+			}
 			readServerBanList() //Reload ban list
 			updateWebCache()    //Update web cache
 			compositeBans()     //Update composite ban list

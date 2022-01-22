@@ -2,9 +2,9 @@ package main
 
 //Our config data
 type serverConfigData struct {
-	Version string
-	Name    string
-	ListURL string
+	Version       string
+	CommunityName string
+	ServerListURL string
 
 	PathData    filePathData
 	ServerPrefs serverPrefs
@@ -16,18 +16,15 @@ type serverPrefs struct {
 	RequireReason bool
 	StripReasons  bool
 
-	//RCONEnabled         bool
-	//LogMonitoring       bool
-	//RequireMultipleBans bool
-
 	MaxBanOutputSize int
-
-	FetchBansMinutes int
 	WatchFileSeconds int
+	FetchBansMinutes int
 	RefreshListHours int
 
 	DownloadTimeoutSeconds int
-	DownloadSizeLimitBytes int64
+	DownloadSizeLimitKB    int64
+
+	VerboseLogging bool
 }
 
 type filePathData struct {
@@ -56,14 +53,14 @@ type serverListData struct {
 
 //Server data
 type serverData struct {
-	Name         string
-	Bans         string
-	Trusts       string `json:",omitempty"`
-	Logs         string `json:",omitempty"`
-	Website      string `json:",omitempty"`
-	Discord      string `json:",omitempty"`
-	JsonGzip     bool
-	UseRedScrape bool
+	CommunityName string `json:"Name"`
+	BanListURL    string `json:"Bans"`
+	WhiteListURL  string `json:"Trusts,omitempty"`
+	LogFileURL    string `json:"Logs,omitempty"`
+	WebsiteURL    string `json:"Website,omitempty"`
+	DiscordURL    string `json:"Discord,omitempty"`
+	JsonGzip      bool
+	UseRedScrape  bool
 
 	LocalData localData
 }

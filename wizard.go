@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"strconv"
 )
 
 func setupWizard() {
 	makeDefaultConfigFile()
-	makeHTTPs := false
 
 	fmt.Println("Pressing enter on a question will accept the default value.")
 	fmt.Println("Community or server name: (Used to skip ourselves in the server list)")
@@ -17,16 +15,16 @@ func setupWizard() {
 	var communityName string
 	fmt.Scanln(&communityName)
 	if communityName == "" {
-		communityName = defaultName
+		communityName = defaultCommunityName
 	}
-	serverConfig.Name = communityName
+	serverConfig.CommunityName = communityName
 
 	fmt.Println("You will need a certificate and key file for HTTPS.")
-	fmt.Println("Run a rate-limited, cached HTTPS (SSL) webserver, to provide server-banlist.json? (Y/n)")
+	fmt.Println("Run a rate-limited, cached HTTPS (SSL) webserver, to provide server-banlist.json? (y/N)")
 
 	var runSSLWebServer string
 	fmt.Scanln(&runSSLWebServer)
-	if runSSLWebServer == "" || runSSLWebServer == "y" || runSSLWebServer == "Y" {
+	if runSSLWebServer == "y" || runSSLWebServer == "Y" {
 		serverConfig.WebServer.RunWebServer = true
 
 		fmt.Println("HTTPS Web server port (8443): ")
@@ -107,19 +105,12 @@ func setupWizard() {
 	}
 
 	writeConfigFile()
-	fmt.Println("Config file written to : " + configPath + ", please add paths to your banlist file and check over the settings.")
+	fmt.Println("Config file written to : " + configPath + ", please add paths to your banlist file (and HTTPS cert/key if needed) and check over the settings.")
 
-	if makeHTTPs {
-		fmt.Println("Running make-https-cert.sh script...")
+	fmt.Println("Press enter to exit.")
+	var exit string
+	fmt.Scanln(&exit)
 
-		path, _ := os.Getwd()
-		os.Chdir(path)
-		cmd := exec.Command("/bin/bash", "make-https-cert.sh")
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		_ = cmd.Run() // add error checking
-	}
 	os.Exit(1)
 
 }

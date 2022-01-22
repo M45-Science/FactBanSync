@@ -10,14 +10,14 @@ import (
 	"time"
 )
 
-/* Lots of replicated code, but I'd rather have the duplicate code than a single overly complex function */
+/* Lots of dupe code, but I'd rather have the duplicate code than a single overly complex function */
 
 func readBanCache() {
 	for spos, server := range serverList.ServerList {
-		if server.Name == serverConfig.Name {
+		if server.CommunityName == serverConfig.CommunityName {
 			continue
 		}
-		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(spos, server.Name)
+		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(spos, server.CommunityName)
 	}
 }
 
@@ -85,7 +85,7 @@ func readConfigFile() {
 		}
 
 		//Let user know further config is required
-		if serverConfig.Name == "Default" {
+		if serverConfig.CommunityName == "Default" {
 			log.Println("Please change ServerName in the config file, or use --runWizard")
 			os.Exit(1)
 		}
@@ -167,7 +167,9 @@ func readServerBanList() {
 
 	ourBanData = bData
 
-	log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println("Read " + fmt.Sprintf("%v", len(bData)) + " bans from banlist")
+	}
 	updateWebCache()
 	compositeBans()
 }

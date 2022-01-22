@@ -30,6 +30,7 @@ func main() {
 
 	if runWizard {
 		setupWizard()
+		return
 	}
 
 	readConfigFile()
@@ -37,7 +38,9 @@ func main() {
 
 	//Logging
 	startLog()
-	log.Println(fmt.Sprintf("FactBanSync v%v", Version))
+	if serverConfig.ServerPrefs.VerboseLogging {
+		log.Println(fmt.Sprintf("FactBanSync v%v", ProgVersion))
+	}
 
 	//Run a webserver, if requested
 	exit := false
@@ -68,14 +71,17 @@ func main() {
 					log.Println(err)
 				}
 			}(serverConfig, server)
-			log.Println("Web server started:")
-			log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName + ".gz")
-			log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName)
-			log.Print()
+			if serverConfig.ServerPrefs.VerboseLogging {
+				log.Println("Web server started:")
+				log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName + ".gz")
+				log.Println(" https://" + serverConfig.WebServer.DomainName + ":" + strconv.Itoa(serverConfig.WebServer.SSLWebPort) + "/" + defaultFileWebName)
+			}
 		} else {
 			log.Println("Web server not started.")
 		}
 	}
+
+	//Read banlist
 	if serverConfig.PathData.FactorioBanFile != "" {
 		readServerBanList()
 	}

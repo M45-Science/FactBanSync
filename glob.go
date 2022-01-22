@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const Version string = "0.0.2"
+const ProgVersion string = "0.0.2"
 
 //Globals
 var (
@@ -23,26 +23,29 @@ var (
 )
 
 const (
-	defaultListURL         = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
-	timeFormat             = time.RFC822Z
-	defaultName            = "Default"
-	defaultBanFile         = ""
-	defaultSSLWebPort      = 8443
-	defaultMaxDownloadSize = 1024 * 1024 //mb
-	defaultDownloadTimeout = 10
+	timeFormat           = time.RFC822Z
+	defaultListURL       = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
+	defaultCommunityName = "Default"
 
-	//Default file paths
+	defaultSSLWebPort             = 8443
+	defaultDownloadSizeLimitKB    = 1024 //1MB
+	defaultDownloadTimeoutSeconds = 10
+	defaultMaxReqestsPerSecond    = 10
+	defaultRunWebServer           = false
+	defaultAutoSubscribe          = true
+	defaultRequireReason          = false
+
+	//PathData
+	defaultBanFile        = "../factorio/server-banlist.changeme"
 	defaultConfigPath     = "data/server-config.json"
 	defaultServerListFile = "data/server-list.json"
 	defaultCompositeFile  = "data/composite.json"
 	defaultFileWebName    = "server-banlist.json"
 	defaultSSLKeyFile     = "data/server.key"
 	defaultSSLCertFile    = "data/server.crt"
-
-	//Default directories
-	defaultDataDir    = "data"
-	defaultLogDir     = "data/logs"
-	defaultBanFileDir = "data/banCache"
+	defaultDataDir        = "data"
+	defaultLogDir         = "data/logs"
+	defaultBanFileDir     = "data/banCache"
 
 	//Default delay times
 	defaultFetchBansMinutes = 15
@@ -50,5 +53,7 @@ const (
 	defaultRefreshListHours = 12
 
 	//Max banlist size
-	defaultMaxBanListSize = 950
+	defaultMaxBanListSize = 10000
+
+	defaultVerboseLogging = false
 )
