@@ -16,10 +16,13 @@ func mainLoop() {
 
 			fetchBanLists()
 		}
-		if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
-			LastWatch = time.Now()
-			if serverConfig.PathData.FactorioBanFile != "" {
-				watchBanFile()
+		//Don't run if no file specificed
+		if serverConfig.PathData.FactorioBanFile != "" {
+			if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
+				LastWatch = time.Now()
+				if serverConfig.PathData.FactorioBanFile != "" {
+					watchBanFile()
+				}
 			}
 		}
 		if time.Since(LastRefresh).Hours() >= float64(serverConfig.ServerPrefs.RefreshListHours) {
