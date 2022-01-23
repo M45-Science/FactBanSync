@@ -17,7 +17,7 @@ func mainLoop() {
 			fetchBanLists()
 		}
 		//Don't run if no file specificed
-		if serverConfig.PathData.FactorioBanFile != "" || serverConfig.PathData.FactorioBanFile == defaultBanFile {
+		if serverConfig.PathData.FactorioBanFile == "" && serverConfig.PathData.FactorioBanFile != defaultBanFile {
 			if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
 				LastWatch = time.Now()
 				if serverConfig.PathData.FactorioBanFile != "" {
