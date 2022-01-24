@@ -1,0 +1,251 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "/home/dist/github/FactBanSync",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2022-01-23 22:12:09",
+            "filesum": 31,
+            "codesum": 11162,
+            "commentsum": 109,
+            "blanksum": 321,
+            "statistics": {
+                ".md": {
+                    "code": 39,
+                    "comment": 8,
+                    "blank": 1
+                },
+                ".go": {
+                    "code": 1121,
+                    "comment": 97,
+                    "blank": 293
+                },
+                "": {
+                    "code": 24,
+                    "comment": 1,
+                    "blank": 4
+                },
+                ".mod": {
+                    "code": 3,
+                    "comment": 0,
+                    "blank": 2
+                },
+                ".sh": {
+                    "code": 1,
+                    "comment": 1,
+                    "blank": 0
+                },
+                ".sum": {
+                    "code": 2,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".json": {
+                    "code": 9830,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".yml": {
+                    "code": 105,
+                    "comment": 2,
+                    "blank": 21
+                },
+                ".log": {
+                    "code": 37,
+                    "comment": 0,
+                    "blank": 0
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 2,
+                    "code": 15,
+                    "comment": 0,
+                    "filename": ".github/workflows/build-linux64.yml"
+                },
+                {
+                    "blank": 10,
+                    "code": 60,
+                    "comment": 2,
+                    "filename": ".github/workflows/codeql-analysis.yml"
+                },
+                {
+                    "blank": 6,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": ".github/workflows/go.yml"
+                },
+                {
+                    "blank": 3,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": ".github/workflows/report.yml"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 17,
+                    "code": 109,
+                    "comment": 12,
+                    "filename": "composite.go"
+                },
+                {
+                    "blank": 0,
+                    "code": 3092,
+                    "comment": 0,
+                    "filename": "data/banCache/Comfy.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 2362,
+                    "comment": 0,
+                    "filename": "data/banCache/RedMew.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 4298,
+                    "comment": 0,
+                    "filename": "data/composite.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 37,
+                    "comment": 0,
+                    "filename": "data/logs/2022-01-22.log"
+                },
+                {
+                    "blank": 0,
+                    "code": 33,
+                    "comment": 0,
+                    "filename": "data/server-config.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 45,
+                    "comment": 0,
+                    "filename": "data/server-list.json"
+                },
+                {
+                    "filename": "FactBanSync",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 12,
+                    "code": 43,
+                    "comment": 5,
+                    "filename": "glob.go"
+                },
+                {
+                    "blank": 2,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "go.mod"
+                },
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": "go.sum"
+                },
+                {
+                    "blank": 44,
+                    "code": 122,
+                    "comment": 12,
+                    "filename": "json-read.go"
+                },
+                {
+                    "blank": 40,
+                    "code": 125,
+                    "comment": 6,
+                    "filename": "json-write.go"
+                },
+                {
+                    "blank": 4,
+                    "code": 20,
+                    "comment": 1,
+                    "filename": "LICENSE"
+                },
+                {
+                    "blank": 10,
+                    "code": 14,
+                    "comment": 5,
+                    "filename": "log.go"
+                },
+                {
+                    "blank": 13,
+                    "code": 43,
+                    "comment": 6,
+                    "filename": "main.go"
+                },
+                {
+                    "blank": 6,
+                    "code": 26,
+                    "comment": 2,
+                    "filename": "mainLoop.go"
+                },
+                {
+                    "blank": 10,
+                    "code": 26,
+                    "comment": 5,
+                    "filename": "rcon.go"
+                },
+                {
+                    "blank": 1,
+                    "code": 39,
+                    "comment": 8,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 12,
+                    "code": 35,
+                    "comment": 1,
+                    "filename": "redmew.go"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 1,
+                    "filename": "start.sh"
+                },
+                {
+                    "blank": 18,
+                    "code": 85,
+                    "comment": 8,
+                    "filename": "structs.go"
+                },
+                {
+                    "blank": 47,
+                    "code": 285,
+                    "comment": 24,
+                    "filename": "update.go"
+                },
+                {
+                    "blank": 6,
+                    "code": 15,
+                    "comment": 2,
+                    "filename": "util.go"
+                },
+                {
+                    "blank": 27,
+                    "code": 108,
+                    "comment": 9,
+                    "filename": "web-serv.go"
+                },
+                {
+                    "blank": 31,
+                    "code": 85,
+                    "comment": 0,
+                    "filename": "wizard.go"
+                }
+            ]
+        }
+    ]
+}

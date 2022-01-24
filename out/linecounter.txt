@@ -1,0 +1,56 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2022-01-23 22:12:09
+count workspace : /home/dist/github/FactBanSync
+total files : 31
+total code lines : 11162
+total comment lines : 109
+total blank lines : 321
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |            .md|             39|              8|              1|   0.35|
+   |            .go|           1121|             97|            293|     10|
+   |               |             24|              1|              4|   0.22|
+   |           .mod|              3|              0|              2|  0.027|
+   |            .sh|              1|              1|              0| 0.0090|
+   |           .sum|              2|              0|              0|  0.018|
+   |          .json|           9830|              0|              0|     88|
+   |           .yml|            105|              2|             21|   0.94|
+   |           .log|             37|              0|              0|   0.33|
+   -------------------------------------------------------------------------
+.github/workflows/build-linux64.yml, code is 15, comment is 0, blank is 2.
+.github/workflows/codeql-analysis.yml, code is 60, comment is 2, blank is 10.
+.github/workflows/go.yml, code is 19, comment is 0, blank is 6.
+.github/workflows/report.yml, code is 11, comment is 0, blank is 3.
+.gitignore, code is 4, comment is 0, blank is 0.
+composite.go, code is 109, comment is 12, blank is 17.
+data/banCache/Comfy.json, code is 3092, comment is 0, blank is 0.
+data/banCache/RedMew.json, code is 2362, comment is 0, blank is 0.
+data/composite.json, code is 4298, comment is 0, blank is 0.
+data/logs/2022-01-22.log, code is 37, comment is 0, blank is 0.
+data/server-config.json, code is 33, comment is 0, blank is 0.
+data/server-list.json, code is 45, comment is 0, blank is 0.
+FactBanSync, it is a binary file.
+glob.go, code is 43, comment is 5, blank is 12.
+go.mod, code is 3, comment is 0, blank is 2.
+go.sum, code is 2, comment is 0, blank is 0.
+json-read.go, code is 122, comment is 12, blank is 44.
+json-write.go, code is 125, comment is 6, blank is 40.
+LICENSE, code is 20, comment is 1, blank is 4.
+log.go, code is 14, comment is 5, blank is 10.
+main.go, code is 43, comment is 6, blank is 13.
+mainLoop.go, code is 26, comment is 2, blank is 6.
+rcon.go, code is 26, comment is 5, blank is 10.
+README.md, code is 39, comment is 8, blank is 1.
+redmew.go, code is 35, comment is 1, blank is 12.
+start.sh, code is 1, comment is 1, blank is 0.
+structs.go, code is 85, comment is 8, blank is 18.
+update.go, code is 285, comment is 24, blank is 47.
+util.go, code is 15, comment is 2, blank is 6.
+web-serv.go, code is 108, comment is 9, blank is 27.
+wizard.go, code is 85, comment is 0, blank is 31.
+===============================================================================
