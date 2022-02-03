@@ -15,6 +15,7 @@ func mainLoop() {
 			LastFetchBans = time.Now()
 
 			fetchBanLists()
+			compositeBans()
 		}
 		//Don't run if no file specificed
 		if serverConfig.PathData.FactorioBanFile == "" && serverConfig.PathData.FactorioBanFile != defaultBanFile {
