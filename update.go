@@ -46,7 +46,7 @@ func fetchBanLists() {
 						for _, red := range redMewNames {
 							rLen := len(red)
 							if rLen > 0 && rLen < 128 {
-								names = append(names, red)
+								names = append(names, strings.ToLower(red))
 								count++
 							}
 						}
