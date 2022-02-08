@@ -147,9 +147,10 @@ func readServerBanList() {
 		//Only needed because Factorio will write some bans as an array for some unknown reason.
 	} else {
 
-		for _, name := range names {
+		for npos, name := range names {
 			if name != "" {
 				bData = append(bData, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
+				names[npos] = strings.ToLower(name)
 			}
 		}
 	}
@@ -161,9 +162,10 @@ func readServerBanList() {
 		fmt.Print("") //Annoying warning remover
 	}
 
-	for _, item := range bans {
+	for ipos, item := range bans {
 		if item.UserName != "" && !strings.HasPrefix(item.Reason, "[auto]") {
 			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+			bans[ipos].UserName = strings.ToLower(item.UserName)
 		}
 	}
 
