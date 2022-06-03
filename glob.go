@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const ProgVersion string = "0.0.2"
+const ProgVersion string = "0.0.201"
 
 //Globals
 var (

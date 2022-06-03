@@ -163,7 +163,7 @@ func readServerBanList() {
 	}
 
 	for ipos, item := range bans {
-		if item.UserName != "" && !strings.HasPrefix(item.Reason, "[auto]") {
+		if item.UserName != "" && !strings.HasPrefix(item.Reason, "[FCL]") {
 			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 			bans[ipos].UserName = strings.ToLower(item.UserName)
 		}
