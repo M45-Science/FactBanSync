@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -25,14 +26,14 @@ func compositeBans() {
 	//Now add the bans from other servers
 	for _, server := range serverList.ServerList {
 		//Only if subscribed, and skip self
-		if server.LocalData.Subscribed && server.CommunityName != serverConfig.CommunityName {
+		if server.LocalData.Subscribed && !strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			for _, ban := range server.LocalData.BanList {
 				//Don't composite revoked bans
 				if !ban.Revoked {
 					found := false
 					for ipos, iban := range compositeBanlist {
 						//Duplicate, add data to existing entry
-						if iban.UserName == ban.UserName {
+						if strings.EqualFold(iban.UserName, ban.UserName) {
 							found = true
 							dupes++
 							compositeBanlist[ipos].Sources = append(compositeBanlist[ipos].Sources, server.CommunityName)

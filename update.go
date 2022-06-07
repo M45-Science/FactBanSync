@@ -16,7 +16,7 @@ import (
 func fetchBanLists() {
 	gDirty := 0
 	for spos, server := range serverList.ServerList {
-		if server.CommunityName == serverConfig.CommunityName {
+		if strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			continue
 		}
 		lDirty := 0
@@ -32,7 +32,7 @@ func fetchBanLists() {
 			if len(data) > 0 {
 
 				var names []string
-				if server.CommunityName == "RedMew" {
+				if strings.EqualFold(server.CommunityName, "RedMew") {
 					count := 0
 					var redMewNames []string
 					if server.UseRedScrape {
@@ -69,7 +69,7 @@ func fetchBanLists() {
 						for _, name := range names {
 							if name != "" {
 								for ipos, item := range server.LocalData.BanList {
-									if item.UserName == name {
+									if strings.EqualFold(item.UserName, name) {
 										if item.Revoked {
 											if serverConfig.ServerPrefs.VerboseLogging {
 												log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
@@ -117,7 +117,7 @@ func fetchBanLists() {
 						if item.UserName != "" {
 							found := false
 							for _, ban := range server.LocalData.BanList {
-								if ban.UserName == item.UserName && !item.Revoked {
+								if strings.EqualFold(ban.UserName, item.UserName) && !item.Revoked {
 									if item.Revoked {
 										if serverConfig.ServerPrefs.VerboseLogging {
 											log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
@@ -143,7 +143,7 @@ func fetchBanLists() {
 					for ipos, item := range oldList {
 						found := false
 						for _, ban := range server.LocalData.BanList {
-							if ban.UserName == item.UserName {
+							if strings.EqualFold(ban.UserName, item.UserName) {
 								found = true
 								break
 							}
@@ -208,7 +208,7 @@ func updateServerList() {
 				if server.CommunityName != "" && server.BanListURL != "" {
 					for ipos, s := range serverList.ServerList {
 						//Found existing entry
-						if s.CommunityName == server.CommunityName {
+						if strings.EqualFold(s.CommunityName, server.CommunityName) {
 							foundl = true
 
 							if serverList.ServerList[ipos].BanListURL != server.BanListURL {

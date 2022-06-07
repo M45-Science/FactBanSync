@@ -14,7 +14,7 @@ import (
 
 func readBanCache() {
 	for spos, server := range serverList.ServerList {
-		if server.CommunityName == serverConfig.CommunityName {
+		if strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			continue
 		}
 		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(spos, server.CommunityName)
@@ -85,7 +85,7 @@ func readConfigFile() {
 		}
 
 		//Let user know further config is required
-		if serverConfig.CommunityName == "Default" {
+		if strings.EqualFold(serverConfig.CommunityName, "Default") {
 			log.Println("Please change ServerName in the config file, or use --runWizard")
 			os.Exit(1)
 		}
@@ -163,7 +163,7 @@ func readServerBanList() {
 	}
 
 	for ipos, item := range bans {
-		if item.UserName != "" && !strings.HasPrefix(item.Reason, "[FCL]") {
+		if item.UserName != "" && !strings.HasPrefix(strings.ToLower(item.Reason), strings.ToLower("[FCL]")) {
 			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 			bans[ipos].UserName = strings.ToLower(item.UserName)
 		}

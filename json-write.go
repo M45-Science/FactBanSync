@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 /* Lots of replicated code, but I'd rather have the duplicate code than a single overly complex function */
@@ -14,7 +15,7 @@ import (
 func saveBanLists() {
 	os.Mkdir(serverConfig.PathData.BanCacheDir, 0777)
 	for _, server := range serverList.ServerList {
-		if server.CommunityName == serverConfig.CommunityName {
+		if strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			continue
 		}
 		if server.LocalData.Subscribed {
