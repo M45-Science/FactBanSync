@@ -142,7 +142,10 @@ func writeServerListFile() {
 //Write out a combined list of bans
 func writeCompositeBanlist() {
 
-	file, err := os.Create(serverConfig.PathData.CompositeBanFile)
+	tempPath := serverConfig.PathData.CompositeBanFile + ".tmp"
+	finalPath := serverConfig.PathData.CompositeBanFile
+
+	file, err := os.Create(tempPath)
 
 	if err != nil {
 		log.Println(err)
@@ -169,4 +172,11 @@ func writeCompositeBanlist() {
 	if serverConfig.ServerPrefs.VerboseLogging {
 		log.Printf("Wrote composite banlist of %v items, %v kb.\n", len(compositeBanData), wrote/1024)
 	}
+
+	err = os.Rename(tempPath, finalPath)
+
+	if err != nil {
+		log.Printf("Couldn't rename VoteFile file.")
+	}
+
 }
