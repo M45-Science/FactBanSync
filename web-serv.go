@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -114,7 +115,7 @@ func updateWebCache() {
 				reason = item.Reason
 			}
 
-			localCopy = append(localCopy, banDataType{UserName: name, Reason: reason})
+			localCopy = append(localCopy, banDataType{UserName: strings.ToLower(name), Reason: reason})
 		}
 	}
 

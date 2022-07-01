@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const ProgVersion string = "0.0.203"
+const ProgVersion string = "0.0.204"
 
 //Globals
 var (
@@ -29,7 +29,7 @@ const (
 
 	defaultSSLWebPort             = 8443
 	defaultDownloadSizeLimitKB    = 1024 //1MB
-	defaultDownloadTimeoutSeconds = 10
+	defaultDownloadTimeoutSeconds = 30
 	defaultMaxReqestsPerSecond    = 10
 	defaultRunWebServer           = false
 	defaultAutoSubscribe          = true
@@ -49,7 +49,7 @@ const (
 
 	//Default delay times
 	defaultFetchBansMinutes = 15
-	defaultWatchSeconds     = 10
+	defaultWatchSeconds     = 5
 	defaultRefreshListHours = 12
 
 	//Max banlist size

@@ -14,7 +14,7 @@ func compositeBans() {
 	for _, ban := range ourBanData {
 
 		compositeBanlist = append(compositeBanlist, banDataType{
-			UserName: ban.UserName,
+			UserName: strings.ToLower(ban.UserName),
 			Sources:  []string{serverConfig.CommunityName},
 			Reasons:  []string{ban.Reason},
 			Revokes:  []bool{ban.Revoked},
@@ -61,7 +61,7 @@ func compositeBans() {
 							continue
 						}
 						compositeBanlist = append(compositeBanlist, banDataType{
-							UserName: ban.UserName,
+							UserName: strings.ToLower(ban.UserName),
 							Sources:  []string{server.CommunityName},
 							Reasons:  []string{ban.Reason},
 							Revokes:  []bool{ban.Revoked},
@@ -130,7 +130,7 @@ func compositeBans() {
 				}
 			}
 			condList = append(condList, minBanDataType{
-				UserName: ban.UserName, Reason: reasonList})
+				UserName: strings.ToLower(ban.UserName), Reason: reasonList})
 		}
 	}
 	compositeBanData = condList

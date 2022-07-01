@@ -84,7 +84,7 @@ func fetchBanLists() {
 								if !found {
 									gDirty++
 									lDirty++
-									serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
+									serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(name), Added: time.Now().Format(timeFormat)})
 								}
 							}
 						}
@@ -130,7 +130,7 @@ func fetchBanLists() {
 							if !found {
 								gDirty++
 								lDirty++
-								serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+								serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(item.UserName), Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 							}
 						}
 					}

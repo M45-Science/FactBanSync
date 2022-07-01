@@ -149,7 +149,7 @@ func readServerBanList() {
 
 		for npos, name := range names {
 			if name != "" {
-				bData = append(bData, banDataType{UserName: name, Added: time.Now().Format(timeFormat)})
+				bData = append(bData, banDataType{UserName: strings.ToLower(name), Added: time.Now().Format(timeFormat)})
 				names[npos] = strings.ToLower(name)
 			}
 		}
@@ -164,7 +164,7 @@ func readServerBanList() {
 
 	for ipos, item := range bans {
 		if item.UserName != "" && !strings.HasPrefix(strings.ToLower(item.Reason), strings.ToLower("[FCL]")) {
-			bData = append(bData, banDataType{UserName: item.UserName, Reason: item.Reason, Added: time.Now().Format(timeFormat)})
+			bData = append(bData, banDataType{UserName: strings.ToLower(item.UserName), Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 			bans[ipos].UserName = strings.ToLower(item.UserName)
 		}
 	}
