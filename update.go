@@ -320,6 +320,7 @@ func watchBanFile() {
 
 	if err != nil {
 		log.Println("watchBanFile: stat: " + err.Error())
+		initialStat = nil
 		return
 	}
 
@@ -344,6 +345,7 @@ func watchBanFile() {
 
 			if err != nil {
 				log.Println("watchBanFile: stat: " + err.Error())
+				initialStat = nil
 				return
 			}
 			return

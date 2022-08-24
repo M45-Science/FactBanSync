@@ -52,6 +52,7 @@ func main() {
 		updateServerList()
 		fetchBanLists()
 	}
+	readServerBanList()
 	compositeBans()
 	updateWebCache()
 
