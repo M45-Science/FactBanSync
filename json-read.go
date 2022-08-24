@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -26,7 +26,7 @@ func readBanCacheFile(spos int, serverName string) []banDataType {
 	bandata := []banDataType{}
 	serverName = FileNameFilter(serverName)
 	path := serverConfig.PathData.BanCacheDir + "/" + serverName + ".json"
-	file, err := ioutil.ReadFile(path)
+	file, err := os.ReadFile(path)
 
 	if file != nil && err == nil {
 		err = json.Unmarshal(file, &bandata)
@@ -40,9 +40,9 @@ func readBanCacheFile(spos int, serverName string) []banDataType {
 
 }
 
-//Read list of servers from file
+// Read list of servers from file
 func readServerListFile() {
-	file, err := ioutil.ReadFile(serverConfig.PathData.ServerListFile)
+	file, err := os.ReadFile(serverConfig.PathData.ServerListFile)
 
 	//Read server list file if it exists
 	if file != nil && !os.IsNotExist(err) {
@@ -70,10 +70,10 @@ func readServerListFile() {
 	}
 }
 
-//Read server config from file
+// Read server config from file
 func readConfigFile() {
 	//Read server config file
-	file, err := ioutil.ReadFile(configPath)
+	file, err := os.ReadFile(configPath)
 
 	if file != nil && err == nil {
 		var temp serverConfigData
@@ -120,7 +120,7 @@ func readConfigFile() {
 	}
 }
 
-//Read the Factorio ban list file locally
+// Read the Factorio ban list file locally
 func readServerBanList() {
 
 	file, err := os.Open(serverConfig.PathData.FactorioBanFile)
@@ -132,7 +132,7 @@ func readServerBanList() {
 
 	var bData []banDataType
 
-	data, err := ioutil.ReadAll(file)
+	data, err := io.ReadAll(file)
 
 	if err != nil {
 		log.Println(err)
@@ -174,6 +174,6 @@ func readServerBanList() {
 	if serverConfig.ServerPrefs.VerboseLogging {
 		log.Printf("Read %v bans from banlist.\n", len(bData))
 	}
-	updateWebCache()
 	compositeBans()
+	updateWebCache()
 }

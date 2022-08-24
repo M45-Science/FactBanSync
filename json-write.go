@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -11,7 +10,7 @@ import (
 
 /* Lots of replicated code, but I'd rather have the duplicate code than a single overly complex function */
 
-//Save a banlist from a specific server
+// Save a banlist from a specific server
 func saveBanLists() {
 	os.Mkdir(serverConfig.PathData.BanCacheDir, 0777)
 	for _, server := range serverList.ServerList {
@@ -33,7 +32,7 @@ func saveBanLists() {
 				log.Println("Error encoding ban list file: " + err.Error())
 				os.Exit(1)
 			}
-			err = ioutil.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.CommunityName)+".json", outbuf.Bytes(), 0644)
+			err = os.WriteFile(defaultBanFileDir+"/"+FileNameFilter(server.CommunityName)+".json", outbuf.Bytes(), 0644)
 			if err != nil {
 				if serverConfig.ServerPrefs.VerboseLogging {
 					log.Println("Error saving ban list: " + err.Error())
@@ -44,7 +43,7 @@ func saveBanLists() {
 	}
 }
 
-//Make default-value config file as an example starting point
+// Make default-value config file as an example starting point
 func makeDefaultConfigFile() {
 	serverConfig.ServerListURL = defaultListURL
 
@@ -76,7 +75,7 @@ func makeDefaultConfigFile() {
 	writeConfigFile()
 }
 
-//Write our server list to the server list file (indent)
+// Write our server list to the server list file (indent)
 func writeConfigFile() {
 	file, err := os.Create(configPath)
 
@@ -109,7 +108,7 @@ func writeConfigFile() {
 
 }
 
-//Write list of servers to file
+// Write list of servers to file
 func writeServerListFile() {
 	file, err := os.Create(serverConfig.PathData.ServerListFile)
 
@@ -139,7 +138,7 @@ func writeServerListFile() {
 	}
 }
 
-//Write out a combined list of bans
+// Write out a combined list of bans
 func writeCompositeBanlist() {
 
 	tempPath := serverConfig.PathData.CompositeBanFile + ".tmp"

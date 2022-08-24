@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-//Duplicate code, not great
+// Duplicate code, not great
 func fetchBanLists() {
 	gDirty := 0
 	for spos, server := range serverList.ServerList {
@@ -182,7 +182,7 @@ func fetchBanLists() {
 	}
 }
 
-//Refresh list of servers from master
+// Refresh list of servers from master
 func updateServerList() {
 
 	//Update server list
@@ -266,7 +266,7 @@ func updateServerList() {
 	}
 }
 
-//Download file to byte array
+// Download file to byte array
 func fetchFile(url string) ([]byte, error) {
 
 	timeout := (time.Duration(serverConfig.ServerPrefs.DownloadTimeoutSeconds) * time.Second)
@@ -295,7 +295,7 @@ func fetchFile(url string) ([]byte, error) {
 		return []byte{}, errors.New("file too large")
 	}
 
-	output, err := ioutil.ReadAll(resp.Body)
+	output, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -308,7 +308,7 @@ func fetchFile(url string) ([]byte, error) {
 	return output, err
 }
 
-//Monitor ban file for changes
+// Monitor ban file for changes
 func watchBanFile() {
 	var err error
 
@@ -336,8 +336,8 @@ func watchBanFile() {
 				log.Println("watchBanFile: file changed")
 			}
 			readServerBanList() //Reload ban list
-			updateWebCache()    //Update web cache
 			compositeBans()     //Update composite ban list
+			updateWebCache()    //Update web cache
 
 			//Update stat for next time
 			initialStat, err = os.Stat(filePath)

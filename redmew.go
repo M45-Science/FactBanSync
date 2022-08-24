@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -17,7 +17,7 @@ func GetRedMew(url string) []string {
 	//This will eventually break, probably -- 1/2022
 	if resp.StatusCode == 200 {
 		if resp.Body != nil {
-			data, err := ioutil.ReadAll(resp.Body)
+			data, err := io.ReadAll(resp.Body)
 			if err != nil {
 				log.Println("Error:", err)
 			}

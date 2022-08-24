@@ -6,9 +6,9 @@ import (
 	"time"
 )
 
-const ProgVersion string = "0.0.204"
+const ProgVersion string = "0.0.205"
 
-//Globals
+// Globals
 var (
 	serverRunning     = true
 	serverConfig      serverConfigData
