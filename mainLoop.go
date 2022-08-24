@@ -16,6 +16,7 @@ func mainLoop() {
 
 			fetchBanLists()
 			compositeBans()
+			updateWebCache()
 		}
 		//Don't run if no file specificed
 		if serverConfig.PathData.FactorioBanFile == "" && serverConfig.PathData.FactorioBanFile != defaultBanFile {
