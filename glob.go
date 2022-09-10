@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const ProgVersion string = "0.0.206"
+const ProgVersion string = "0.0.207"
 
 // Globals
 var (
@@ -24,7 +24,7 @@ var (
 
 const (
 	timeFormat           = time.RFC822Z
-	defaultListURL       = "https://raw.githubusercontent.com/Distortions81/Factorio-Community-List/main/server-list.json"
+	defaultListURL       = "https://raw.githubusercontent.com/M45-Science/Factorio-Community-List/main/server-list.json"
 	defaultCommunityName = "Default"
 
 	defaultSSLWebPort             = 8443
