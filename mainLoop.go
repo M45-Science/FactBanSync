@@ -19,7 +19,7 @@ func mainLoop() {
 			updateWebCache()
 		}
 		//Don't run if no file specificed
-		if serverConfig.PathData.FactorioBanFile == "" && serverConfig.PathData.FactorioBanFile != defaultBanFile {
+		if serverConfig.PathData.FactorioBanFile != "" {
 			if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
 				LastWatch = time.Now()
 				if serverConfig.PathData.FactorioBanFile != "" {
@@ -31,6 +31,7 @@ func mainLoop() {
 			LastRefresh = time.Now()
 
 			updateServerList()
+
 		}
 	}
 }
