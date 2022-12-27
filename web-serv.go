@@ -101,20 +101,20 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		cachedBanListLock.Unlock()
 
 		//Composite: Cached gzip copy
-	} else if r.URL.Path == "/"+defaultCompositeFile+".gz" {
-		if cachedBanListGz == nil {
+	} else if r.URL.Path == "/"+defaultCompositeName+".gz" {
+		if cachedCompositeGz == nil {
 			noDataReply(w)
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "gzip")
 		cachedBanListLock.Lock()
-		w.Write(cachedBanListGz)
+		w.Write(cachedCompositeGz)
 		cachedBanListLock.Unlock()
 
 		//Composite: Cached copy
-	} else if r.URL.Path == "/"+defaultCompositeFile {
-		if cachedBanList == nil {
+	} else if r.URL.Path == "/"+defaultCompositeName {
+		if cachedCompositeList == nil {
 			noDataReply(w)
 			return
 		}
@@ -122,7 +122,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		cachedBanListLock.Lock()
-		w.Write(cachedBanList)
+		w.Write(cachedCompositeList)
 		cachedBanListLock.Unlock()
 	} else {
 		//Not found
