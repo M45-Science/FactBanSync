@@ -1,4 +1,5 @@
 /.vscode
-data/
+data/*.json
 FactBanSync
 composite-banlist.json
+data/logs

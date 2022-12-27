@@ -54,7 +54,7 @@ func startWebserver() {
 	}
 }
 
-//Web server
+// Web server
 func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 
 	//Limit requests per second
@@ -64,8 +64,19 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	defer time.Sleep(time.Duration(delay) * time.Microsecond)
 
-	//Cached gzip copy
-	if r.URL.Path == "/"+defaultFileWebName+".gz" {
+	//Ban list: Cached gzip copy
+	if r.URL.Path == "/" || r.URL.Path == "" {
+		if cachedWelcome == nil {
+			noDataReply(w)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		cachedBanListLock.Lock()
+		w.Write(cachedWelcome)
+		cachedBanListLock.Unlock()
+
+	} else if r.URL.Path == "/"+defaultFileWebName+".gz" {
 		if cachedBanListGz == nil {
 			noDataReply(w)
 		}
@@ -76,8 +87,33 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 		w.Write(cachedBanListGz)
 		cachedBanListLock.Unlock()
 
-		//Cached copy
+		//Ban list: Cached copy
 	} else if r.URL.Path == "/"+defaultFileWebName {
+		if cachedBanList == nil {
+			noDataReply(w)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		cachedBanListLock.Lock()
+		w.Write(cachedBanList)
+		cachedBanListLock.Unlock()
+
+		//Composite: Cached gzip copy
+	} else if r.URL.Path == "/"+defaultCompositeFile+".gz" {
+		if cachedBanListGz == nil {
+			noDataReply(w)
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "gzip")
+		cachedBanListLock.Lock()
+		w.Write(cachedBanListGz)
+		cachedBanListLock.Unlock()
+
+		//Composite: Cached copy
+	} else if r.URL.Path == "/"+defaultCompositeFile {
 		if cachedBanList == nil {
 			noDataReply(w)
 			return
@@ -102,8 +138,23 @@ func noDataReply(w http.ResponseWriter) {
 	fmt.Fprintf(w, "No ban data\n")
 }
 
+// Read list of servers from file
+func readWelcome() {
+	file, err := os.ReadFile(defaultWelcomeFile)
+
+	//Read server list file if it exists
+	if file != nil && !os.IsNotExist(err) {
+		cachedWelcome = file
+	} else {
+		log.Println("readWelcome: ", err)
+	}
+}
+
 func updateWebCache() {
 
+	readWelcome()
+
+	//Our ban list
 	var localCopy []banDataType
 	for _, item := range ourBanData {
 		if item.UserName != "" {
@@ -126,18 +177,61 @@ func updateWebCache() {
 	err := enc.Encode(localCopy)
 
 	if err != nil {
-		log.Println("Error encoding ban list file: " + err.Error())
+		log.Println("Error encoding ban list for web: " + err.Error())
 		os.Exit(1)
 	}
 
 	//Cache a normal and gzip version of the ban list
 	if serverConfig.WebServer.RunWebServer {
 		cachedBanListLock.Lock()
+
 		cachedBanList = outbuf.Bytes()
 		cachedBanListGz = compressGzip(outbuf.Bytes())
 		if serverConfig.ServerPrefs.VerboseLogging {
 			log.Printf("Cached response: json: %v gz: %v (bytes)\n", len(cachedBanList), len(cachedBanListGz))
 		}
+
 		cachedBanListLock.Unlock()
 	}
+
+	//Composite ban list
+	localCopy = []banDataType{} //Clear
+	for _, item := range compositeBanData {
+		if item.UserName != "" {
+			var name, reason string
+
+			name = item.UserName
+
+			if !serverConfig.ServerPrefs.StripReasons {
+				reason = item.Reason
+			}
+
+			localCopy = append(localCopy, banDataType{UserName: strings.ToLower(name), Reason: reason})
+		}
+	}
+
+	outbuf = new(bytes.Buffer)
+	enc = json.NewEncoder(outbuf)
+	enc.SetIndent("", "\t")
+
+	err = enc.Encode(localCopy)
+
+	if err != nil {
+		log.Println("Error encoding composite list for web: " + err.Error())
+		os.Exit(1)
+	}
+
+	//Cache a normal and gzip version of the ban list
+	if serverConfig.WebServer.RunWebServer {
+		cachedBanListLock.Lock()
+
+		cachedCompositeList = outbuf.Bytes()
+		cachedCompositeGz = compressGzip(outbuf.Bytes())
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Printf("Cached response: json: %v gz: %v (bytes)\n", len(cachedCompositeList), len(cachedCompositeGz))
+		}
+
+		cachedBanListLock.Unlock()
+	}
+
 }

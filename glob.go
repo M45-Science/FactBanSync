@@ -10,16 +10,22 @@ const ProgVersion string = "0.0.207"
 
 // Globals
 var (
-	serverRunning     = true
-	serverConfig      serverConfigData
-	serverList        serverListData
-	configPath        string
-	ourBanData        []banDataType
-	compositeBanData  []minBanDataType
-	cachedBanListGz   []byte
-	cachedBanList     []byte
-	cachedBanListLock sync.Mutex
-	initialStat       fs.FileInfo
+	serverRunning    = true
+	serverConfig     serverConfigData
+	serverList       serverListData
+	configPath       string
+	ourBanData       []banDataType
+	compositeBanData []minBanDataType
+
+	cachedBanListGz []byte
+	cachedBanList   []byte
+
+	cachedWelcome []byte
+
+	cachedCompositeGz   []byte
+	cachedCompositeList []byte
+	cachedBanListLock   sync.Mutex
+	initialStat         fs.FileInfo
 )
 
 const (
@@ -36,16 +42,21 @@ const (
 	defaultRequireReason          = false
 
 	//PathData
-	defaultBanFile        = "../factorio/server-banlist.changeme"
+	defaultBanFile = "../factorio/server-banlist.changeme"
+
 	defaultConfigPath     = "data/server-config.json"
 	defaultServerListFile = "data/server-list.json"
 	defaultCompositeFile  = "data/composite.json"
 	defaultFileWebName    = "server-banlist.json"
-	defaultSSLKeyFile     = "data/server.key"
-	defaultSSLCertFile    = "data/server.crt"
-	defaultDataDir        = "data"
-	defaultLogDir         = "data/logs"
-	defaultBanFileDir     = "data/banCache"
+	defaultCompositeName  = "composite.json"
+
+	defaultSSLKeyFile  = "data/server.key"
+	defaultSSLCertFile = "data/server.crt"
+
+	defaultDataDir     = "data"
+	defaultLogDir      = "data/logs"
+	defaultBanFileDir  = "data/banCache"
+	defaultWelcomeFile = "data/welcome.html"
 
 	//Default delay times
 	defaultFetchBansMinutes = 15
