@@ -1,6 +1,6 @@
 package main
 
-//Our config data
+// Our config data
 type serverConfigData struct {
 	Version       string
 	CommunityName string
@@ -45,40 +45,41 @@ type webServerConfigData struct {
 	MaxRequestsPerSecond int
 }
 
-//List of servers
+// List of servers
 type serverListData struct {
 	Version    string
 	ServerList []serverData
 }
 
-//Server data
+// Server data
 type serverData struct {
-	CommunityName string `json:"Name"`
-	BanListURL    string `json:"Bans"`
-	WhiteListURL  string `json:"Trusts,omitempty"`
-	LogFileURL    string `json:"Logs,omitempty"`
-	WebsiteURL    string `json:"Website,omitempty"`
-	DiscordURL    string `json:"Discord,omitempty"`
-	JsonGzip      bool
-	UseRedScrape  bool
+	CommunityName  string `json:"Name"`
+	BanListURL     string `json:"Bans"`
+	WhiteListURL   string `json:"Trusts,omitempty"`
+	LogFileURL     string `json:"Logs,omitempty"`
+	WebsiteURL     string `json:"Website,omitempty"`
+	DiscordURL     string `json:"Discord,omitempty"`
+	JsonGzip       bool   `json:",omitempty"`
+	UseRedScrape   bool   `json:",omitempty"`
+	UseComfyScrape bool   `json:",omitempty"`
 
 	LocalData localData
 }
 
 type localData struct {
-	Subscribed   bool
-	StripReasons bool
-	Added        string
+	Subscribed   bool          `json:",omitempty"`
+	StripReasons bool          `json:",omitempty"`
+	Added        string        `json:",omitempty"`
 	BanList      []banDataType `json:"-"`
 }
 
-//Minimal ban data
+// Minimal ban data
 type minBanDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason"`
 }
 
-//Ban data
+// Ban data
 type banDataType struct {
 	UserName string `json:"username"`
 	Reason   string `json:"reason,omitempty"`
@@ -91,19 +92,19 @@ type banDataType struct {
 	Adds    []string `json:",omitempty"`
 }
 
-//RCON list
+// RCON list
 type RCONDataList struct {
 	RCONData []RCONData
 }
 
-//RCON data
+// RCON data
 type RCONData struct {
 	RCONName     string
 	RCONAddress  string
 	RCONPassword string
 }
 
-//Log monitor data
+// Log monitor data
 type LogMonitorData struct {
 	Name string
 	File string

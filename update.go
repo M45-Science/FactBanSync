@@ -53,6 +53,28 @@ func fetchBanLists() {
 						if serverConfig.ServerPrefs.VerboseLogging {
 							log.Printf("Redmew: %v names scraped.\n", count)
 						}
+					} else if strings.EqualFold(server.CommunityName, "Comfy") {
+						count := 0
+						var comfyNames []string
+						if server.UseComfyScrape {
+							if serverConfig.ServerPrefs.VerboseLogging {
+								log.Println("Scraping Comfy.")
+							}
+							comfyNames = GetComfy(server.BanListURL)
+						}
+
+						if comfyNames != nil {
+							for _, comfy := range comfyNames {
+								rLen := len(comfy)
+								if rLen > 0 && rLen < 128 {
+									names = append(names, strings.ToLower(comfy))
+									count++
+								}
+							}
+							if serverConfig.ServerPrefs.VerboseLogging {
+								log.Printf("Comfy: %v names scraped.\n", count)
+							}
+						}
 					}
 				} else {
 					err = json.Unmarshal(data, &names)
