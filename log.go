@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-///Config and start a new log file
+// /Config and start a new log file
 func startLog() {
 	//Make log dir
 	os.Mkdir(serverConfig.PathData.LogDir+"/", 0777)
@@ -23,5 +23,5 @@ func startLog() {
 	mw := io.MultiWriter(os.Stdout, logDesc) //To log and stdout
 	log.SetOutput(mw)
 
-	log.SetFlags(log.Lmicroseconds | log.Lshortfile) //Show source file and line number
+	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile) //Show source file and line number
 }
