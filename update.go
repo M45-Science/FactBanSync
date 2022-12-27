@@ -113,7 +113,7 @@ func fetchBanLists() {
 					}
 				}
 
-				if !server.UseRedScrape {
+				if !server.UseRedScrape && !server.UseComfyScrape {
 
 					var bans []banDataType
 					err = json.Unmarshal(data, &bans)
