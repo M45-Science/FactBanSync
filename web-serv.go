@@ -135,7 +135,7 @@ func handleFileRequest(w http.ResponseWriter, r *http.Request) {
 func noDataReply(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8") // normal header
-	fmt.Fprintf(w, "No ban data\n")
+	fmt.Fprintf(w, "No data\n")
 }
 
 // Read list of servers from file
