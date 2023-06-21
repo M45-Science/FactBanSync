@@ -3,10 +3,14 @@ package main
 import (
 	"flag"
 	"log"
+	"runtime/debug"
 )
 
 func main() {
 	var runWizard bool
+
+	//KB, MB
+	debug.SetMemoryLimit(1024 * 1024 * 100)
 
 	//Launch arguments
 	flag.StringVar(&configPath, "configPath", defaultConfigPath, "config file path")
