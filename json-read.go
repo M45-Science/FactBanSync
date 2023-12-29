@@ -123,6 +123,9 @@ func readConfigFile() {
 // Read the Factorio ban list file locally
 func readServerBanList() {
 
+	if serverConfig.PathData.FactorioBanFile == "" {
+		return
+	}
 	file, err := os.Open(serverConfig.PathData.FactorioBanFile)
 
 	if err != nil {

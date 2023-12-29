@@ -310,9 +310,6 @@ func fetchFile(url string) ([]byte, error) {
 	}
 
 	maxSize := int64(serverConfig.ServerPrefs.DownloadSizeLimitKB * 1024)
-	if serverConfig.ServerPrefs.DownloadSizeLimitKB > 0 {
-		maxSize = serverConfig.ServerPrefs.DownloadSizeLimitKB * 1024
-	}
 	if resp.ContentLength > maxSize {
 		return []byte{}, errors.New("file too large")
 	}

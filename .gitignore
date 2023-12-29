@@ -3,3 +3,4 @@ data/*.json
 FactBanSync
 composite-banlist.json
 data/logs
+data/banCache/

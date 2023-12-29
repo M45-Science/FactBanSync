@@ -175,7 +175,7 @@ func writeCompositeBanlist() {
 	err = os.Rename(tempPath, finalPath)
 
 	if err != nil {
-		log.Printf("Couldn't rename VoteFile file.")
+		log.Printf("Couldn't rename file.")
 	}
 
 }

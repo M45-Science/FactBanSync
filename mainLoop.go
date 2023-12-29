@@ -17,21 +17,16 @@ func mainLoop() {
 			fetchBanLists()
 			compositeBans()
 			updateWebCache()
-		}
-		//Don't run if no file specificed
-		if serverConfig.PathData.FactorioBanFile != "" {
-			if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) {
-				LastWatch = time.Now()
-				if serverConfig.PathData.FactorioBanFile != "" {
-					watchBanFile()
-				}
-			}
-		}
-		if time.Since(LastRefresh).Hours() >= float64(serverConfig.ServerPrefs.RefreshListHours) {
+
+		} else if time.Since(LastWatch).Seconds() >= float64(serverConfig.ServerPrefs.WatchFileSeconds) &&
+			serverConfig.PathData.FactorioBanFile != "" {
+			LastWatch = time.Now()
+			watchBanFile()
+
+		} else if time.Since(LastRefresh).Hours() >= float64(serverConfig.ServerPrefs.RefreshListHours) {
 			LastRefresh = time.Now()
 
 			updateServerList()
-
 		}
 	}
 }
