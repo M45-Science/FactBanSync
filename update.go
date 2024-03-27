@@ -26,20 +26,20 @@ func fetchBanLists() {
 
 			data, err := fetchFile(server.BanListURL)
 			if err != nil {
-				log.Println("Error updating ban list: " + err.Error())
+				log.Printf("Error updating ban list: %v: %v: %v\n", server.CommunityName, server.BanListURL, err.Error())
 				continue
 			}
 			if len(data) > 0 {
 
 				var names []string
-				if strings.EqualFold(server.CommunityName, "RedMew") {
+				if server.UseRedScrape {
 					count := 0
 					var redMewNames []string
 					if server.UseRedScrape {
 						if serverConfig.ServerPrefs.VerboseLogging {
 							log.Println("Scraping RedMew.")
 						}
-						redMewNames = GetRedMew(server.BanListURL)
+						redMewNames = GetRedMew(data)
 					}
 
 					if redMewNames != nil {
@@ -53,29 +53,30 @@ func fetchBanLists() {
 						if serverConfig.ServerPrefs.VerboseLogging {
 							log.Printf("Redmew: %v names scraped.\n", count)
 						}
-					} else if strings.EqualFold(server.CommunityName, "Comfy") {
-						count := 0
-						var comfyNames []string
-						if server.UseComfyScrape {
-							if serverConfig.ServerPrefs.VerboseLogging {
-								log.Println("Scraping Comfy.")
-							}
-							comfyNames = GetComfy(server.BanListURL)
+					}
+				} else if server.UseComfyScrape {
+					count := 0
+					var comfyNames []string
+					if server.UseComfyScrape {
+						if serverConfig.ServerPrefs.VerboseLogging {
+							log.Println("Scraping Comfy.")
 						}
+						comfyNames = GetComfy(data)
+					}
 
-						if comfyNames != nil {
-							for _, comfy := range comfyNames {
-								rLen := len(comfy)
-								if rLen > 0 && rLen < 128 {
-									names = append(names, strings.ToLower(comfy))
-									count++
-								}
+					if comfyNames != nil {
+						for _, comfy := range comfyNames {
+							rLen := len(comfy)
+							if rLen > 0 && rLen < 128 {
+								names = append(names, strings.ToLower(comfy))
+								count++
 							}
-							if serverConfig.ServerPrefs.VerboseLogging {
-								log.Printf("Comfy: %v names scraped.\n", count)
-							}
+						}
+						if serverConfig.ServerPrefs.VerboseLogging {
+							log.Printf("Comfy: %v names scraped.\n", count)
 						}
 					}
+
 				} else {
 					err = json.Unmarshal(data, &names)
 				}
