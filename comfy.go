@@ -1,48 +1,45 @@
 package main
 
 import (
-	"io"
 	"log"
-	"net/http"
 	"strings"
 )
 
-func GetComfy(url string) []string {
-	resp, err := http.Get(url)
+func GetComfy(data []byte) []string {
 
-	if err != nil {
-		log.Println("Error:", err)
+	var lines []string
+	dstr := string(data)
+	dstr = strings.ReplaceAll(dstr, "\n", "")
+	dstr = strings.ReplaceAll(dstr, "\r", "")
+	spltStr := strings.SplitAfter(dstr, "</tbody>")
+	if len(spltStr) <= 0 {
+		log.Println("GetComfy: Not enough data.")
+		return lines
 	}
+	spltStr = strings.SplitAfter(spltStr[0], "<tbody>")
 
-	//This will eventually break, probably -- 12/2022
-	if resp.StatusCode == 200 {
-		if resp.Body != nil {
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				log.Println("Error:", err)
+	if len(spltStr) <= 0 {
+		log.Println("GetRedMew: Data not valid.")
+		return []string{}
+	}
+	spltStr = strings.SplitAfter(spltStr[1], "<tr>")
+	for _, item := range spltStr {
+		newSplit := strings.SplitAfter(item, "<td>")
+		for e, element := range newSplit {
+			if e%2 == 0 {
+				continue
 			}
-			dstr := string(data)
-			spltStr := strings.SplitAfter(dstr, "<ul class=\"ul-has-multiple-rows\">")
-			spltStr = strings.SplitAfter(spltStr[1], "</ul>")
-			cleanStr := strings.Replace(spltStr[0], "</ul>", "", -1)
-
-			lines := strings.Split(cleanStr, "\n")
-			for lpos := range lines {
-				lines[lpos] = strings.TrimSpace(lines[lpos])
-				if len(lines[lpos]) < 64 {
-					lines[lpos] = strings.Replace(lines[lpos], "<li>", "", -1)
-					lines[lpos] = strings.Replace(lines[lpos], "</li>", "", -1)
-				} else {
-					lines[lpos] = ""
-				}
+			if strings.Contains(element, ":") {
+				continue
 			}
-
-			return lines
+			name := strings.ReplaceAll(element, " ", "")
+			name = strings.ReplaceAll(name, "<td>", "")
+			name = strings.ReplaceAll(name, "</td>", "")
+			//fmt.Printf("Item: %v\n", name)
+			if len(name) > 3 {
+				lines = append(lines, name)
+			}
 		}
-	} else {
-		log.Println("Error:", resp.StatusCode)
 	}
-
-	return nil
-
+	return lines
 }
