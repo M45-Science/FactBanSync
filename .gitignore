@@ -4,3 +4,5 @@ FactBanSync
 composite-banlist.json
 data/logs
 data/banCache/
+data/server.crt
+data/server.key

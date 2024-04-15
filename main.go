@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"time"
 )
 
 func main() {
@@ -60,6 +62,35 @@ func main() {
 	updateWebCache()
 
 	startWebserver()
+
+	go func() {
+		for {
+			time.Sleep(time.Second * 5)
+
+			initialStat, erra := os.Stat(serverConfig.WebServer.SSLCertFile)
+
+			if erra != nil {
+				continue
+			}
+
+			for initialStat != nil {
+				time.Sleep(time.Second * 5)
+
+				stat, errb := os.Stat(serverConfig.WebServer.SSLCertFile)
+				if errb != nil {
+					break
+				}
+
+				if stat.Size() != initialStat.Size() || stat.ModTime() != initialStat.ModTime() {
+					log.Println("Cert updated, closing.")
+					time.Sleep(time.Second * 5)
+					os.Exit(0)
+					break
+				}
+			}
+
+		}
+	}()
 
 	mainLoop()
 }
