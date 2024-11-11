@@ -1,31 +1,162 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html><head>
-<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>ban-links.html</title></head><body style="background-color: black; color: rgb(0, 0, 0);" alink="#ee0000" link="#0000ee" vlink="#551a8b"><span style="color: white;">Links:</span><br style="color: white;">
-<br style="color: white;">
-<a style="color: white;" href="server-banlist.json">M45 Ban list</a><br style="color: white;">
-<span style="color: white;">(plain json file)</span><br style="color: white;">
-<a style="color: white;" href="server-banlist.json.gz">M45 Ban list - gzip</a><br style="color: white;">
-<span style="color: white;">( json, gzip compressed )</span><br style="color: white;">
-<br style="color: white;">
-<a style="color: white;" href="https://m45sci.xyz/old-server-banlist.json">M45 Old bans</a><br style="color: white;">
-<span style="color: white;">(Still enforced, but not active)</span><br style="color: white;">
-<br style="color: white;">
-<a style="color: white;" href="composite.json">Composite Ban List</a><br style="color: white;">
-<span style="color: white;">(json, all bans we are enforcing)</span><br style="color: white;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M45-Science Ban Lists</title>
+<style>
+    body {
+        background-color: #1b1b1b;
+        color: #d0d0d0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        margin: 0;
+    }
 
-<a style="color: white;" href="composite.json.gz">Composite Ban List</a><span style="color: white;"> - gzip</span><br style="color: white;">
+    .container {
+        max-width: 700px;
+        width: 100%;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+    }
 
-<span style="color: white;">( json, gzip compressed )</span><br style="color: white;">
-<br style="color: white;">
-<a style="color: white;" href="https://github.com/M45-Science/Factorio-Community-List">Factorio-Community-List</a><br style="color: white;">
-<span style="color: white;">( List of public ban URL for a few Factorio communities )</span><br style="color: white;">
-<br style="color: white;">
-<a style="color: white;" href="https://github.com/M45-Science/FactBanSync">FactBanSync</a><br style="color: white;">
-<span style="color: white;">( Custom software written for this service )</span><br style="color: white;">
-<br style="color: white;">
-<span style="color: white;">License: </span><a style="color: white;" href="https://unlicense.org/">Unlicense</a><br style="color: white;">
-<br style="color: white;">
-<br style="color: white;">
+    .logo {
+        width: 100px;
+        height: auto;
+        margin-bottom: 10px;
+        transition: transform 0.3s ease;
+    }
 
+    .logo:hover {
+        transform: scale(1.05);
+    }
 
-</body></html>
+    h1 {
+        color: #ff6f61;
+        font-size: 2.2em;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ff6f61;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        color: #4fc3f7;
+        font-size: 1.5em;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #4fc3f7;
+        padding-bottom: 5px;
+    }
+
+    .link-container {
+        background-color: #2a2a2a;
+        border: 1px solid #ff6f61;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .link-container:hover {
+        transform: scale(1.02);
+        background-color: #333333;
+    }
+
+    a {
+        color: #4fc3f7;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 1.1em;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #ff6f61;
+    }
+
+    .description {
+        color: #a0a0a0;
+        font-size: 0.95em;
+        margin-top: 5px;
+        display: block;
+        font-style: italic;
+    }
+
+    .alternate-link {
+        font-size: 0.85em;
+        color: #a0a0a0;
+    }
+
+    .alternate-link a {
+        color: #4fc3f7;
+        text-decoration: underline;
+        font-style: italic;
+    }
+
+    footer {
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #757575;
+        border-top: 1px solid #444;
+        padding-top: 10px;
+    }
+
+    footer a {
+        color: #4fc3f7;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+        color: #ff6f61;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://m45sci.xyz/m45-2024b-128.png" alt="M45 Logo" class="logo">
+    <h1>M45-Science Ban Lists</h1>
+
+    <h2>Active Ban Lists</h2>
+
+    <div class="link-container">
+        <a href="server-banlist.json">M45 Active Ban List</a>
+        <span class="description">Current list of enforced bans in JSON format</span>
+        <div class="alternate-link">Also available as <a href="server-banlist.json.gz">gzip</a></div>
+    </div>
+
+    <div class="link-container">
+        <a href="https://m45sci.xyz/old-server-banlist.json">M45 Legacy Ban List</a>
+        <span class="description">Older bans that remain enforced</span>
+    </div>
+
+    <div class="link-container">
+        <a href="composite.json">Composite Ban List</a>
+        <span class="description">Comprehensive list of all active bans across systems</span>
+        <div class="alternate-link">Also available as <a href="composite.json.gz">gzip</a></div>
+    </div>
+
+    <h2>Resources and Tools</h2>
+
+    <div class="link-container">
+        <a href="https://github.com/M45-Science/Factorio-Community-List">Factorio Community Ban List</a>
+        <span class="description">Community-contributed ban data for Factorio servers</span>
+    </div>
+
+    <div class="link-container">
+        <a href="https://github.com/M45-Science/FactBanSync">FactBanSync Software</a>
+        <span class="description">Custom tool for managing M45-Science ban lists</span>
+    </div>
+
+    <footer>
+        License: <a href="https://unlicense.org/">Unlicense</a>
+    </footer>
+</div>
+
+</body>
+</html>
