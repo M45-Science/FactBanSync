@@ -17,11 +17,11 @@ func readBanCache() {
 		if strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			continue
 		}
-		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(spos, server.CommunityName)
+		serverList.ServerList[spos].LocalData.BanList = readBanCacheFile(server.CommunityName)
 	}
 }
 
-func readBanCacheFile(spos int, serverName string) []banDataType {
+func readBanCacheFile(serverName string) []banDataType {
 
 	bandata := []banDataType{}
 	serverName = FileNameFilter(serverName)
