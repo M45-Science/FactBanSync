@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GetRedMew(data []byte) []string {
+func ParseRedMew(data []byte) []string {
 
 	dstr := string(data)
 	spltStr := strings.SplitAfter(dstr, "<ul>")
@@ -29,4 +29,31 @@ func GetRedMew(data []byte) []string {
 
 	return lines
 
+}
+
+func ScrapeRedMew(server serverData, data []byte) []string {
+	count := 0
+	var names []string
+	var redMewNames []string
+	if server.UseRedScrape {
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Println("Scraping RedMew.")
+		}
+		redMewNames = ParseRedMew(data)
+	}
+
+	if redMewNames != nil {
+		for _, red := range redMewNames {
+			rLen := len(red)
+			if rLen > 0 && rLen < 128 {
+				names = append(names, strings.ToLower(red))
+				count++
+			}
+		}
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Printf("Redmew: %v names scraped.\n", count)
+		}
+	}
+
+	return names
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GetComfy(data []byte) []string {
+func ParseComfy(data []byte) []string {
 
 	var lines []string
 	dstr := string(data)
@@ -42,4 +42,31 @@ func GetComfy(data []byte) []string {
 		}
 	}
 	return lines
+}
+
+func ScrapeComfy(server serverData, data []byte) []string {
+	count := 0
+	var comfyNames []string
+	var names []string
+	if server.UseComfyScrape {
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Println("Scraping Comfy.")
+		}
+		comfyNames = ParseComfy(data)
+	}
+
+	if comfyNames != nil {
+		for _, comfy := range comfyNames {
+			rLen := len(comfy)
+			if rLen > 0 && rLen < 128 {
+				names = append(names, strings.ToLower(comfy))
+				count++
+			}
+		}
+		if serverConfig.ServerPrefs.VerboseLogging {
+			log.Printf("Comfy: %v names scraped.\n", count)
+		}
+	}
+
+	return names
 }
