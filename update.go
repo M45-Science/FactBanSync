@@ -15,182 +15,160 @@ import (
 // Duplicate code, not great
 func fetchBanLists() {
 	gDirty := 0
+
+	//Cycle all servers
 	for spos, server := range serverList.ServerList {
+		//Not ourself
 		if strings.EqualFold(server.CommunityName, serverConfig.CommunityName) {
 			continue
 		}
 		lDirty := 0
 		revoked := 0
+		scraper := false
+		//Are subscribed
 		if server.LocalData.Subscribed {
-			oldList := server.LocalData.BanList
 
+			//Save previous version to detect changes
+			var oldList []banDataType
+			for _, old := range server.LocalData.BanList {
+				oldList = append(oldList, banDataType{
+					UserName: old.UserName, Reason: old.Reason, Revoked: old.Revoked,
+					Added: old.Added, Sources: old.Sources, Reasons: old.Reasons, Revokes: old.Revokes, Adds: old.Adds})
+			}
+
+			//Fetch URL
 			data, err := fetchFile(server.BanListURL)
 			if err != nil {
 				log.Printf("Error updating ban list: %v: %v: %v\n", server.CommunityName, server.BanListURL, err.Error())
 				continue
 			}
-			if len(data) > 0 {
+			if len(data) <= 0 {
+				continue
+			}
 
-				var names []string
-				if server.UseRedScrape {
-					count := 0
-					var redMewNames []string
-					if server.UseRedScrape {
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Println("Scraping RedMew.")
-						}
-						redMewNames = GetRedMew(data)
-					}
+			//Web scrapers
+			var names []string
+			if server.UseRedScrape {
+				names = append(names, ScrapeRedMew(server, data)...)
+				scraper = true
+			} else if server.UseComfyScrape {
+				names = append(names, ScrapeComfy(server, data)...)
+				scraper = true
+			} else { //Handle array format bans
+				//json.Unmarshal(data, &names)
+			}
 
-					if redMewNames != nil {
-						for _, red := range redMewNames {
-							rLen := len(red)
-							if rLen > 0 && rLen < 128 {
-								names = append(names, strings.ToLower(red))
-								count++
-							}
-						}
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Printf("Redmew: %v names scraped.\n", count)
-						}
-					}
-				} else if server.UseComfyScrape {
-					count := 0
-					var comfyNames []string
-					if server.UseComfyScrape {
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Println("Scraping Comfy.")
-						}
-						comfyNames = GetComfy(data)
-					}
-
-					if comfyNames != nil {
-						for _, comfy := range comfyNames {
-							rLen := len(comfy)
-							if rLen > 0 && rLen < 128 {
-								names = append(names, strings.ToLower(comfy))
-								count++
-							}
-						}
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Printf("Comfy: %v names scraped.\n", count)
-						}
-					}
-
-				} else {
-					err = json.Unmarshal(data, &names)
-				}
-
-				if err != nil {
-					//Not really an error, just empty array
-					//Only needed because Factorio will write some bans as an array for some unknown reason.
-				} else {
-
-					//Read bans in array format
+			//Process names
+			if len(names) > 0 {
+				//Look for new names
+				for _, name := range names {
 					found := false
-					if len(names) > 0 {
-						for _, name := range names {
-							if name != "" {
-								for ipos, item := range server.LocalData.BanList {
-									if strings.EqualFold(item.UserName, name) {
-										if item.Revoked {
-											if serverConfig.ServerPrefs.VerboseLogging {
-												log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
-											}
-
-											serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
-											serverList.ServerList[spos].LocalData.BanList[ipos].Added = time.Now().Format(time.RFC3339)
-										}
-										found = true
+					if name != "" {
+						for i, item := range oldList {
+							if strings.EqualFold(item.UserName, name) {
+								if item.Revoked {
+									if serverConfig.ServerPrefs.VerboseLogging {
+										log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
 									}
+									serverList.ServerList[spos].LocalData.BanList[i].Revoked = false
 								}
-								if !found {
-									gDirty++
-									lDirty++
-									serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(name), Added: time.Now().Format(timeFormat)})
-								}
-							}
-						}
-					}
-				}
-
-				if !server.UseRedScrape && !server.UseComfyScrape {
-
-					var bans []banDataType
-					err = json.Unmarshal(data, &bans)
-
-					if err != nil {
-						fmt.Print("") //Remove annoying warning
-					}
-
-					//Deal with nested json
-					if len(bans) <= 1 && len(data) > 0 {
-						datastr := string(data)
-						datastr = strings.TrimSuffix(datastr, "]")
-						datastr = strings.TrimPrefix(datastr, "[")
-
-						err = json.Unmarshal([]byte(datastr), &bans)
-						if err != nil {
-							log.Println("Error parsing ban list: " + err.Error())
-						}
-					}
-
-					//Read bans in standard format
-					for ipos, item := range bans {
-						if item.UserName != "" {
-							found := false
-							for _, ban := range server.LocalData.BanList {
-								if strings.EqualFold(ban.UserName, item.UserName) && !item.Revoked {
-									if item.Revoked {
-										if serverConfig.ServerPrefs.VerboseLogging {
-											log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
-										}
-										serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
-									}
-									found = true
-								}
-							}
-							if !found {
-								gDirty++
-								lDirty++
-								serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(item.UserName), Reason: item.Reason, Added: time.Now().Format(timeFormat)})
-							}
-						}
-					}
-
-					//Detect bans that were revoked
-					oldLen := len(oldList)
-					threshold := oldLen / 10
-
-					count := 0
-					for ipos, item := range oldList {
-						found := false
-						for _, ban := range server.LocalData.BanList {
-							if strings.EqualFold(ban.UserName, item.UserName) {
 								found = true
-								break
 							}
 						}
 						if !found {
-							count++
+							gDirty++
+							lDirty++
+							serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(name), Added: time.Now().Format(timeFormat)})
+						}
+					}
+				}
+				//Look for names that disappeared
+				for i, item := range oldList {
+					found := false
+					for _, name := range names {
+						if strings.EqualFold(item.UserName, name) {
+							found = true
+							break
+						}
+					}
+					if !found && !item.Revoked {
+						gDirty++
+						lDirty++
+						serverList.ServerList[spos].LocalData.BanList[i].Revoked = true
+						if serverConfig.ServerPrefs.VerboseLogging {
+							log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
 							revoked++
-							if oldLen > 30 && count > threshold {
-								if serverConfig.ServerPrefs.VerboseLogging {
-									log.Println("More than 10% of bans were revoked. Ban list was probably cleared, silencing printout.")
+						}
+					}
+				}
+			}
+
+			//Not scraper or array format ban
+			if !scraper {
+
+				var bans []banDataType
+				err = json.Unmarshal(data, &bans)
+
+				if err != nil {
+					fmt.Print("") //Remove annoying warning
+				}
+
+				//Deal with nested json
+				if len(bans) <= 1 && len(data) > 0 {
+					fmt.Printf("Fixing nested JSON for %v.\n", server.CommunityName)
+					datastr := string(data)
+					datastr = strings.TrimSuffix(datastr, "]")
+					datastr = strings.TrimPrefix(datastr, "[")
+
+					err = json.Unmarshal([]byte(datastr), &bans)
+					if err != nil {
+						log.Println("Error parsing ban list: " + err.Error())
+					}
+				}
+
+				//Read bans in standard format
+				for ipos, item := range bans {
+					if item.UserName != "" {
+						found := false
+						for _, ban := range oldList {
+							if strings.EqualFold(ban.UserName, item.UserName) {
+								if item.Revoked {
+									if serverConfig.ServerPrefs.VerboseLogging {
+										log.Println(server.CommunityName + ": Revoked ban was reinstated: " + item.UserName)
+									}
+									serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = false
+									revoked++
 								}
-								oldLen = 0
+								found = true
 							}
-							if oldLen > 0 {
-								if serverConfig.ServerPrefs.VerboseLogging {
-									log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
-								}
-							}
-							serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
+						}
+						if !found {
+							gDirty++
+							lDirty++
+							serverList.ServerList[spos].LocalData.BanList = append(serverList.ServerList[spos].LocalData.BanList, banDataType{UserName: strings.ToLower(item.UserName), Reason: item.Reason, Added: time.Now().Format(timeFormat)})
 						}
 					}
 				}
 
+				//Detect bans that were revoked
+				for ipos, item := range oldList {
+					found := false
+					for _, ban := range bans {
+						if strings.EqualFold(ban.UserName, item.UserName) {
+							found = true
+							break
+						}
+					}
+					if !found && !item.Revoked {
+						revoked++
+						if serverConfig.ServerPrefs.VerboseLogging {
+							log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
+						}
+						serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
+					}
+				}
 			}
+
 			if lDirty > 0 {
 				log.Printf("Found %v new bans for %v\n", lDirty, server.CommunityName)
 			}
