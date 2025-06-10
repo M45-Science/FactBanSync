@@ -35,8 +35,23 @@
         transform: scale(1.05);
     }
 
-    .search-container {
+    .search-box {
         margin: 20px 0;
+        border: 1px solid #4fc3f7;
+        border-radius: 8px;
+        background-color: #2a2a2a;
+    }
+
+    .search-title {
+        background-color: #4fc3f7;
+        color: #000;
+        font-weight: bold;
+        padding: 8px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .search-container {
+        padding: 10px;
     }
 
     .search-container input[type="text"] {
@@ -59,6 +74,11 @@
 
     .search-container button:hover {
         background-color: #ff6f61;
+    }
+
+    #searchResults {
+        margin-top: 10px;
+        text-align: left;
     }
 
     h1 {
@@ -147,11 +167,14 @@
 <div class="container">
     <img src="https://m45sci.xyz/img/m45.png" alt="M45 Logo" class="logo">
     <h1>M45-Science Ban Lists</h1>
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search username...">
-        <button onclick="searchBans()">Search</button>
+    <div class="search-box">
+        <div class="search-title">Search the combined ban lists by username</div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter username...">
+            <button onclick="searchBans()">Search</button>
+        </div>
+        <div id="searchResults"></div>
     </div>
-    <div id="searchResults"></div>
 
     <h2>Active Ban Lists</h2>
 
