@@ -35,6 +35,52 @@
         transform: scale(1.05);
     }
 
+    .search-box {
+        margin: 20px 0;
+        border: 1px solid #4fc3f7;
+        border-radius: 8px;
+        background-color: #2a2a2a;
+    }
+
+    .search-title {
+        background-color: #4fc3f7;
+        color: #000;
+        font-weight: bold;
+        padding: 8px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .search-container {
+        padding: 10px;
+    }
+
+    .search-container input[type="text"] {
+        padding: 6px 8px;
+        border: 1px solid #444;
+        border-radius: 4px;
+        background-color: #2a2a2a;
+        color: #d0d0d0;
+    }
+
+    .search-container button {
+        padding: 6px 12px;
+        margin-left: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: #4fc3f7;
+        color: #000;
+    }
+
+    .search-container button:hover {
+        background-color: #ff6f61;
+    }
+
+    #searchResults {
+        margin-top: 10px;
+        text-align: left;
+    }
+
     h1 {
         color: #ff6f61;
         font-size: 2.2em;
@@ -119,8 +165,16 @@
 <body>
 
 <div class="container">
-    <img src="https://m45sci.xyz/m45-2024b-128.png" alt="M45 Logo" class="logo">
+    <img src="https://m45sci.xyz/img/m45.png" alt="M45 Logo" class="logo">
     <h1>M45-Science Ban Lists</h1>
+    <div class="search-box">
+        <div class="search-title">Search the combined ban lists by username</div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter username...">
+            <button onclick="searchBans()">Search</button>
+        </div>
+        <div id="searchResults"></div>
+    </div>
 
     <h2>Active Ban Lists</h2>
 
@@ -157,6 +211,36 @@
         License: <a href="https://unlicense.org/">Unlicense</a>
     </footer>
 </div>
+
+<script>
+    async function searchBans() {
+        const name = document.getElementById('searchInput').value.trim().toLowerCase();
+        const resultsDiv = document.getElementById('searchResults');
+        if (!name) {
+            resultsDiv.textContent = 'Please enter a username.';
+            return;
+        }
+        try {
+            const resp = await fetch('composite.json');
+            if (!resp.ok) throw new Error('Failed to fetch ban list');
+            const data = await resp.json();
+            const matches = data.filter(b => b.username.toLowerCase() === name);
+            if (matches.length === 0) {
+                resultsDiv.textContent = 'No bans found for ' + name;
+                return;
+            }
+            let out = '<ul>';
+            for (const m of matches) {
+                const reason = m.reason ? ' - ' + m.reason : '';
+                out += '<li>' + m.username + reason + '</li>';
+            }
+            out += '</ul>';
+            resultsDiv.innerHTML = out;
+        } catch (err) {
+            resultsDiv.textContent = 'Error searching bans.';
+        }
+    }
+</script>
 
 </body>
 </html>
