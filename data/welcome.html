@@ -198,10 +198,10 @@
             return;
         }
         try {
-            const resp = await fetch('server-banlist.json');
+            const resp = await fetch('composite.json');
             if (!resp.ok) throw new Error('Failed to fetch ban list');
             const data = await resp.json();
-            const matches = data.filter(b => b.username === name);
+            const matches = data.filter(b => b.username.toLowerCase() === name);
             if (matches.length === 0) {
                 resultsDiv.textContent = 'No bans found for ' + name;
                 return;
