@@ -83,21 +83,23 @@ func fetchBanLists() {
 					}
 				}
 				//Look for names that disappeared
-				for i, item := range oldList {
-					found := false
-					for _, name := range names {
-						if strings.EqualFold(item.UserName, name) {
-							found = true
-							break
+				if !disableBanRevoke {
+					for i, item := range oldList {
+						found := false
+						for _, name := range names {
+							if strings.EqualFold(item.UserName, name) {
+								found = true
+								break
+							}
 						}
-					}
-					if !found && !item.Revoked {
-						gDirty++
-						lDirty++
-						serverList.ServerList[spos].LocalData.BanList[i].Revoked = true
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
-							revoked++
+						if !found && !item.Revoked {
+							gDirty++
+							lDirty++
+							serverList.ServerList[spos].LocalData.BanList[i].Revoked = true
+							if serverConfig.ServerPrefs.VerboseLogging {
+								log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
+								revoked++
+							}
 						}
 					}
 				}
@@ -151,20 +153,22 @@ func fetchBanLists() {
 				}
 
 				//Detect bans that were revoked
-				for ipos, item := range oldList {
-					found := false
-					for _, ban := range bans {
-						if strings.EqualFold(ban.UserName, item.UserName) {
-							found = true
-							break
+				if !disableBanRevoke {
+					for ipos, item := range oldList {
+						found := false
+						for _, ban := range bans {
+							if strings.EqualFold(ban.UserName, item.UserName) {
+								found = true
+								break
+							}
 						}
-					}
-					if !found && !item.Revoked {
-						revoked++
-						if serverConfig.ServerPrefs.VerboseLogging {
-							log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
+						if !found && !item.Revoked {
+							revoked++
+							if serverConfig.ServerPrefs.VerboseLogging {
+								log.Println(server.CommunityName + ": Ban for " + item.UserName + " was revoked")
+							}
+							serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
 						}
-						serverList.ServerList[spos].LocalData.BanList[ipos].Revoked = true
 					}
 				}
 			}

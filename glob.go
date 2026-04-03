@@ -14,6 +14,7 @@ var (
 	serverConfig     serverConfigData
 	serverList       serverListData
 	configPath       string
+	disableBanRevoke bool
 	ourBanData       []banDataType
 	compositeBanData []minBanDataType
 

@@ -22,6 +22,7 @@ func main() {
 	flag.BoolVar(&forceFetch, "forceFetch", false, "force startup fetching ban lists from remotes")
 	var verboseLogging bool
 	flag.BoolVar(&verboseLogging, "verboseLogging", false, "force enable verbose logging")
+	flag.BoolVar(&disableBanRevoke, "disableBanRevoke", true, "disable processing of ban revocations")
 	flag.Parse()
 
 	//Make config file if requested
