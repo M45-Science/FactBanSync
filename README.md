@@ -12,7 +12,7 @@ Grabs data in a simple and secure, decentralized fashion.<br>
 https://github.com/Distortions81/FactBanSync/releases<br>
 <br>
 Download binary, OR:<br>
-1: Install GO 1.17.x: https://go.dev/dl/<br>
+1: Install the current stable Go toolchain: https://go.dev/dl/<br>
 2: Go to the FactBanSync directory, run 'go get'<br>
 3: Run 'go build', then run the FactBanSync binary.<br>
 
@@ -35,6 +35,11 @@ Setup Wizard<br>
 RCON banning live<br>
 Logfile monitoring for logins<br>
 Whitelists<br>
-Unit tests<br>
 <br>
 *(ChatWire currently handles rcon/log monitoring for me.)*
+
+### Development
+
+Run `go test -race ./...` and `go vet ./...` before submitting changes.
+Composite-ban tests cover subscribed-source merging and retaining the newest
+bans when the output limit is reached.

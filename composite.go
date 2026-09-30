@@ -77,10 +77,10 @@ func compositeBans() {
 	}
 
 	//Sort by time added, new to old
-	sort.Slice(compositeBanlist, func(i, j int) bool {
+	sort.SliceStable(compositeBanlist, func(i, j int) bool {
 		//Use newest date, if there are multiple sources
 		var newest_a time.Time = time.Time{}
-		for _, addA := range compositeBanlist[j].Adds {
+		for _, addA := range compositeBanlist[i].Adds {
 			bTime, errb := time.Parse(timeFormat, addA)
 			if errb == nil {
 				if bTime.After(newest_a) || newest_a.IsZero() {
@@ -97,7 +97,7 @@ func compositeBans() {
 				}
 			}
 		}
-		return newest_a.Before(newest_b)
+		return newest_a.After(newest_b)
 	})
 
 	//Cut list to size, new entries are at the start

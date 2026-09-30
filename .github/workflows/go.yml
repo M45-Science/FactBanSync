@@ -6,20 +6,26 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: read
+
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v7
       with:
-        go-version: 1.17
+        go-version: 'stable'
 
     - name: Build
-      run: go build -v ./...
+      run: go build -mod=readonly -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: go test -mod=readonly -race -v ./...
+
+    - name: Vet
+      run: go vet -mod=readonly ./...
